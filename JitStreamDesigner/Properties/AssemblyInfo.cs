@@ -1,0 +1,30 @@
+﻿using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+
+// アセンブリに関する一般情報は、以下の属性セットによって制御されます。
+// アセンブリに関連付けられている情報を変更するには、
+// これらの属性値を変更します。
+[assembly: AssemblyTitle("Jit Stream Designer")]
+[assembly: AssemblyDescription("Just-in-time Stream GUI Designer")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Manabu Tonosaki")]
+[assembly: AssemblyProduct("Jit Stream Designer")]
+[assembly: AssemblyCopyright("Copyright ©  2019 Manabu Tonosaki")]
+[assembly: AssemblyTrademark("Jit Stream Designer")]
+[assembly: AssemblyCulture("")]
+
+// アセンブリのバージョン情報は次の 4 つの値で構成されています:
+//
+//      メジャー バージョン
+//      マイナー バージョン
+//      ビルド番号
+//      Revision
+//
+// すべての値を指定するか、次を使用してビルド番号とリビジョン番号を既定に設定できます
+// 既定値にすることができます:
+//[アセンブリ: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: ComVisible(false)]
+[assembly: NeutralResourcesLanguage("en-US")]
