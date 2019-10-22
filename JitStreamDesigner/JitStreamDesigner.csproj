@@ -126,6 +126,7 @@
     <Compile Include="FeatureClassListPanel.cs" />
     <Compile Include="FeatureClock.cs" />
     <Compile Include="FeatureSimulatorBase.cs" />
+    <Compile Include="FeatureToolbox.cs" />
     <Compile Include="LAYER.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -164,6 +165,7 @@
     <Content Include="Assets\Lump16.png" />
     <Content Include="Assets\NoSheet16.png" />
     <Content Include="Assets\Paper16.png" />
+    <Content Include="Assets\tbProcess.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -207,6 +209,7 @@
     <None Include="%40Doc\JitStreamDesigner.pptx" />
     <None Include="%40Res\LogPanelTitileDesign.psd" />
     <None Include="%40Res\Tono7Seg.psd" />
+    <None Include="%40Res\ToolButtons.psd" />
     <None Include="JitStreamDesigner.snk" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

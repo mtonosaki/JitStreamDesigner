@@ -42,7 +42,7 @@ namespace JitStreamDesigner
             TargetListView.SelectionChanged += TargetListView_SelectionChanged;
 
             // Draw preparation
-            Pane.Target = Pane.Main;
+            Pane.Target = Pane["LogPanel"]; // to get priority draw layer
             BarParts = new PartsActiveClass
             {
             };
@@ -87,39 +87,12 @@ namespace JitStreamDesigner
         public ClassTipModel TargetClass { get; set; }
     }
 
-    public class DOBridge : DependencyObject
-    {
-        public new object GetValue(DependencyProperty dp)
-        {
-            return base.GetValue(dp);
-        }
-        public new void SetValue(DependencyProperty dp, object value)
-        {
-            base.SetValue(dp, value);
-        }
-    }
-
     /// <summary>
     /// Active Class name and Yellow Bar
     /// </summary>
     public class PartsActiveClass : PartsBase<ScreenX, ScreenY>
     {
         public string Text { get; set; }
-        public DOBridge dob = new DOBridge();
-
-        public static readonly DependencyProperty DummyProperty = DependencyProperty.Register("Dummy", typeof(double), typeof(PartsActiveClass), null);
-
-        public double Dummy
-        {
-            get
-            {
-                return (double)dob.GetValue(DummyProperty);
-            }
-            set
-            {
-                dob.SetValue(DummyProperty, value);
-            }
-        }
 
         public override void Draw(DrawProperty dp)
         {
@@ -129,7 +102,8 @@ namespace JitStreamDesigner
             }
             // Yellow bar
             var r = dp.PaneRect.Clone();
-            r.RB = ScreenPos.From(r.R, 2) + ScreenX.From(Dummy);
+            r.LT = ScreenPos.From(r.L, 0);
+            r.RB = ScreenPos.From(r.R, 2);
             dp.Graphics.FillRectangle(_(r), Colors.Yellow);
 
             // Active Class name (Back ground)
