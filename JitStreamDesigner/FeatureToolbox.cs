@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Windows.UI;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
@@ -29,6 +31,7 @@ namespace JitStreamDesigner
             base.OnInitialInstance();
             Pane.Target = Pane["ToolBox"];
 
+            // Tool box background
             Parts.Add(Pane.Target, new PartsToolBox{}, LAYER.ToolButtonBox);
 
             var x = ScreenX.From(0);
@@ -40,6 +43,7 @@ namespace JitStreamDesigner
                 var btn = Buttons[i];
                 btn.Size = btnSize;
                 btn.Location = CodePos<ScreenX, ScreenY>.From(x, y);
+                var dmy = btn.Load(View);   // dmy = thread control
                 Parts.Add(Pane.Target, btn, LAYER.ToolButtons);
                 y += btnSize.Height;
             }
@@ -73,7 +77,7 @@ namespace JitStreamDesigner
             Rect = ScreenRect.From(spos, Size);
             var br = Rect.Clone();
             br.RB = ScreenPos.From(br.R, br.B - 1);
-            dp.Graphics.FillRectangle(_(br), Color.FromArgb(24, 255,255,255));
+            dp.Graphics.FillRectangle(_(br), Color.FromArgb(32, 255,255,255));
         }
 
         public virtual async Task Load(TGuiView owner)

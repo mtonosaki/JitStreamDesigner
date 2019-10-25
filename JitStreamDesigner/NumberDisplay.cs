@@ -10,7 +10,10 @@ using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
-    public class SevenSegmentDisplay
+    /// <summary>
+    /// An original bitmap numbers drawing program
+    /// </summary>
+    public class NumberDisplay
     {
         public event EventHandler Loaded;
         public bool IsLoaded { get => LoadStatus == 1; }
