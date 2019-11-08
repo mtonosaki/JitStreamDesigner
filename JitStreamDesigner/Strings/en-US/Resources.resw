@@ -156,4 +156,20 @@
   <data name="OpenStudyButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Open Study file [Ctrl]+[O]</value>
   </data>
+  <data name="PartsToolButtonKanban" xml:space="preserve">
+    <value>Kanban</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="PartsToolButtonProcess" xml:space="preserve">
+    <value>Process</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="PartsToolButtonProcessPriorityJoin" xml:space="preserve">
+    <value>Process w/Priority selector</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="PartsToolButtonWork" xml:space="preserve">
+    <value>Work</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
 </root>

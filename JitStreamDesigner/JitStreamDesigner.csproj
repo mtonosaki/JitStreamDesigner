@@ -122,16 +122,20 @@
     <Compile Include="ClassTipModel.cs" />
     <Compile Include="DataCold.cs" />
     <Compile Include="DataHot.cs" />
+    <Compile Include="DistanceRect.cs" />
     <Compile Include="EventClockUpdatedTokenTrigger.cs" />
     <Compile Include="FeatureClassListPanel.cs" />
     <Compile Include="FeatureClock.cs" />
+    <Compile Include="FeatureJitProcess.cs" />
     <Compile Include="FeatureSimulatorBase.cs" />
     <Compile Include="FeatureToolbox.cs" />
+    <Compile Include="FeatureToolTip.cs" />
     <Compile Include="LAYER.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="PartsClock.cs" />
+    <Compile Include="PartsToolButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NumberDisplay.cs" />
     <Compile Include="TOKEN.cs" />
@@ -165,7 +169,10 @@
     <Content Include="Assets\Lump16.png" />
     <Content Include="Assets\NoSheet16.png" />
     <Content Include="Assets\Paper16.png" />
+    <Content Include="Assets\tbKanban.png" />
+    <Content Include="Assets\tbProcessPriorityJoin.png" />
     <Content Include="Assets\tbProcess.png" />
+    <Content Include="Assets\tbWork.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -190,7 +197,7 @@
       <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="Tono.Gui.Uwp">
-      <Version>1.0.11</Version>
+      <Version>1.0.12</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

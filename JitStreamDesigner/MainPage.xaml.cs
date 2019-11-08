@@ -10,6 +10,9 @@ namespace JitStreamDesigner
         {
             InitializeComponent();
 
+            GuiView.ZoomX = 20;
+            GuiView.ZoomY = 20;
+
             // Welcome message
             var ver = Windows.ApplicationModel.Package.Current.Id.Version;
             LOG.AddMes(LLV.INF, "Start-Welcome", $"{ver.Build}.{ver.Major}.{ver.Minor}.{ver.Revision}", DateTime.Now.Year);

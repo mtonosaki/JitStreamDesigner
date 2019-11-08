@@ -156,4 +156,20 @@
   <data name="OpenStudyButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>スタディを開く [Ctrl]+[O]</value>
   </data>
+  <data name="PartsToolButtonKanban" xml:space="preserve">
+    <value>かんばん</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="PartsToolButtonProcess" xml:space="preserve">
+    <value>プロセス</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="PartsToolButtonProcessPriorityJoin" xml:space="preserve">
+    <value>プロセス(優先選択機能付き）</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="PartsToolButtonWork" xml:space="preserve">
+    <value>ワーク</value>
+    <comment>Toobutton tooltip message</comment>
+  </data>
 </root>
