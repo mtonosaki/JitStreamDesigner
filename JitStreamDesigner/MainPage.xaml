@@ -21,15 +21,24 @@
             <local:FeatureClassListPanel TargetListView="{x:Bind ClassList}"/>
             <local:FeatureToolbox>
                 <local:FeatureToolbox.Buttons>
-                    <local:PartsToolButtonProcess Name="Process" />
-                    <local:PartsToolButtonProcess Name="Process" />
-                    <local:PartsToolButtonProcess Name="Process" />
+                    <local:PartsToolButtonProcess Name="Process" ToolTipUid="PartsToolButtonProcess" />
+                    <local:PartsToolButtonProcessPriorityJoin Name="ProcessPriorityJoin" ToolTipUid="PartsToolButtonProcessPriorityJoin" />
+                    <local:PartsToolButtonWork Name="Work" ToolTipUid="PartsToolButtonWork" />
+                    <local:PartsToolButtonKanban Name="Kanban" ToolTipUid="PartsToolButtonKanban" />
                 </local:FeatureToolbox.Buttons>
             </local:FeatureToolbox>
+            <local:FeatureJitProcess />
             <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <tg:FeatureScrollDrag />
-            <tg:FeatureZoomDrag />
+            <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
+            <tg:FeatureToolTip 
+                TargetPane="{x:Bind ToolBox}" TargetLayer="{x:Bind local:LAYER.ToolButtons}"
+                TooltipPane="{x:Bind ToolBox}" TooltipLayer="{x:Bind tg:FeatureToolTip.DefaultLayer}">
+                <tg:FeatureToolTip.PartsTooltip>
+                    <tg:PartsTooltip />
+                </tg:FeatureToolTip.PartsTooltip>
+            </tg:FeatureToolTip>
         </tg:TGuiView.Features>
         <tg:TGuiView.ContextFlyout>
             <MenuFlyout>

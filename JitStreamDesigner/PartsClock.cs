@@ -19,7 +19,7 @@ namespace JitStreamDesigner
         /// <summary>
         /// should be set instance by owner feature
         /// </summary>
-        public SevenSegmentDisplay Seg7 { get; set; }
+        public NumberDisplay Seg7 { get; set; }
 
         public override void Draw(DrawProperty dp)
         {

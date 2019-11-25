@@ -72,7 +72,7 @@ namespace JitStreamDesigner
             ClockParts = new PartsClock
             {
                 Parent = this,
-                Seg7 = new SevenSegmentDisplay { View = View, },
+                Seg7 = new NumberDisplay { View = View, },
             };
             Parts.Add(Pane.Target, ClockParts, LAYER.Clock);
             ClockParts.Seg7.Loaded += (s, e) => Redraw();   // redraw when loaded images completely.

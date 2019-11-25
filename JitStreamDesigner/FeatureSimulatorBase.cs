@@ -1,4 +1,6 @@
 ﻿using System;
+using Tono;
+using Tono.Gui;
 using Tono.Gui.Uwp;
 
 namespace JitStreamDesigner
@@ -22,5 +24,47 @@ namespace JitStreamDesigner
         /// Simulator clock current time
         /// </summary>
         public DateTime Now { get; set; }
+
+        public LayoutX DistancePositionerX(CodeX<Distance> x, CodeY<Distance> y)
+        {
+            return new LayoutX
+            {
+                Lx = x.Cx.m,
+            };
+        }
+
+        public LayoutY DistancePositionerY(CodeX<Distance> x, CodeY<Distance> y)
+        {
+            return new LayoutY
+            {
+                Ly = y.Cy.m,
+            };
+        }
+
+        public CodeX<Distance> DistanceCoderX(LayoutX x, LayoutY y)
+        {
+            return new CodeX<Distance>
+            {
+                Cx = Distance.FromMeter(x.Lx),
+            };
+        }
+        public CodeY<Distance> DistanceCoderY(LayoutX x, LayoutY y)
+        {
+            return new CodeY<Distance>
+            {
+                Cy = Distance.FromMeter(y.Ly)
+            };
+        }
+
+        public CodePos<Distance,Distance> GetCoderPos(IDrawArea pane, PointerState po)
+        {
+            return GetCoderPos(pane, po.Position);
+        }
+        public CodePos<Distance, Distance> GetCoderPos(IDrawArea pane, ScreenPos po)
+        {
+            var lpos = LayoutPos.From(pane, po);
+            return CodePos<Distance, Distance>.From(DistanceCoderX(lpos.X, lpos.Y), DistanceCoderY(lpos.X, lpos.Y));
+        }
+
     }
 }

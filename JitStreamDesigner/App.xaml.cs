@@ -49,7 +49,7 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// TODO: Backup application data here
+        /// Backup application data here
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -61,7 +61,7 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// TODO: Restore application data from backup of suspended timing
+        /// Restore application data from backup of suspended timing
         /// </summary>
         private void OnResuming()
         {

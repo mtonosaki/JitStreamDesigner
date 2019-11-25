@@ -1,12 +1,16 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Windows.UI;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
@@ -14,8 +18,13 @@ namespace JitStreamDesigner
     /// <summary>
     /// Toolbox
     /// </summary>
-    public class FeatureToolbox : FeatureSimulatorBase
+    public class FeatureToolbox : FeatureSimulatorBase, IPointerListener
     {
+        public const string TokenIdCreating = "TokenIdCreating";
+        public const string TokenIdPositioning = "TokenIdPositioning";
+        public const string TokenIdFinished = "TokenIdFinished";
+        public const string TokenIdCancelling = "TokenIdCancelling";
+
         /// <summary>
         /// Tool Button Collection
         /// </summary>
@@ -29,79 +38,112 @@ namespace JitStreamDesigner
             base.OnInitialInstance();
             Pane.Target = Pane["ToolBox"];
 
-            Parts.Add(Pane.Target, new PartsToolBox{}, LAYER.ToolButtonBox);
+            // Tool box background
+            Parts.Add(Pane.Target, new PartsToolBox { }, LAYER.ToolButtonBox);
 
             var x = ScreenX.From(0);
             var y = ScreenY.From(48);
             var btnSize = ScreenSize.From(24, 24);
+            var marginY = ScreenY.From(8);
 
-            for( var i = 0; i < Buttons.Count; i++)
+            for (var i = 0; i < Buttons.Count; i++)
             {
                 var btn = Buttons[i];
+                btn.Name = string.IsNullOrEmpty(btn.Name) ? btn.GetType().Name : btn.Name;
                 btn.Size = btnSize;
                 btn.Location = CodePos<ScreenX, ScreenY>.From(x, y);
+                var dmy = btn.Load(View);   // dmy = thread control
                 Parts.Add(Pane.Target, btn, LAYER.ToolButtons);
-                y += btnSize.Height;
+                y += btnSize.Height + marginY;
             }
         }
-    }
 
-    public class PartsToolBox : PartsBase<ScreenX, ScreenY>
-    {
-        public override void Draw(DrawProperty dp)
+        private PartsToolButton Dragging = null;
+
+        public void OnPointerPressed(PointerState po)
         {
-            dp.Graphics.FillRectangle(_(dp.PaneRect), Colors.Black);
+            if (Dragging == null)
+            {
+                var tar = checkSelect(po);
+                if (tar != null)
+                {
+                    Dragging = tar;
+                    DraggingMessage(po, TokenIdCreating);
+                }
+            }
+        }
+
+        public void OnPointerMoved(PointerState po)
+        {
+            if (Dragging != null)
+            {
+                DraggingMessage(po, po.IsInContact ? TokenIdPositioning : TokenIdFinished);
+            }
+            else if (po.DeviceType == PointerState.DeviceTypes.Mouse)
+            {
+                checkSelect(po);
+            }
+        }
+
+        public void OnPointerReleased(PointerState po)
+        {
+            if (po.DeviceType == PointerState.DeviceTypes.Touch || po.DeviceType == PointerState.DeviceTypes.Pen)
+            {
+                checkSelect(po);
+            }
+            DraggingMessage(po, Pane.Target.Rect.IsIn(po.Position) ? TokenIdCancelling : TokenIdFinished);
+        }
+
+        public void OnPointerHold(PointerState po)
+        {
+        }
+
+        private PartsToolButton checkSelect(PointerState po)
+        {
+            var selected = new List<PartsToolButton>();
+            foreach (PartsToolButton btn in Parts.GetParts(LAYER.ToolButtons, p => p is PartsToolButton sp))
+            {
+                if (btn.Rect.IsIn(po.Position))
+                {
+                    btn.IsSelected = true;
+                    selected.Add(btn);
+                }
+                else
+                {
+                    btn.IsSelected = false;
+                }
+            }
+            Redraw();
+
+            return selected.OrderBy(a => a.SelectingScore(Pane.Target, po.Position)).FirstOrDefault();
+        }
+
+        private void DraggingMessage(PointerState po, string tokenid)
+        {
+            if (Dragging == null) return;
+
+            Token.AddNew(new EventTokenTriggerToolDragging
+            {
+                TokenID = tokenid,
+                Name = Dragging.Name,
+                ToolButtonType = Dragging.GetType(),
+                Pointer = po,
+                Sender = this,
+            });
+            if (tokenid == TokenIdFinished || tokenid == TokenIdCancelling)
+            {
+                Dragging = null;
+            }
         }
     }
 
     /// <summary>
-    /// Tool Button
+    /// Creating Jit-instance
     /// </summary>
-    public class PartsToolButton : PartsBase<ScreenX, ScreenY>
+    public class EventTokenTriggerToolDragging : EventTokenTrigger
     {
         public string Name { get; set; }
-        public ScreenSize Size { get; set; }
-        protected ScreenRect Rect { get; private set; }
-
-        /// <summary>
-        /// Draw background
-        /// </summary>
-        /// <param name="dp"></param>
-        public override void Draw(DrawProperty dp)
-        {
-            var spos = ScreenPos.From(Location);
-            Rect = ScreenRect.From(spos, Size);
-            var br = Rect.Clone();
-            br.RB = ScreenPos.From(br.R, br.B - 1);
-            dp.Graphics.FillRectangle(_(br), Color.FromArgb(24, 255,255,255));
-        }
-
-        public virtual async Task Load(TGuiView owner)
-        {
-            await Task.Run(() => { });  // dummy task
-        }
-    }
-
-    public class PartsToolButtonProcess : PartsToolButton
-    {
-        private CanvasBitmap Bitmap = null;
-
-        /// <summary>
-        /// Load bitmap
-        /// </summary>
-        /// <param name="owner"></param>
-        public override async Task Load(TGuiView owner)
-        {
-            Bitmap = await CanvasBitmap.LoadAsync(owner.Canvas, new Uri("ms-appx:///Assets/tbProcess.png"));
-        }
-
-        public override void Draw(DrawProperty dp)
-        {
-            base.Draw(dp);  // draw background
-            if (Bitmap != null)
-            {
-                dp.Graphics.DrawImage(Bitmap, _(Rect));
-            }
-        }
+        public Type ToolButtonType { get; set; }
+        public PointerState Pointer { get; set; }
     }
 }
