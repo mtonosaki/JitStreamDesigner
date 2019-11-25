@@ -148,8 +148,7 @@ namespace Tono.Gui.Uwp
 
         public void OnPointerMoved(PointerState po)
         {
-            // TODO: IsKeyNoneのバグフィックス待ち
-            if ( /*po.IsKeyNone &&*/ po.IsInContact == false)
+            if ( po.IsInContact == false)
             {
                 PartsTooltip.Location = CodePos<ScreenX, ScreenY>.From(po.Position.X, po.Position.Y);
                 Redraw();
@@ -227,13 +226,7 @@ namespace Tono.Gui.Uwp
                 VerticalGlyphOrientation = CanvasVerticalGlyphOrientation.Default,
             };
             var ssz0 = GraphicUtil.MeasureString(dp.Canvas, Text, tf);
-            // TODO: Cloneサポート待ち
-            //var ssz = ssz0.Clone();
-            var ssz = new ScreenSize
-            {
-                Width = ssz0.Width,
-                Height = ssz0.Height,
-            };
+            var ssz = ssz0.Clone();
             var sp = ScreenPos.From(Location.X.Cx, Location.Y.Cy);
 
             if (IsUpperPositionDefault)

@@ -1,8 +1,5 @@
 ﻿using Tono;
-using Tono.Gui;
 using Tono.Gui.Uwp;
-using Windows.UI;
-using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
@@ -10,13 +7,19 @@ namespace JitStreamDesigner
     {
         private PartsJitProcess CurrentParts = null;
 
+        /// <summary>
+        /// Initialize Feature
+        /// </summary>
         public override void OnInitialInstance()
         {
             base.OnInitialInstance();
             Pane.Target = Pane.Main;
-
         }
 
+        /// <summary>
+        /// Creating new instance
+        /// </summary>
+        /// <param name="token"></param>
         [EventCatch(TokenID = FeatureToolbox.TokenIdCreating, Name = "Process")]
         public void Creating(EventTokenTriggerToolDragging token)
         {
@@ -38,51 +41,47 @@ namespace JitStreamDesigner
             Parts.Add(Pane.Target, CurrentParts, LAYER.JitProcess);
         }
 
+        /// <summary>
+        /// Moving new instance
+        /// </summary>
+        /// <param name="token"></param>
         [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Process")]
         public void Positioning(EventTokenTriggerToolDragging token)
         {
             if (CurrentParts == null) return;
 
+            CurrentParts.DesignState = PartsJitBase.DesignStates.Positioning;
             CurrentParts.Location = GetCoderPos(Pane.Target, token.Pointer);
             Redraw();
         }
 
+        /// <summary>
+        /// Decide the instance position
+        /// </summary>
+        /// <param name="token"></param>
         [EventCatch(TokenID = FeatureToolbox.TokenIdFinished, Name = "Process")]
         public void Finished(EventTokenTriggerToolDragging token)
         {
             if (CurrentParts == null) return;
 
-            CurrentParts.Location = GetCoderPos(Pane.Target, token.Pointer);
+            CurrentParts.DesignState = PartsJitBase.DesignStates.Normal;
+            CurrentParts.Location = GetCoderPos(Pane.Main, token.Pointer);
             CurrentParts = null;
             Redraw();
         }
-    }
 
-    /// <summary>
-    /// Process Parts
-    /// </summary>
-    /// <remarks>
-    /// Location = Center
-    /// </remarks>
-    public class PartsJitProcess : PartsBase<Distance, Distance>
-    {
-        public Distance Width { get; set; }
-        public Distance Height { get; set; }
-
-        public override void Draw(DrawProperty dp)
+        /// <summary>
+        /// Cancel the instance position
+        /// </summary>
+        /// <param name="token"></param>
+        [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Process")]
+        public void Cancelling(EventTokenTriggerToolDragging token)
         {
-            var sc = GetScreenPos(dp.Pane);
-            var lsiz = LayoutSize.From(PositionerX(CodeX<Distance>.From(Width), null), PositionerY(null, CodeY<Distance>.From(Height)));
-            // TODO: Tono.Gui更新待ち 
-            //var ssiz = ScreenSize.From(dp.Pane, lsiz);
-            var ssiz = new ScreenSize
-            {
-                Width = ScreenX.From(lsiz.Width.Lx * dp.Pane.ZoomX),
-                Height = ScreenY.From(lsiz.Height.Ly * dp.Pane.ZoomY),
-            };
-            var sr = ScreenRect.FromCWH(sc, ssiz.Width, ssiz.Height);
+            if (CurrentParts == null) return;
 
-            dp.Graphics.DrawRectangle(_(sr), Colors.White);
+            Parts.Remove(Pane.Target, CurrentParts, LAYER.JitProcess);  // delete temporary parts
+            CurrentParts = null;
+            Redraw();
         }
     }
 }

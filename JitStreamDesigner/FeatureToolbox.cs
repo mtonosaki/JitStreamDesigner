@@ -23,6 +23,7 @@ namespace JitStreamDesigner
         public const string TokenIdCreating = "TokenIdCreating";
         public const string TokenIdPositioning = "TokenIdPositioning";
         public const string TokenIdFinished = "TokenIdFinished";
+        public const string TokenIdCancelling = "TokenIdCancelling";
 
         /// <summary>
         /// Tool Button Collection
@@ -90,7 +91,7 @@ namespace JitStreamDesigner
             {
                 checkSelect(po);
             }
-            DraggingMessage(po, TokenIdFinished);
+            DraggingMessage(po, Pane.Target.Rect.IsIn(po.Position) ? TokenIdCancelling : TokenIdFinished);
         }
 
         public void OnPointerHold(PointerState po)
@@ -129,7 +130,7 @@ namespace JitStreamDesigner
                 Pointer = po,
                 Sender = this,
             });
-            if (tokenid == TokenIdFinished)
+            if (tokenid == TokenIdFinished || tokenid == TokenIdCancelling)
             {
                 Dragging = null;
             }

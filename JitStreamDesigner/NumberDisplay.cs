@@ -15,6 +15,11 @@ namespace JitStreamDesigner
     /// </summary>
     public class NumberDisplay
     {
+        /// <summary>
+        /// Filen name prefix of image file
+        /// </summary>
+        public string FileNamePrefix => "s13-";
+
         public event EventHandler Loaded;
         public bool IsLoaded { get => LoadStatus == 1; }
 
@@ -35,21 +40,21 @@ namespace JitStreamDesigner
             }
             var seq = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', ':', ';', '*' };
             var tasks = new List<Task<CanvasBitmap>>{
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/0.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/1.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/2.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/3.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/4.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/5.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/6.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/7.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/8.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/9.png")).AsTask(),
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/D.png")).AsTask(),       // Dot
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/DDark.png")).AsTask(),   // Dot(Dark)
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/C.png")).AsTask(),       // Colon
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/CDark.png")).AsTask(),   // Colon(Dark)
-                    CanvasBitmap.LoadAsync(View.Canvas, new Uri("ms-appx:///Assets/Dark.png")).AsTask(),    // All (Dark)
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}0.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}1.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}2.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}3.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}4.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}5.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}6.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}7.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}8.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}9.png")).AsTask(),
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}D.png")).AsTask(),       // Dot
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}DDark.png")).AsTask(),   // Dot(Dark)
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}C.png")).AsTask(),       // Colon
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}CDark.png")).AsTask(),   // Colon(Dark)
+                    CanvasBitmap.LoadAsync(View.Canvas, new Uri($"ms-appx:///Assets/{FileNamePrefix}Dark.png")).AsTask(),    // All (Dark)
             };
             await Task.WhenAll(tasks);
             for (var i = 0; i < tasks.Count; i++)
