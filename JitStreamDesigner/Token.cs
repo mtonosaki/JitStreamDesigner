@@ -12,6 +12,6 @@
         public const string WaitingRingON = "WaitingRingON";
         public const string WaitingRingOFF = "WaitingRingOFF";
 
-        public const string ClassSelectionChanged = "ClassSelectionChanged";
+        public const string TemplateSelectionChanged = "TemplateSelectionChanged";
     }
 }

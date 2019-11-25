@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using Tono.Gui;
 using Tono.Gui.Uwp;
+using Tono.Jit;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -13,15 +14,10 @@ using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
-    [FeatureDescription(En = "Class Control Panel", Jp = "クラス一覧パネル")]
-    public class FeatureClassListPanel : FeatureSimulatorBase
+    [FeatureDescription(En = "Template Control Panel", Jp = "テンプレート一覧パネル")]
+    public class FeatureJitTemplateListPanel : FeatureSimulatorBase
     {
-        /// <summary>
-        /// active Class for edit
-        /// </summary>
-        public ClassTipModel CurrentClass { get; set; }
-
-        private PartsActiveClass BarParts = null;
+        private PartsActiveTemplate BarParts = null;
 
         /// <summary>
         /// target list view UWP control
@@ -36,17 +32,33 @@ namespace JitStreamDesigner
             // UWP control preparation
             if (TargetListView == null)
             {
-                Kill(new NullReferenceException("FeatureClassListPanel must have FeatureClassListPanel={Bind:****}"));
+                Kill(new NullReferenceException("FeatureJitTemplateListPanel must have FeatureJitTemplateListPanel={Bind:****}"));
                 return;
             }
+
+            TargetListView.ItemsSource = Hot.TemplateList;
             TargetListView.SelectionChanged += TargetListView_SelectionChanged;
+
+            // Add default template chip
+            Hot.TemplateList.Add(new TemplateTipModel
+            {
+                TemplateID = "<default template>",
+                Stage = new JitStage
+                {
+                    Name = $"<Default>",
+                },
+            });
+            DelayUtil.Start(TimeSpan.FromMilliseconds(200), () =>
+            {
+                TargetListView.SelectedIndex = 0;
+            });
 
             // Draw preparation
             Pane.Target = Pane["LogPanel"]; // to get priority draw layer
-            BarParts = new PartsActiveClass
+            BarParts = new PartsActiveTemplate
             {
             };
-            Parts.Add(Pane.Target, BarParts, LAYER.ActiveClass);
+            Parts.Add(Pane.Target, BarParts, LAYER.ActiveTemplate);
         }
 
         /// <summary>
@@ -57,40 +69,40 @@ namespace JitStreamDesigner
         /// <param name="e"></param>
         private void TargetListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var tar = e.AddedItems.LastOrDefault() as ClassTipModel;
-            if (tar != CurrentClass)
+            var tar = e.AddedItems.LastOrDefault() as TemplateTipModel;
+            if (tar != Hot.ActiveTemplate)
             {
-                Token.AddNew(new EventTokenClassChangedTrigger
+                Token.AddNew(new EventTokenTemplateChangedTrigger
                 {
-                    TargetClass = tar,
-                    TokenID = TOKEN.ClassSelectionChanged,
+                    TargetTemplate = tar,
+                    TokenID = TOKEN.TemplateSelectionChanged,
                     Sender = this,
-                    Remarks = "Select changed List View to change active class",
+                    Remarks = "Select changed List View to change active template",
                 });
             }
         }
 
-        [EventCatch(TokenID = TOKEN.ClassSelectionChanged)]
-        public void ClassSelectionChanged(EventTokenClassChangedTrigger token)
+        [EventCatch(TokenID = TOKEN.TemplateSelectionChanged)]
+        public void TemplateSelectionChanged(EventTokenTemplateChangedTrigger token)
         {
-            CurrentClass = token.TargetClass;
-            BarParts.Text = CurrentClass?.ClassID;
+            Hot.ActiveTemplate = token.TargetTemplate;
+            BarParts.Text = Hot.ActiveTemplate?.TemplateID;
             Redraw();
         }
     }
 
     /// <summary>
-    /// Token type for class selection change
+    /// Token type for template selection change
     /// </summary>
-    public class EventTokenClassChangedTrigger : EventTokenTrigger
+    public class EventTokenTemplateChangedTrigger : EventTokenTrigger
     {
-        public ClassTipModel TargetClass { get; set; }
+        public TemplateTipModel TargetTemplate { get; set; }
     }
 
     /// <summary>
-    /// Active Class name and Yellow Bar
+    /// Active Template name and Yellow Bar
     /// </summary>
-    public class PartsActiveClass : PartsBase<ScreenX, ScreenY>
+    public class PartsActiveTemplate : PartsBase<ScreenX, ScreenY>
     {
         public string Text { get; set; }
 
@@ -106,18 +118,18 @@ namespace JitStreamDesigner
             r.RB = ScreenPos.From(r.R, 2);
             dp.Graphics.FillRectangle(_(r), Colors.Yellow);
 
-            // Active Class name (Back ground)
+            // Active Template name (Back ground)
             var tf = new CanvasTextFormat
             {
                 FontFamily = "Coureir New",
-                FontSize = 9.0f,
-                FontWeight = FontWeights.Bold,
+                FontSize = 11.0f,
+                FontWeight = FontWeights.Normal,
                 WordWrapping = CanvasWordWrapping.NoWrap,
             };
-            r.RB = r.LT + GraphicUtil.MeasureString(dp.Canvas, Text, tf) + ScreenSize.From(10, 8);
+            r.RB = r.LT + GraphicUtil.MeasureString(dp.Canvas, Text, tf) + ScreenSize.From(10, 10);
             dp.Graphics.FillRectangle(_(r), Colors.Yellow);
 
-            // Active Class name (Text)
+            // Active Template name (Text)
             dp.Graphics.TextAntialiasing = CanvasTextAntialiasing.ClearType;
             dp.Graphics.DrawText(Text, 4, 2, Color.FromArgb(0xff, 0x55, 0x77, 0xaa), tf);
         }

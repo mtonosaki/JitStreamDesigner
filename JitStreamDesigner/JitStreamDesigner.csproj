@@ -119,12 +119,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClassTipModel.cs" />
+    <Compile Include="TemplateTipModel.cs" />
     <Compile Include="DataCold.cs" />
     <Compile Include="DataHot.cs" />
     <Compile Include="DistanceRect.cs" />
     <Compile Include="EventClockUpdatedTokenTrigger.cs" />
-    <Compile Include="FeatureClassListPanel.cs" />
+    <Compile Include="FeatureJitTemplateListPanel.cs" />
     <Compile Include="FeatureClock.cs" />
     <Compile Include="FeatureJitProcess.cs" />
     <Compile Include="FeatureSimulatorBase.cs" />

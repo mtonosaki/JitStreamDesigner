@@ -18,7 +18,7 @@
         </tg:TGuiView.DataHot>
         <tg:TGuiView.Features>
             <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
-            <local:FeatureClassListPanel TargetListView="{x:Bind ClassList}"/>
+            <local:FeatureJitTemplateListPanel TargetListView="{x:Bind TemplateList}"/>
             <local:FeatureToolbox>
                 <local:FeatureToolbox.Buttons>
                     <local:PartsToolButtonProcess Name="Process" ToolTipUid="PartsToolButtonProcess" />
@@ -67,9 +67,9 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Uid="LabelOpen"      FontSize="12" Grid.Row="0" FlowDirection="RightToLeft" />
-                    <TextBlock x:Uid="LabelClassMode" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
+                    <TextBlock x:Uid="LabelTemplateMode" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
                     <TextBlock x:Uid="LabelStageMode" FontSize="12" Grid.Row="2" FlowDirection="RightToLeft" />
-                    <ListView x:Name="ClassList" x:Uid="ClassList"
+                    <ListView x:Name="TemplateList" x:Uid="TemplateList"
                               CanReorderItems="True" AllowDrop="True"
                               IsMultiSelectCheckBoxEnabled="False"
                               SingleSelectionFollowsFocus="True"
@@ -85,7 +85,7 @@
                                         Padding="2,2,2,2"
                                         Margin="0,4,0,4">
                                             <TextBlock Margin="8,4,0,0">
-                                                <Run Text="{Binding ClassID}" 
+                                                <Run Text="{Binding TemplateID}" 
                                                      Foreground="White" 
                                                      FontSize="18" 
                                                      TextDecorations="Underline"
@@ -95,28 +95,28 @@
                                         </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
-                            <ListView.ItemsSource>
-                                <local:ClassTipCollection>
-                                    <local:ClassTipModel ClassID="SampleClass001" />
-                                    <local:ClassTipModel ClassID="SampleClass002" />
-                                    <local:ClassTipModel ClassID="SampleClass003" />
-                                    <local:ClassTipModel ClassID="SampleClass004" />
-                                    <local:ClassTipModel ClassID="SampleClass005" />
-                                    <local:ClassTipModel ClassID="SampleClass006" />
-                                    <local:ClassTipModel ClassID="SampleClass007" />
-                                    <local:ClassTipModel ClassID="SampleClass008" />
-                                    <local:ClassTipModel ClassID="SampleClass009" />
-                                    <local:ClassTipModel ClassID="SampleClass010" />
-                                    <local:ClassTipModel ClassID="SampleClass011" />
-                                    <local:ClassTipModel ClassID="SampleClass012" />
-                                    <local:ClassTipModel ClassID="SampleClass013" />
-                                    <local:ClassTipModel ClassID="SampleClass014" />
-                                    <local:ClassTipModel ClassID="SampleClass015" />
-                                    <local:ClassTipModel ClassID="SampleClass016" />
-                                    <local:ClassTipModel ClassID="SampleClass017" />
-                                    <local:ClassTipModel ClassID="SampleClass018" />
-                                </local:ClassTipCollection>
-                            </ListView.ItemsSource>
+                            <!--<ListView.ItemsSource>
+                                <local:TemplateTipCollection>
+                                    <local:TemplateTipModel TemplateID="SampleTemplate001" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate002" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate003" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate004" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate005" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate006" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate007" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate008" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate009" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate010" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate011" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate012" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate013" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate014" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate015" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate016" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate017" />
+                                    <local:TemplateTipModel TemplateID="SampleTemplate018" />
+                                </local:TemplateTipCollection>
+                            </ListView.ItemsSource>-->
                         </ListView>
                 </Grid>
             </SplitView.Pane>
@@ -140,8 +140,8 @@
                     <KeyboardAccelerator Modifiers="Control" Key="O"/>
                 </tg:TButton.KeyboardAccelerators>
             </tg:TButton>
-            <Button x:Uid="ButtonClassMode" 
-                    Content="C"
+            <Button x:Uid="ButtonTemplateMode" 
+                    Content="T"
                     Background="Transparent" Height="32" Width="48" Margin="0,4,0,0" />
             <Button x:Uid="ButtonStageMode" 
                     Content="S"

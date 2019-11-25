@@ -126,8 +126,8 @@
   <data name="Start-Welcome" xml:space="preserve">
     <value>(c) {1} Jit Stream Designer Version {0} all rights reserved.</value>
   </data>
-  <data name="LabelClassMode.Text" xml:space="preserve">
-    <value>Class design Mode</value>
+  <data name="LabelTemplateMode.Text" xml:space="preserve">
+    <value>Template design Mode</value>
   </data>
   <data name="LabelOpen.Text" xml:space="preserve">
     <value>Open study file</value>
@@ -135,14 +135,14 @@
   <data name="LabelStageMode.Text" xml:space="preserve">
     <value>Stage modeing Mode</value>
   </data>
-  <data name="ButtonClassMode.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Class design mode</value>
+  <data name="ButtonTemplateMode.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Template design mode</value>
   </data>
   <data name="ButtonStageMode.ToolTipService.ToolTip" xml:space="preserve">
     <value>Stage modeling mode</value>
   </data>
-  <data name="ClassList.Header" xml:space="preserve">
-    <value>  Jit Stream Class list</value>
+  <data name="TemplateList.Header" xml:space="preserve">
+    <value>  Jit Stream Template list</value>
   </data>
   <data name="ClockStart.ToolTipService.ToolTip" xml:space="preserve">
     <value>Clock Start/Stop [F]</value>

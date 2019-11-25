@@ -13,12 +13,12 @@ namespace JitStreamDesigner
     public class DataHot : DataHotBase
     {
         /// <summary>
-        /// シミュレーション開始時刻
+        /// Simulation Clock
         /// </summary>
         public DateTime SimStartTime { get; set; }
 
         /// <summary>
-        /// シミュレーション粒度
+        /// Simulation clock step unit
         /// </summary>
         public TimeSpan ClockTick { get; set; } = TimeSpan.FromSeconds(1);
 
@@ -28,7 +28,7 @@ namespace JitStreamDesigner
         public JitStage JitStage { get; set; }
 
         /// <summary>
-        /// 相対時間からシミュレーション時刻を計算する
+        /// Calclate Simulation time
         /// </summary>
         /// <param name="span"></param>
         /// <returns></returns>
@@ -38,11 +38,13 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// Excelからロードした かんばんを 一時保管しておくところ
+        /// JitStreamDesigner template list
         /// </summary>
-        public BlockingCollection<JitKanban> LoadJitKanbans { get; private set; } = new BlockingCollection<JitKanban>();
-        public BlockingCollection<JitWork> LoadJitWorks { get; private set; } = new BlockingCollection<JitWork>();
+        public List<TemplateTipModel> TemplateList { get; private set; } = new List<TemplateTipModel>();
 
-        public IEnumerable<JitVariable> AllJitVariables => LoadJitKanbans.Select(a => (JitVariable)a).Concat(LoadJitWorks);
+        /// <summary>
+        /// JitStreamDesigner Template target (GUI)
+        /// </summary>
+        public TemplateTipModel ActiveTemplate { get; set; }
     }
 }
