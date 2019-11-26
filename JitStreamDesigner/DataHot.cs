@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Tono.Gui.Uwp;
 using Tono.Jit;
@@ -40,11 +41,16 @@ namespace JitStreamDesigner
         /// <summary>
         /// JitStreamDesigner template list
         /// </summary>
-        public List<TemplateTipModel> TemplateList { get; private set; } = new List<TemplateTipModel>();
+        public TemplateTipCollection TemplateList { get; private set; } = new TemplateTipCollection();
 
         /// <summary>
         /// JitStreamDesigner Template target (GUI)
         /// </summary>
         public TemplateTipModel ActiveTemplate { get; set; }
+
+        /// <summary>
+        /// Keyboard shortcut disable flag (When you input text in DialogBox, TGuiView receives key event)
+        /// </summary>
+        public Dictionary<string/*name*/, bool> KeybordShortcutDisabledFlags { get; private set; } = new Dictionary<string, bool>();
     }
 }

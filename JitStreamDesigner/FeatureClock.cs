@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Tono;
@@ -59,6 +60,8 @@ namespace JitStreamDesigner
                 Clock_Running,
             });
             Status[ClockSwitch].Value = Clock_Stopping; // initial status
+
+
 
             // for Running Bar ON/OFF
             runningBar = (ProgressBar)ControlUtil.FindControl(View, "ClockRunning");
@@ -186,6 +189,10 @@ namespace JitStreamDesigner
         /// <param name="kt"></param>
         public void OnKey(KeyEventToken kt)
         {
+            if( Hot.KeybordShortcutDisabledFlags.Values.Where(a => a).Count() > 0)  // Check disabled flag
+            {
+                return;
+            }
             kt.Select(_keyStartStop, Status[ClockSwitch].IsOn(Clock_Running), ks =>
             {
                 Token.Link(kt, new EventTokenTrigger

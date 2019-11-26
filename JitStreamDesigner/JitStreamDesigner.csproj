@@ -119,6 +119,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TemplateDialog.xaml.cs">
+      <DependentUpon>TemplateDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TemplateTipModel.cs" />
     <Compile Include="DataCold.cs" />
     <Compile Include="DataHot.cs" />
@@ -215,6 +218,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TemplateDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

@@ -172,4 +172,19 @@
     <value>ワーク</value>
     <comment>Toobutton tooltip message</comment>
   </data>
+  <data name="ButtonAddTemplate.Content" xml:space="preserve">
+    <value>＋テンプレート追加</value>
+  </data>
+  <data name="TemplateDialog.Title" xml:space="preserve">
+    <value>新規テンプレート</value>
+  </data>
+  <data name="TemplateDialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="TemplateDialog.SecondaryButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="FeatureJitTemplatePanel-CannotUndo" xml:space="preserve">
+    <value>テンプレート作成はUNDOができません</value>
+  </data>
 </root>

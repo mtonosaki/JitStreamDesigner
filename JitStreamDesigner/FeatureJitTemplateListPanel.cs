@@ -1,6 +1,8 @@
 ﻿using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Tono.Jit;
@@ -40,14 +42,22 @@ namespace JitStreamDesigner
             TargetListView.SelectionChanged += TargetListView_SelectionChanged;
 
             // Add default template chip
-            Hot.TemplateList.Add(new TemplateTipModel
+            TemplateTipModel ttm;
+            const string defaultName = "@Default";
+            Hot.TemplateList.Add(ttm = new TemplateTipModel
             {
-                TemplateID = "<default template>",
-                Stage = new JitStage
+                Template = new JitTemplate
                 {
-                    Name = $"<Default>",
+                    Name = defaultName,
                 },
+                AccentColor = Colors.Yellow,
+                Remarks = "Free purpose template",
             });
+            ttm.Template.ChildVriables["AccentColor"] = JitVariable.From("#ffffff00", classNames: ":RGB32");
+            var jac = $@"
+                TheStage = new Stage  //-ForTemplateOnly-//
+            ";
+            ttm.Template.AddBlock(jac);
             DelayUtil.Start(TimeSpan.FromMilliseconds(200), () =>
             {
                 TargetListView.SelectedIndex = 0;
@@ -87,7 +97,40 @@ namespace JitStreamDesigner
         {
             Hot.ActiveTemplate = token.TargetTemplate;
             BarParts.Text = Hot.ActiveTemplate?.TemplateID;
+            BarParts.BackgroundColor = Hot.ActiveTemplate.AccentColor;
+            BarParts.Remarks = Hot.ActiveTemplate?.Remarks;
             Redraw();
+        }
+
+        [EventCatch]
+        public async Task AddTemplate(EventTokenButton token)
+        {
+            try
+            {
+                var td = new TemplateDialog
+                {
+                    AccentColor = (new ColorUtil.HSV((float)MathUtil.Rand() * 360, 1.0f, 1.0f)).ToColor(),
+                };
+                Hot.KeybordShortcutDisabledFlags["AddTemplate"] = true;
+                var res = await td.ShowAsync();
+                if (res == ContentDialogResult.Primary)
+                {
+                    Hot.TemplateList.Add(new TemplateTipModel
+                    {
+                        Template = new JitTemplate
+                        {
+                            Name = td.TemplateName,
+                        },
+                        AccentColor = td.AccentColor,
+                        Remarks = td.TemplateRemarks,
+                    });
+                    LOG.AddMes(LLV.INF, new LogAccessor.Image { Key="Lump16" }, "FeatureJitTemplatePanel-CannotUndo");
+                }
+            }
+            finally
+            {
+                Hot.KeybordShortcutDisabledFlags["AddTemplate"] = false;
+            }
         }
     }
 
@@ -105,6 +148,8 @@ namespace JitStreamDesigner
     public class PartsActiveTemplate : PartsBase<ScreenX, ScreenY>
     {
         public string Text { get; set; }
+        public Color BackgroundColor { get; set; }
+        public string Remarks { get; set; }
 
         public override void Draw(DrawProperty dp)
         {
@@ -116,7 +161,7 @@ namespace JitStreamDesigner
             var r = dp.PaneRect.Clone();
             r.LT = ScreenPos.From(r.L, 0);
             r.RB = ScreenPos.From(r.R, 2);
-            dp.Graphics.FillRectangle(_(r), Colors.Yellow);
+            dp.Graphics.FillRectangle(_(r), BackgroundColor);
 
             // Active Template name (Back ground)
             var tf = new CanvasTextFormat
@@ -127,11 +172,11 @@ namespace JitStreamDesigner
                 WordWrapping = CanvasWordWrapping.NoWrap,
             };
             r.RB = r.LT + GraphicUtil.MeasureString(dp.Canvas, Text, tf) + ScreenSize.From(10, 10);
-            dp.Graphics.FillRectangle(_(r), Colors.Yellow);
+            dp.Graphics.FillRectangle(_(r), BackgroundColor);
 
             // Active Template name (Text)
             dp.Graphics.TextAntialiasing = CanvasTextAntialiasing.ClearType;
-            dp.Graphics.DrawText(Text, 4, 2, Color.FromArgb(0xff, 0x55, 0x77, 0xaa), tf);
+            dp.Graphics.DrawText(Text, 4, 2, ColorUtil.GetNegativeColor(BackgroundColor), tf);
         }
     }
 }

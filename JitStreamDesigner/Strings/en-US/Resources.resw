@@ -172,4 +172,19 @@
     <value>Work</value>
     <comment>Toobutton tooltip message</comment>
   </data>
+  <data name="ButtonAddTemplate.Content" xml:space="preserve">
+    <value>+ Add new template</value>
+  </data>
+  <data name="TemplateDialog.Title" xml:space="preserve">
+    <value>New Template</value>
+  </data>
+  <data name="TemplateDialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="TemplateDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="FeatureJitTemplatePanel-CannotUndo" xml:space="preserve">
+    <value>Undo is not support to Template edit</value>
+  </data>
 </root>

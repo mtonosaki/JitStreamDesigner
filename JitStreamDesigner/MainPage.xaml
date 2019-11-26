@@ -18,7 +18,7 @@
         </tg:TGuiView.DataHot>
         <tg:TGuiView.Features>
             <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
-            <local:FeatureJitTemplateListPanel TargetListView="{x:Bind TemplateList}"/>
+            <local:FeatureJitTemplateListPanel ListeningButtonNames="ButtonAddTemplate" TargetListView="{x:Bind TemplateList}"/>
             <local:FeatureToolbox>
                 <local:FeatureToolbox.Buttons>
                     <local:PartsToolButtonProcess Name="Process" ToolTipUid="PartsToolButtonProcess" />
@@ -65,59 +65,58 @@
                         <RowDefinition Height="36" />
                         <RowDefinition Height="36" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Uid="LabelOpen"      FontSize="12" Grid.Row="0" FlowDirection="RightToLeft" />
                     <TextBlock x:Uid="LabelTemplateMode" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
                     <TextBlock x:Uid="LabelStageMode" FontSize="12" Grid.Row="2" FlowDirection="RightToLeft" />
+                    <tg:TButton Name="ButtonAddTemplate" x:Uid="ButtonAddTemplate" 
+                                Grid.Row="4" 
+                                Content="Add new template" 
+                                Margin="4,4,4,4"
+                                HorizontalAlignment="Left" 
+                                Background="#FF4D834D" />
                     <ListView x:Name="TemplateList" x:Uid="TemplateList"
                               CanReorderItems="True" AllowDrop="True"
                               IsMultiSelectCheckBoxEnabled="False"
                               SingleSelectionFollowsFocus="True"
                               Grid.Row="3">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="x:String">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Width="3" Margin="0,4,0,4">
+                                        <Rectangle.Fill>
+                                            <SolidColorBrush Color="{Binding AccentColor}" />
+                                        </Rectangle.Fill>
+                                    </Rectangle>
                                     <StackPanel
                                         Background="#11ffffff"
                                         BorderThickness="1"
                                         BorderBrush="DimGray"
-                                        Height="64"
+                                        Height="56"
                                         Width="500"
                                         Padding="2,2,2,2"
                                         Margin="0,4,0,4">
-                                            <TextBlock Margin="8,4,0,0">
+                                        <TextBlock Margin="8,4,0,0">
                                                 <Run Text="{Binding TemplateID}" 
                                                      Foreground="White" 
                                                      FontSize="18" 
                                                      TextDecorations="Underline"
                                                      FontWeight="Bold"
                                                      FontFamily="Coureir New" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <!--<ListView.ItemsSource>
-                                <local:TemplateTipCollection>
-                                    <local:TemplateTipModel TemplateID="SampleTemplate001" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate002" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate003" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate004" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate005" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate006" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate007" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate008" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate009" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate010" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate011" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate012" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate013" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate014" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate015" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate016" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate017" />
-                                    <local:TemplateTipModel TemplateID="SampleTemplate018" />
-                                </local:TemplateTipCollection>
-                            </ListView.ItemsSource>-->
-                        </ListView>
+                                        </TextBlock>
+                                        <TextBlock Margin="8,0,0,0" Text="{Binding Remarks}" Foreground="Gray" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemsSource>
+                            <local:TemplateTipCollection>
+                                <local:TemplateTipModel TemplateID="Template001" AccentColor="Cyan" Remarks="Test template" />
+                                <local:TemplateTipModel TemplateID="Template002" AccentColor="Yellow" Remarks="Test template this remarks is for long text sample" />
+                            </local:TemplateTipCollection>
+                        </ListView.ItemsSource>
+                    </ListView>
                 </Grid>
             </SplitView.Pane>
         </SplitView>

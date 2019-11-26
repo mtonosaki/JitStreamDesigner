@@ -66,6 +66,12 @@ namespace JitStreamDesigner
 
             CurrentParts.DesignState = PartsJitBase.DesignStates.Normal;
             CurrentParts.Location = GetCoderPos(Pane.Main, token.Pointer);
+
+            var jac = $@"
+                
+            ";
+            Hot.ActiveTemplate.Template.AddBlock(jac);
+
             CurrentParts = null;
             Redraw();
         }
