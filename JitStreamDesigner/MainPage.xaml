@@ -28,6 +28,8 @@
                 </local:FeatureToolbox.Buttons>
             </local:FeatureToolbox>
             <local:FeatureJitProcess />
+            <local:FeatureUndoRedo />
+            <local:FeatureGuiJacBroker />
             <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <tg:FeatureScrollDrag />
@@ -112,8 +114,8 @@
                         </ListView.ItemTemplate>
                         <ListView.ItemsSource>
                             <local:TemplateTipCollection>
-                                <local:TemplateTipModel TemplateID="Template001" AccentColor="Cyan" Remarks="Test template" />
-                                <local:TemplateTipModel TemplateID="Template002" AccentColor="Yellow" Remarks="Test template this remarks is for long text sample" />
+                                <local:TemplateTipModel Name="Template001" AccentColor="Cyan" Remarks="Test template" />
+                                <local:TemplateTipModel Name="Template002" AccentColor="Yellow" Remarks="Test template this remarks is for long text sample" />
                             </local:TemplateTipCollection>
                         </ListView.ItemsSource>
                     </ListView>

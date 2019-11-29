@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using System;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
@@ -24,6 +27,24 @@ namespace JitStreamDesigner
         /// Simulator clock current time
         /// </summary>
         public DateTime Now { get; set; }
+
+        /// <summary>
+        /// Set JIT model edit action and send Jac to FeatureUndoRedo
+        /// </summary>
+        /// <param name="redoJac"></param>
+        /// <param name="undoJac"></param>
+        public void SetNewAction(EventToken from, string redoJac, string undoJac)
+        {
+            Token.Link(from, new EventSetUndoRedoTokenTrigger
+            {
+                TokenID = FeatureUndoRedo.TOKEN.SET,
+                JacRedo = redoJac,
+                JacUndo = undoJac,
+                Sender = this,
+                Remarks = $"{DateTime.Now}",
+            });
+        }
+
 
         public LayoutX DistancePositionerX(CodeX<Distance> x, CodeY<Distance> y)
         {
@@ -56,7 +77,7 @@ namespace JitStreamDesigner
             };
         }
 
-        public CodePos<Distance,Distance> GetCoderPos(IDrawArea pane, PointerState po)
+        public CodePos<Distance, Distance> GetCoderPos(IDrawArea pane, PointerState po)
         {
             return GetCoderPos(pane, po.Position);
         }

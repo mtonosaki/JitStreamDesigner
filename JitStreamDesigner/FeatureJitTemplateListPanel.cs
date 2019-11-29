@@ -1,4 +1,7 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,17 +11,25 @@ using Tono.Gui.Uwp;
 using Tono.Jit;
 using Windows.UI;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Shapes;
 using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
+    /// <summary>
+    /// Feature : Jit Template List Panel Control
+    /// </summary>
+    /// <remarks>
+    /// [EventCatch(TokenID = TOKEN.TemplateSelectionChanged)]  EventTokenTemplateChangedTrigger 
+    /// </remarks>
     [FeatureDescription(En = "Template Control Panel", Jp = "テンプレート一覧パネル")]
     public class FeatureJitTemplateListPanel : FeatureSimulatorBase
     {
+        public static class TOKEN
+        {
+            public const string TemplateSelectionChanged = "TemplateSelectionChanged";
+        }
+
         private PartsActiveTemplate BarParts = null;
 
         /// <summary>
@@ -42,25 +53,9 @@ namespace JitStreamDesigner
             TargetListView.SelectionChanged += TargetListView_SelectionChanged;
 
             // Add default template chip
-            TemplateTipModel ttm;
-            const string defaultName = "@Default";
-            Hot.TemplateList.Add(ttm = new TemplateTipModel
-            {
-                Template = new JitTemplate
-                {
-                    Name = defaultName,
-                },
-                AccentColor = Colors.Yellow,
-                Remarks = "Free purpose template",
-            });
-            ttm.Template.ChildVriables["AccentColor"] = JitVariable.From("#ffffff00", classNames: ":RGB32");
-            var jac = $@"
-                TheStage = new Stage  //-ForTemplateOnly-//
-            ";
-            ttm.Template.AddBlock(jac);
             DelayUtil.Start(TimeSpan.FromMilliseconds(200), () =>
             {
-                TargetListView.SelectedIndex = 0;
+                AddTemplateChip("@Default", Colors.Yellow, "Free GUI space");
             });
 
             // Draw preparation
@@ -92,14 +87,57 @@ namespace JitStreamDesigner
             }
         }
 
+
+        /// <summary>
+        /// Template change request event
+        /// </summary>
+        /// <param name="token"></param>
         [EventCatch(TokenID = TOKEN.TemplateSelectionChanged)]
         public void TemplateSelectionChanged(EventTokenTemplateChangedTrigger token)
         {
+            if (ReferenceEquals(Hot.ActiveTemplate, token.TargetTemplate)) return;
+
             Hot.ActiveTemplate = token.TargetTemplate;
-            BarParts.Text = Hot.ActiveTemplate?.TemplateID;
+            BarParts.Text = Hot.ActiveTemplate?.Name;
             BarParts.BackgroundColor = Hot.ActiveTemplate.AccentColor;
             BarParts.Remarks = Hot.ActiveTemplate?.Remarks;
             Redraw();
+
+            if (object.ReferenceEquals(TargetListView.SelectedItem, token.TargetTemplate) == false)
+            {
+                TargetListView.SelectedItem = token.TargetTemplate; // for if not called TargetListView_SelectionChanged
+            }
+        }
+
+        /// <summary>
+        /// Add template chip and initialize Jac objects
+        /// </summary>
+        /// <param name="templateName"></param>
+        /// <param name="accentColor"></param>
+        /// <param name="remarks"></param>
+        private void AddTemplateChip(string templateName, Color accentColor, string remarks)
+        {
+            var te = new TemplateTipModel
+            {
+                Template = new JitTemplate
+                {
+                    Name = templateName,
+                },
+                AccentColor = accentColor,
+                Remarks = remarks,
+                Jac = new JacInterpreter(),
+            };
+            var jac = $@"
+                TheStage = new Stage
+                    Name = '{templateName}'
+                    AccentColor = {accentColor.ToString()}
+                    Remarks = '{remarks}'
+            ";
+            te.Jac.Exec(jac);
+            te.Jac["Gui"] = Hot.TheBroker;
+
+            Hot.TemplateList.Add(te);
+            TargetListView.SelectedItem = te;   // auto select the new item
         }
 
         [EventCatch]
@@ -107,24 +145,18 @@ namespace JitStreamDesigner
         {
             try
             {
+                // Show Dialog
                 var td = new TemplateDialog
                 {
                     AccentColor = (new ColorUtil.HSV((float)MathUtil.Rand() * 360, 1.0f, 1.0f)).ToColor(),
                 };
                 Hot.KeybordShortcutDisabledFlags["AddTemplate"] = true;
                 var res = await td.ShowAsync();
+
                 if (res == ContentDialogResult.Primary)
                 {
-                    Hot.TemplateList.Add(new TemplateTipModel
-                    {
-                        Template = new JitTemplate
-                        {
-                            Name = td.TemplateName,
-                        },
-                        AccentColor = td.AccentColor,
-                        Remarks = td.TemplateRemarks,
-                    });
-                    LOG.AddMes(LLV.INF, new LogAccessor.Image { Key="Lump16" }, "FeatureJitTemplatePanel-CannotUndo");
+                    AddTemplateChip(td.TemplateName, td.AccentColor, td.TemplateRemarks);
+                    LOG.AddMes(LLV.INF, new LogAccessor.Image { Key = "Lump16" }, "FeatureJitTemplatePanel-CannotUndo");
                 }
             }
             finally

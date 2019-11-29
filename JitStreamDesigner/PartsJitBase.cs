@@ -1,4 +1,7 @@
-﻿using Tono;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using Tono;
 using Tono.Gui.Uwp;
 using Windows.UI;
 
@@ -33,7 +36,7 @@ namespace JitStreamDesigner
         /// <summary>
         /// Parts Color
         /// </summary>
-        public virtual Color BaseColor { get => Colors.White; }
+        public virtual Color BaseColor => Colors.White;
 
         /// <summary>
         /// Produce main parts color considering parts creating, selecting, etc...

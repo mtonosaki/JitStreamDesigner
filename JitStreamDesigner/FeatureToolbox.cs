@@ -1,17 +1,11 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
@@ -120,7 +114,10 @@ namespace JitStreamDesigner
 
         private void DraggingMessage(PointerState po, string tokenid)
         {
-            if (Dragging == null) return;
+            if (Dragging == null)
+            {
+                return;
+            }
 
             Token.AddNew(new EventTokenTriggerToolDragging
             {

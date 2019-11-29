@@ -148,7 +148,7 @@ namespace Tono.Gui.Uwp
 
         public void OnPointerMoved(PointerState po)
         {
-            if ( po.IsInContact == false)
+            if (po.IsInContact == false)
             {
                 PartsTooltip.Location = CodePos<ScreenX, ScreenY>.From(po.Position.X, po.Position.Y);
                 Redraw();
@@ -207,7 +207,10 @@ namespace Tono.Gui.Uwp
 
         public override void Draw(DrawProperty dp)
         {
-            if (string.IsNullOrEmpty(Text) || string.IsNullOrWhiteSpace(Text)) return;
+            if (string.IsNullOrEmpty(Text) || string.IsNullOrWhiteSpace(Text))
+            {
+                return;
+            }
 
             var tf = new CanvasTextFormat
             {
@@ -239,7 +242,10 @@ namespace Tono.Gui.Uwp
                 sp -= ssz.Width;            // adjust tooltip position
                 sp += ScreenY.From(24);
             }
-            if (sp.X < 0) sp.X = ScreenX.From(0);
+            if (sp.X < 0)
+            {
+                sp.X = ScreenX.From(0);
+            }
 
             var sr = ScreenRect.From(sp, ssz + ScreenSize.From(12, 12));
             sp += ScreenPos.From(6, 4); // padding

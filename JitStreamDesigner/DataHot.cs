@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Tono.Gui.Uwp;
 using Tono.Jit;
 
@@ -52,5 +52,10 @@ namespace JitStreamDesigner
         /// Keyboard shortcut disable flag (When you input text in DialogBox, TGuiView receives key event)
         /// </summary>
         public Dictionary<string/*name*/, bool> KeybordShortcutDisabledFlags { get; private set; } = new Dictionary<string, bool>();
+
+        /// <summary>
+        /// The broker instance set by FeatureGuiJacBroker
+        /// </summary>
+        public FeatureGuiJacBroker TheBroker { get; set; }
     }
 }

@@ -1,13 +1,12 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
-using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -22,6 +21,12 @@ namespace JitStreamDesigner
     [FeatureDescription(En = "Simulator Clock", Jp = "シミュレータークロック")]
     public partial class FeatureClock : FeatureSimulatorBase, IKeyListener
     {
+        public static class TOKEN
+        {
+            public const string ClockUpdated = "ClockUpdated";
+            public const string ClockStart = "ClockStart";
+            public const string ClockStop = "ClockStop";
+        }
         public const string ClockSwitch = "ClockSwitch";
         public const string Clock_Running = "Clock_Running";
         public const string Clock_Stopping = "Clock_Stopping";
@@ -111,16 +116,6 @@ namespace JitStreamDesigner
             blinkTimer.Start();
         }
 
-        [EventCatch(TokenID = TOKEN.ReadCompleted)]
-        public void ReadCompleted(EventTokenTrigger _)
-        {
-            DelayUtil.Start(TimeSpan.FromMilliseconds(MathUtil.Rand(990, 1000)), () =>
-            {
-                Parts.ClearDoubleBuffer(LAYER.DoubleBufferMap, true);  // clock redraw after open study
-                Redraw();
-            });
-        }
-
         [EventCatch(TokenID = TOKEN.ClockStart, Status = (ClockSwitch + "=" + Clock_Stopping))]
         public void ClockStart(EventTokenTrigger _)
         {
@@ -189,7 +184,7 @@ namespace JitStreamDesigner
         /// <param name="kt"></param>
         public void OnKey(KeyEventToken kt)
         {
-            if( Hot.KeybordShortcutDisabledFlags.Values.Where(a => a).Count() > 0)  // Check disabled flag
+            if (Hot.KeybordShortcutDisabledFlags.Values.Where(a => a).Count() > 0)  // Check disabled flag
             {
                 return;
             }
@@ -251,5 +246,14 @@ namespace JitStreamDesigner
             });
             from.Redraw();
         }
+    }
+
+    /// <summary>
+    /// Clock update event trigger class
+    /// </summary>
+    public class EventClockUpdatedTokenTrigger : EventTokenTrigger
+    {
+        public DateTime Pre { get; set; }
+        public DateTime Now { get; set; }
     }
 }
