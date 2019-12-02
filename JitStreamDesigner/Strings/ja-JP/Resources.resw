@@ -151,10 +151,10 @@
     <value>ログファイルを開く</value>
   </data>
   <data name="OpenStudy.Text" xml:space="preserve">
-    <value>スタディを開く [Ctrl]+[O]</value>
+    <value>スタディを開く [Ctrl+O]</value>
   </data>
   <data name="OpenStudyButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>スタディを開く [Ctrl]+[O]</value>
+    <value>スタディを開く [Ctrl+O]</value>
   </data>
   <data name="PartsToolButtonKanban" xml:space="preserve">
     <value>かんばん</value>
@@ -186,5 +186,11 @@
   </data>
   <data name="FeatureJitTemplatePanel-CannotUndo" xml:space="preserve">
     <value>テンプレート作成はUNDOができません</value>
+  </data>
+  <data name="RedoButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>やり直し    [Ctrl+Y]</value>
+  </data>
+  <data name="UndoButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>元に戻す    [Ctrl+Z]</value>
   </data>
 </root>

@@ -154,7 +154,7 @@
     <value>Open Study</value>
   </data>
   <data name="OpenStudyButton.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Open Study file [Ctrl]+[O]</value>
+    <value>Open Study file  [Ctrl+O]</value>
   </data>
   <data name="PartsToolButtonKanban" xml:space="preserve">
     <value>Kanban</value>
@@ -186,5 +186,11 @@
   </data>
   <data name="FeatureJitTemplatePanel-CannotUndo" xml:space="preserve">
     <value>Undo is not support to Template edit</value>
+  </data>
+  <data name="RedoButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Redo    [Ctrl+Y]</value>
+  </data>
+  <data name="UndoButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Undo    [Ctrl+Z]</value>
   </data>
 </root>

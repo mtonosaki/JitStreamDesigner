@@ -22,10 +22,6 @@ namespace JitStreamDesigner
             public const string UNDO = "FeatureUndoRedo.UNDO";
             public const string SET = "FeatureUndoRedo.SET";
         }
-        private readonly List<string> RedoStream = new List<string>();
-        private readonly List<string> UndoStream = new List<string>();
-        private int CurrenttPointer = 0;
-        private int RequestedPointer = 0;
         private TButton UndoButton = null, RedoButton = null;
         private Color ButtonForegroundColor = Colors.White;
 
@@ -41,7 +37,7 @@ namespace JitStreamDesigner
             ButtonEnable(RedoButton, false);
 
             JacInterpreter.RegisterJacTarget(typeof(FeatureGuiJacBroker).Assembly);
-            UndoStream.Add("// no action here");
+            Hot.UndoStream.Add("// no action here");
         }
 
         /// <summary>
@@ -64,10 +60,15 @@ namespace JitStreamDesigner
         [EventCatch(TokenID = TOKEN.SET)]
         public void Set(EventSetUndoRedoTokenTrigger token)
         {
-            RedoStream.Add(token.JacRedo);
-            UndoStream.Add(token.JacUndo);
+            // Cut pro-queue data
+            Hot.RedoStream.RemoveRange(Hot.UndoRedoCurrenttPointer, Hot.RedoStream.Count - Hot.UndoRedoCurrenttPointer);
+            Hot.UndoStream.RemoveRange(Hot.UndoRedoCurrenttPointer + 1, Hot.UndoStream.Count - Hot.UndoRedoCurrenttPointer - 1);
 
-            RequestedPointer++;
+            // add queue
+            Hot.RedoStream.Add(token.JacRedo);
+            Hot.UndoStream.Add(token.JacUndo);
+
+            Hot.UndoRedoRequestedPointer++;
             Token.Finalize(MoveCurrentPointer);
         }
 
@@ -76,34 +77,34 @@ namespace JitStreamDesigner
         /// </summary>
         private void MoveCurrentPointer()
         {
-            var dir = MathUtil.Sgn(RequestedPointer - CurrenttPointer);
-            while (CurrenttPointer != RequestedPointer && dir != 0)
+            var dir = MathUtil.Sgn(Hot.UndoRedoRequestedPointer - Hot.UndoRedoCurrenttPointer);
+            while (Hot.UndoRedoCurrenttPointer != Hot.UndoRedoRequestedPointer && dir != 0)
             {
-                string jac = dir > 0 ? RedoStream[CurrenttPointer] : UndoStream[CurrenttPointer];
+                string jac = dir > 0 ? Hot.RedoStream[Hot.UndoRedoCurrenttPointer] : Hot.UndoStream[Hot.UndoRedoCurrenttPointer];
 
                 Hot.ActiveTemplate.Jac.Exec(jac);
-                CurrenttPointer += dir;
+                Hot.UndoRedoCurrenttPointer += dir;
             }
 
-            ButtonEnable(UndoButton, CurrenttPointer > 0);
-            ButtonEnable(RedoButton, CurrenttPointer < RedoStream.Count);
+            ButtonEnable(UndoButton, Hot.UndoRedoCurrenttPointer > 0);
+            ButtonEnable(RedoButton, Hot.UndoRedoCurrenttPointer < Hot.RedoStream.Count);
         }
 
         [EventCatch(Name = "UndoButton")]
         public void Undo(EventTokenButton token)
         {
-            if (CurrenttPointer < 1) return;
+            if (Hot.UndoRedoCurrenttPointer < 1) return;
 
-            RequestedPointer--;
+            Hot.UndoRedoRequestedPointer--;
             Token.Finalize(MoveCurrentPointer);
         }
 
         [EventCatch(Name = "RedoButton")]
         public void Redo(EventTokenButton token)
         {
-            if (CurrenttPointer > RedoStream.Count - 1) return;
+            if (Hot.UndoRedoCurrenttPointer > Hot.RedoStream.Count - 1) return;
 
-            RequestedPointer++;
+            Hot.UndoRedoRequestedPointer++;
             Token.Finalize(MoveCurrentPointer);
         }
     }

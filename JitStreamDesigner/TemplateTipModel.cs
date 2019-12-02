@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using Tono;
 using Tono.Jit;
@@ -18,32 +19,33 @@ namespace JitStreamDesigner
         /// <summary>
         /// Name (Template ID)
         /// </summary>
+        [DataMember]
         public string ID
         {
             get => Template?.ID ?? "(n/a)";
+            set => Template.ID = value;
         }
 
+        [DataMember]
         public string Name 
         {
-            get => Template?.Name;
-            set
-            {
-                if( Template != null)
-                {
-                    Template.Name = value;
-                }
-            }
+            get => Template?.Name ?? "(no template)" ?? "(no name)";
+            set => Template.Name = value;
         }
 
         /// <summary>
         /// Just-in-time model as a code
         /// </summary>
+        [IgnoreDataMember]
         public JacInterpreter Jac { get; set; }
 
         /// <summary>
         /// Jit model stage
         /// </summary>
+        [IgnoreDataMember]
         public JitTemplate Template { get; set; } = new JitTemplate();
+
+
 
         private static readonly Regex hexpattern = new Regex("^[0-9,a-f,A-F]+$");
         /// <summary>
