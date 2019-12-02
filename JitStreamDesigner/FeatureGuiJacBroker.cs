@@ -120,5 +120,19 @@ namespace JitStreamDesigner
             }
             WaitNext();
         }
+
+        /// <summary>
+        /// Gui.ClearSelection = true
+        /// </summary>
+        /// <param name="value">ignore</param>
+        public void ClearSelection(object value)
+        {
+            // TODO: not working collectly
+            foreach (ISelectableParts parts in Parts.GetParts(LAYER.JitProcess, a => a is ISelectableParts))
+            {
+                parts.IsSelected = false;
+            }
+            Redraw();
+        }
     }
 }

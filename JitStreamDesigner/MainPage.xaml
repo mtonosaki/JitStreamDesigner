@@ -41,6 +41,7 @@
                     <tg:PartsTooltip />
                 </tg:FeatureToolTip.PartsTooltip>
             </tg:FeatureToolTip>
+            <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcess}" ForceTokenWhenOn="true" />
         </tg:TGuiView.Features>
         <tg:TGuiView.ContextFlyout>
             <MenuFlyout>

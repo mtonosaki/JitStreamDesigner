@@ -12,6 +12,11 @@ namespace JitStreamDesigner
     /// </summary>
     public abstract class PartsJitBase : PartsBase<Distance, Distance>
     {
+        /// <summary>
+        /// Selecting Background Color
+        /// </summary>
+        protected Color SelectingColor { get; } = Color.FromArgb(160, 255, 0, 0);
+
         public enum DesignStates
         {
             Positioning,
