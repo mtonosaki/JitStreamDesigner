@@ -78,10 +78,11 @@ namespace JitStreamDesigner
 
         public float SelectingScore(IDrawArea pane, ScreenPos pos)
         {
-            var rect = ScreenRect.FromCS(GetScreenPos(pane), SelectableSize);
+            var sp = GetScreenPos(pane);
+            var rect = ScreenRect.FromCS(sp, SelectableSize);
             if (rect.IsIn(pos))
             {
-                var len = GeoEu.Length(GetScreenPos(pane), pos);
+                var len = GeoEu.Length(sp, pos);
                 var vol = len / GeoEu.Length(SelectableSize.ToDoubles());
                 return (float)vol;
             }
