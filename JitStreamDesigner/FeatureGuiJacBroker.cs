@@ -59,7 +59,7 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// Select active template
+        /// Gui.Template JAC interface : Change active Template
         /// </summary>
         /// <param name="value"></param>
         public void Template(object value)
@@ -74,7 +74,7 @@ namespace JitStreamDesigner
                     Sender = this,
                     Remarks = DateTime.Now.ToString(),
                 }); ;
-                Token.Finalize(() => WaitNext());
+                Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
             }
             else
             {
@@ -83,17 +83,38 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// Create Gui parts : Process
+        /// Gui.CreateProcess JAC interface
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">JitProcess instance</param>
         public void CreateProcess(object value)
         {
-
+            if (value is JitProcess proc)
+            {
+                Token.AddNew(new EventTokenProcessPartsTrigger
+                {
+                    TokenID = FeatureJitProcess.TOKEN.CREATE,
+                    Process = proc,
+                    Sender = this,
+                });
+            }
             WaitNext();
         }
 
+        /// <summary>
+        /// Gui.RemoveProcess JAC interface
+        /// </summary>
+        /// <param name="value">JitProcess instance</param>
         public void RemoveProcess(object value)
         {
+            if (value is JitProcess proc)
+            {
+                Token.AddNew(new EventTokenProcessPartsTrigger
+                {
+                    TokenID = FeatureJitProcess.TOKEN.REMOVE,
+                    Process = proc,
+                    Sender = this,
+                });
+            }
             WaitNext();
         }
     }

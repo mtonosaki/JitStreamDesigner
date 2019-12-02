@@ -28,7 +28,7 @@
                 </local:FeatureToolbox.Buttons>
             </local:FeatureToolbox>
             <local:FeatureJitProcess />
-            <local:FeatureUndoRedo />
+            <local:FeatureUndoRedo ListeningButtonNames="UndoButton,RedoButton" />
             <local:FeatureGuiJacBroker />
             <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
@@ -123,6 +123,7 @@
             </SplitView.Pane>
         </SplitView>
         <StackPanel 
+            Name="GeneralButtons"
             HorizontalAlignment="Center" Margin="0,0,1,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
@@ -148,6 +149,32 @@
                     Content="S"
                     Background="Transparent" Height="32" Width="48" Margin="0,4,0,0" />
         </StackPanel>
+        <tg:TButton Name="UndoButton" x:Uid="UndoButton"
+                    Background="Black"
+                    Height="48" Width="48"
+                    Margin="0,0,0,4"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.Above="RedoButton">
+            <tg:TButton.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="Z"/>
+            </tg:TButton.KeyboardAccelerators>
+            <FontIcon Glyph="&#x2B8c;"
+                      FontFamily="Segoe UI" FontSize="24"
+                      FocusVisualPrimaryBrush="{x:Null}" />
+        </tg:TButton>
+        <tg:TButton Name="RedoButton" x:Uid="RedoButton"
+                    Background="Black"
+                    Height="48" Width="48"
+                    Margin="0,0,0,4"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.Above="ClockStart">
+            <tg:TButton.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="Y"/>
+            </tg:TButton.KeyboardAccelerators>
+            <FontIcon Glyph="&#x2B8e;"
+                      FontFamily="Segoe UI" FontSize="24"
+                      FocusVisualPrimaryBrush="{x:Null}" />
+        </tg:TButton>
         <tg:TButton Name="ClockStart" x:Uid="ClockStart"
                     Background="Black"
                     Height="48" Width="48"
