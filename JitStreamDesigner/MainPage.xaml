@@ -100,7 +100,7 @@
                                         Padding="2,2,2,2"
                                         Margin="0,4,0,4">
                                         <TextBlock Margin="8,4,0,0">
-                                                <Run Text="{Binding TemplateID}" 
+                                                <Run Text="{Binding Name}" 
                                                      Foreground="White" 
                                                      FontSize="18" 
                                                      TextDecorations="Underline"
@@ -158,22 +158,20 @@
             <tg:TButton.KeyboardAccelerators>
                 <KeyboardAccelerator Modifiers="Control" Key="Z"/>
             </tg:TButton.KeyboardAccelerators>
-            <FontIcon Glyph="&#x2B8c;"
-                      FontFamily="Segoe UI" FontSize="24"
-                      FocusVisualPrimaryBrush="{x:Null}" />
+            <FontIcon Glyph="&#x2Ba2;"
+                      FontFamily="Segoe UI" FontSize="18" />
         </tg:TButton>
         <tg:TButton Name="RedoButton" x:Uid="RedoButton"
                     Background="Black"
                     Height="48" Width="48"
-                    Margin="0,0,0,4"
+                    Margin="0,0,0,16"
                     RelativePanel.AlignRightWithPanel="True"
                     RelativePanel.Above="ClockStart">
             <tg:TButton.KeyboardAccelerators>
                 <KeyboardAccelerator Modifiers="Control" Key="Y"/>
             </tg:TButton.KeyboardAccelerators>
-            <FontIcon Glyph="&#x2B8e;"
-                      FontFamily="Segoe UI" FontSize="24"
-                      FocusVisualPrimaryBrush="{x:Null}" />
+            <FontIcon Glyph="&#x2Ba3;"
+                      FontFamily="Segoe UI" FontSize="18"  />
         </tg:TButton>
         <tg:TButton Name="ClockStart" x:Uid="ClockStart"
                     Background="Black"

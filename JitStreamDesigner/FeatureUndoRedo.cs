@@ -93,7 +93,11 @@ namespace JitStreamDesigner
         [EventCatch(Name = "UndoButton")]
         public void Undo(EventTokenButton token)
         {
-            if (Hot.UndoRedoCurrenttPointer < 1) return;
+            if (Hot.UndoRedoCurrenttPointer < 1)
+            {
+                LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoUndo").Solo();
+                return;
+            }
 
             Hot.UndoRedoRequestedPointer--;
             Token.Finalize(MoveCurrentPointer);
@@ -102,7 +106,11 @@ namespace JitStreamDesigner
         [EventCatch(Name = "RedoButton")]
         public void Redo(EventTokenButton token)
         {
-            if (Hot.UndoRedoCurrenttPointer > Hot.RedoStream.Count - 1) return;
+            if (Hot.UndoRedoCurrenttPointer > Hot.RedoStream.Count - 1)
+            {
+                LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoRedo").Solo();
+                return;
+            }
 
             Hot.UndoRedoRequestedPointer++;
             Token.Finalize(MoveCurrentPointer);

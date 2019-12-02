@@ -193,4 +193,10 @@
   <data name="UndoButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>元に戻す    [Ctrl+Z]</value>
   </data>
+  <data name="FeatureUndoRedo-NoRedo" xml:space="preserve">
+    <value>これ以上 進めません...</value>
+  </data>
+  <data name="FeatureUndoRedo-NoUndo" xml:space="preserve">
+    <value>これ以上 戻れません...</value>
+  </data>
 </root>
