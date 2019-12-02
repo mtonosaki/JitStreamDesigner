@@ -193,4 +193,10 @@
   <data name="UndoButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Undo    [Ctrl+Z]</value>
   </data>
+  <data name="FeatureUndoRedo-NoRedo" xml:space="preserve">
+    <value>No more Redo data...</value>
+  </data>
+  <data name="FeatureUndoRedo-NoUndo" xml:space="preserve">
+    <value>No more Undo data...</value>
+  </data>
 </root>

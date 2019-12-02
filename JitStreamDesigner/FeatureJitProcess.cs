@@ -128,6 +128,7 @@ namespace JitStreamDesigner
                             LocationY = {CurrentParts.Location.Y.Cy.m}m
                             Width = {CurrentParts.Width.m}m
                             Height = {CurrentParts.Height.m}m
+                            IsSelected = true
                 Gui.Template = '{Hot.ActiveTemplate.ID}'
                 Gui.CreateProcess = '{processID}'
             ";
@@ -158,6 +159,7 @@ namespace JitStreamDesigner
                 PositionerY = DistancePositionerY,
                 CoderX = DistanceCoderX,
                 CoderY = DistanceCoderY,
+                IsSelected = DbUtil.ToBoolean(token.Process.ChildVriables["IsSelected"].Value),
             };
             Parts.Add(Pane.Target, pt, LAYER.JitProcess);
             Redraw();
