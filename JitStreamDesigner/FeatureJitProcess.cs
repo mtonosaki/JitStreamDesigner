@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Tono;
+using Tono.Gui;
 using Tono.Gui.Uwp;
 using Tono.Jit;
 
@@ -17,11 +18,20 @@ namespace JitStreamDesigner
     /// [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Process")] EventTokenTriggerToolDragging
     /// [EventCatch(TokenID = FeatureToolbox.TokenIdFinished, Name = "Process")] EventTokenTriggerToolDragging 
     /// [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Process")] EventTokenTriggerToolDragging 
+    ///
+    /// [EventCatch(TokenID = TOKEN.CREATE)] EventTokenCreateProcessPartsTrigger
+    /// [EventCatch(TokenID = TOKEN.REMOVE)] EventTokenCreateProcessPartsTrigger
     /// </remarks>
     [FeatureDescription(En = "Put JitProcess", Jp = "JitProcess GUI編集")]
     public class FeatureJitProcess : FeatureSimulatorBase
     {
+        public static class TOKEN
+        {
+            public const string CREATE = "FeatureJitProcessCreate";
+            public const string REMOVE = "FeatureJitProcessRemove";
+        };
         private PartsJitProcess CurrentParts = null;
+
 
         /// <summary>
         /// Initialize Feature
@@ -75,6 +85,23 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
+        /// Cancel the instance position
+        /// </summary>
+        /// <param name="token"></param>
+        [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Process")]
+        public void Cancelling(EventTokenTriggerToolDragging token)
+        {
+            if (CurrentParts == null)
+            {
+                return;
+            }
+
+            Parts.Remove(Pane.Target, CurrentParts, LAYER.JitProcess);  // delete temporary parts
+            CurrentParts = null;
+            Redraw();
+        }
+
+        /// <summary>
         /// Decide the instance position
         /// </summary>
         /// <param name="token"></param>
@@ -101,17 +128,15 @@ namespace JitStreamDesigner
                             LocationY = {CurrentParts.Location.Y.Cy.m}m
                             Width = {CurrentParts.Width.m}m
                             Height = {CurrentParts.Height.m}m
-                Gui
-                    Template = '{Hot.ActiveTemplate.ID}'
-                    CreateProcess = '{processID}'
+                Gui.Template = '{Hot.ActiveTemplate.ID}'
+                Gui.CreateProcess = '{processID}'
             ";
             var jacundo = 
             $@"
+                Gui.RemoveProcess = '{processID}'
                 TheStage
                     Procs
                         remove '{processID}'
-                Gui
-                    RemoveProcess = '{processID}'
             ";
             SetNewAction(token, jacredo, jacundo);
 
@@ -120,21 +145,40 @@ namespace JitStreamDesigner
             CurrentParts = null;
         }
 
-        /// <summary>
-        /// Cancel the instance position
-        /// </summary>
-        /// <param name="token"></param>
-        [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Process")]
-        public void Cancelling(EventTokenTriggerToolDragging token)
+        [EventCatch(TokenID = TOKEN.CREATE)]
+        public void CreateProcess(EventTokenProcessPartsTrigger token)
         {
-            if (CurrentParts == null)
+            var pt = new PartsJitProcess
             {
-                return;
-            }
-
-            Parts.Remove(Pane.Target, CurrentParts, LAYER.JitProcess);  // delete temporary parts
-            CurrentParts = null;
+                ID = token.Process.ID,
+                Location = CodePos<Distance, Distance>.From((Distance)token.Process.ChildVriables["LocationX"].Value, (Distance)token.Process.ChildVriables["LocationY"].Value),
+                Width = (Distance)token.Process.ChildVriables["Width"].Value,
+                Height = (Distance)token.Process.ChildVriables["Height"].Value,
+                PositionerX = DistancePositionerX,
+                PositionerY = DistancePositionerY,
+                CoderX = DistanceCoderX,
+                CoderY = DistanceCoderY,
+            };
+            Parts.Add(Pane.Target, pt, LAYER.JitProcess);
             Redraw();
         }
+
+        [EventCatch(TokenID = TOKEN.REMOVE)]
+        public void RemoveProcess(EventTokenProcessPartsTrigger token)
+        {
+            foreach (var pt in Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.ID == token.Process.ID))
+            {
+                Parts.Remove(Pane.Target, pt, LAYER.JitProcess);
+            }
+            Redraw();
+        }
+    }
+
+    /// <summary>
+    /// Process parts control order message
+    /// </summary>
+    public class EventTokenProcessPartsTrigger : EventTokenTrigger
+    {
+        public JitProcess Process { get; set; }
     }
 }
