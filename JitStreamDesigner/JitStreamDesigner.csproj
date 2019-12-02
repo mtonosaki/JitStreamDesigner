@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
+    <Compile Include="PersistModel.cs" />
     <Compile Include="TemplateDialog.xaml.cs">
       <DependentUpon>TemplateDialog.xaml</DependentUpon>
     </Compile>

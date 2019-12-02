@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Tono.Gui.Uwp;
-using Tono.Jit;
 
 namespace JitStreamDesigner
 {
@@ -14,19 +13,39 @@ namespace JitStreamDesigner
     public class DataHot : DataHotBase
     {
         /// <summary>
+        /// Persist data (for save / load target) Poco Model
+        /// </summary>
+        public PersistModel PersistTarget { get; set; } = new PersistModel();
+
+        /// <summary>
         /// Simulation Clock
         /// </summary>
-        public DateTime SimStartTime { get; set; }
+        public DateTime SimStartTime { get => PersistTarget.SimStartTime; set => PersistTarget.SimStartTime = value; }
 
         /// <summary>
         /// Simulation clock step unit
         /// </summary>
-        public TimeSpan ClockTick { get; set; } = TimeSpan.FromSeconds(1);
+        public TimeSpan ClockTick { get => PersistTarget.ClockTick; set => PersistTarget.ClockTick = value; }
 
         /// <summary>
-        /// Virtual TPS Player Modeling Language Root JitStage
+        /// REDO Jac Queue
         /// </summary>
-        public JitStage JitStage { get; set; }
+        public List<string> RedoStream { get => PersistTarget.RedoStream; set => PersistTarget.RedoStream = value; }
+
+        /// <summary>
+        /// UNDO Jac Queue
+        /// </summary>
+        public List<string> UndoStream { get => PersistTarget.UndoStream; set => PersistTarget.UndoStream = value; }
+
+        /// <summary>
+        /// UNDO/REDO Current Pointer
+        /// </summary>
+        public int UndoRedoCurrenttPointer { get => PersistTarget.UndoRedoCurrenttPointer; set => PersistTarget.UndoRedoCurrenttPointer = value; }
+
+        /// <summary>
+        /// UNDO/REDO Requested Pointer position
+        /// </summary>
+        public int UndoRedoRequestedPointer { get => PersistTarget.UndoRedoRequestedPointer; set => PersistTarget.UndoRedoRequestedPointer = value; }
 
         /// <summary>
         /// Calclate Simulation time
