@@ -1,8 +1,9 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Tono.Gui;
 using Tono.Gui.Uwp;
@@ -21,7 +22,7 @@ namespace JitStreamDesigner
         public string FileNamePrefix => "s13-";
 
         public event EventHandler Loaded;
-        public bool IsLoaded { get => LoadStatus == 1; }
+        public bool IsLoaded => LoadStatus == 1;
 
         public TGuiView View { get; set; }
 

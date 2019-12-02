@@ -1,10 +1,10 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
 using System;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
-using Windows.UI;
-using Windows.UI.Text;
 
 namespace JitStreamDesigner
 {
@@ -23,7 +23,10 @@ namespace JitStreamDesigner
 
         public override void Draw(DrawProperty dp)
         {
-            if (Seg7?.IsLoaded == false) return;
+            if (Seg7?.IsLoaded == false)
+            {
+                return;
+            }
 
             var pos = dp.PaneRect.RB - ScreenSize.From(420, 40);
             var now = Parent.Now;

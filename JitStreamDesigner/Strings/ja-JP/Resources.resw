@@ -126,8 +126,8 @@
   <data name="Start-Welcome" xml:space="preserve">
     <value>(c) {1} Jit Stream Designer Version {0} all rights reserved.</value>
   </data>
-  <data name="LabelClassMode.Text" xml:space="preserve">
-    <value>「クラス」デザインモード</value>
+  <data name="LabelTemplateMode.Text" xml:space="preserve">
+    <value>「テンプレート」デザインモード</value>
   </data>
   <data name="LabelOpen.Text" xml:space="preserve">
     <value>スタディファイルを開く</value>
@@ -135,14 +135,14 @@
   <data name="LabelStageMode.Text" xml:space="preserve">
     <value>「ステージ」モデリングモード</value>
   </data>
-  <data name="ButtonClassMode.ToolTipService.ToolTip" xml:space="preserve">
-    <value>クラスデザインモード</value>
+  <data name="ButtonTemplateMode.ToolTipService.ToolTip" xml:space="preserve">
+    <value>テンプレートデザインモード</value>
   </data>
   <data name="ButtonStageMode.ToolTipService.ToolTip" xml:space="preserve">
     <value>ステージモデリングモード</value>
   </data>
-  <data name="ClassList.Header" xml:space="preserve">
-    <value>  Jit Stream クラス一覧</value>
+  <data name="TemplateList.Header" xml:space="preserve">
+    <value>  Jit Stream テンプレート一覧</value>
   </data>
   <data name="ClockStart.ToolTipService.ToolTip" xml:space="preserve">
     <value>[F] クロック開始/停止</value>
@@ -171,5 +171,20 @@
   <data name="PartsToolButtonWork" xml:space="preserve">
     <value>ワーク</value>
     <comment>Toobutton tooltip message</comment>
+  </data>
+  <data name="ButtonAddTemplate.Content" xml:space="preserve">
+    <value>＋テンプレート追加</value>
+  </data>
+  <data name="TemplateDialog.Title" xml:space="preserve">
+    <value>新規テンプレート</value>
+  </data>
+  <data name="TemplateDialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="TemplateDialog.SecondaryButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="FeatureJitTemplatePanel-CannotUndo" xml:space="preserve">
+    <value>テンプレート作成はUNDOができません</value>
   </data>
 </root>

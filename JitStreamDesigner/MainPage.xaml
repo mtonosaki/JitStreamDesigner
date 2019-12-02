@@ -18,7 +18,7 @@
         </tg:TGuiView.DataHot>
         <tg:TGuiView.Features>
             <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
-            <local:FeatureClassListPanel TargetListView="{x:Bind ClassList}"/>
+            <local:FeatureJitTemplateListPanel ListeningButtonNames="ButtonAddTemplate" TargetListView="{x:Bind TemplateList}"/>
             <local:FeatureToolbox>
                 <local:FeatureToolbox.Buttons>
                     <local:PartsToolButtonProcess Name="Process" ToolTipUid="PartsToolButtonProcess" />
@@ -28,6 +28,8 @@
                 </local:FeatureToolbox.Buttons>
             </local:FeatureToolbox>
             <local:FeatureJitProcess />
+            <local:FeatureUndoRedo />
+            <local:FeatureGuiJacBroker />
             <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <tg:FeatureScrollDrag />
@@ -65,59 +67,58 @@
                         <RowDefinition Height="36" />
                         <RowDefinition Height="36" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Uid="LabelOpen"      FontSize="12" Grid.Row="0" FlowDirection="RightToLeft" />
-                    <TextBlock x:Uid="LabelClassMode" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
+                    <TextBlock x:Uid="LabelTemplateMode" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
                     <TextBlock x:Uid="LabelStageMode" FontSize="12" Grid.Row="2" FlowDirection="RightToLeft" />
-                    <ListView x:Name="ClassList" x:Uid="ClassList"
+                    <tg:TButton Name="ButtonAddTemplate" x:Uid="ButtonAddTemplate" 
+                                Grid.Row="4" 
+                                Content="Add new template" 
+                                Margin="4,4,4,4"
+                                HorizontalAlignment="Left" 
+                                Background="#FF4D834D" />
+                    <ListView x:Name="TemplateList" x:Uid="TemplateList"
                               CanReorderItems="True" AllowDrop="True"
                               IsMultiSelectCheckBoxEnabled="False"
                               SingleSelectionFollowsFocus="True"
                               Grid.Row="3">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="x:String">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Width="3" Margin="0,4,0,4">
+                                        <Rectangle.Fill>
+                                            <SolidColorBrush Color="{Binding AccentColor}" />
+                                        </Rectangle.Fill>
+                                    </Rectangle>
                                     <StackPanel
                                         Background="#11ffffff"
                                         BorderThickness="1"
                                         BorderBrush="DimGray"
-                                        Height="64"
+                                        Height="56"
                                         Width="500"
                                         Padding="2,2,2,2"
                                         Margin="0,4,0,4">
-                                            <TextBlock Margin="8,4,0,0">
-                                                <Run Text="{Binding ClassID}" 
+                                        <TextBlock Margin="8,4,0,0">
+                                                <Run Text="{Binding TemplateID}" 
                                                      Foreground="White" 
                                                      FontSize="18" 
                                                      TextDecorations="Underline"
                                                      FontWeight="Bold"
                                                      FontFamily="Coureir New" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemsSource>
-                                <local:ClassTipCollection>
-                                    <local:ClassTipModel ClassID="SampleClass001" />
-                                    <local:ClassTipModel ClassID="SampleClass002" />
-                                    <local:ClassTipModel ClassID="SampleClass003" />
-                                    <local:ClassTipModel ClassID="SampleClass004" />
-                                    <local:ClassTipModel ClassID="SampleClass005" />
-                                    <local:ClassTipModel ClassID="SampleClass006" />
-                                    <local:ClassTipModel ClassID="SampleClass007" />
-                                    <local:ClassTipModel ClassID="SampleClass008" />
-                                    <local:ClassTipModel ClassID="SampleClass009" />
-                                    <local:ClassTipModel ClassID="SampleClass010" />
-                                    <local:ClassTipModel ClassID="SampleClass011" />
-                                    <local:ClassTipModel ClassID="SampleClass012" />
-                                    <local:ClassTipModel ClassID="SampleClass013" />
-                                    <local:ClassTipModel ClassID="SampleClass014" />
-                                    <local:ClassTipModel ClassID="SampleClass015" />
-                                    <local:ClassTipModel ClassID="SampleClass016" />
-                                    <local:ClassTipModel ClassID="SampleClass017" />
-                                    <local:ClassTipModel ClassID="SampleClass018" />
-                                </local:ClassTipCollection>
-                            </ListView.ItemsSource>
-                        </ListView>
+                                        </TextBlock>
+                                        <TextBlock Margin="8,0,0,0" Text="{Binding Remarks}" Foreground="Gray" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemsSource>
+                            <local:TemplateTipCollection>
+                                <local:TemplateTipModel Name="Template001" AccentColor="Cyan" Remarks="Test template" />
+                                <local:TemplateTipModel Name="Template002" AccentColor="Yellow" Remarks="Test template this remarks is for long text sample" />
+                            </local:TemplateTipCollection>
+                        </ListView.ItemsSource>
+                    </ListView>
                 </Grid>
             </SplitView.Pane>
         </SplitView>
@@ -140,8 +141,8 @@
                     <KeyboardAccelerator Modifiers="Control" Key="O"/>
                 </tg:TButton.KeyboardAccelerators>
             </tg:TButton>
-            <Button x:Uid="ButtonClassMode" 
-                    Content="C"
+            <Button x:Uid="ButtonTemplateMode" 
+                    Content="T"
                     Background="Transparent" Height="32" Width="48" Margin="0,4,0,0" />
             <Button x:Uid="ButtonStageMode" 
                     Content="S"

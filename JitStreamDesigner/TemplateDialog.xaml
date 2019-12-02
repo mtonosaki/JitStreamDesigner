@@ -1,0 +1,38 @@
+﻿<ContentDialog
+    x:Uid="TemplateDialog"
+    x:Class="JitStreamDesigner.TemplateDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JitStreamDesigner"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="TITLE"
+    RequestedTheme="Dark"
+    PrimaryButtonText="OK Button"
+    SecondaryButtonText="Cancel Button"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Name" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,8,0" />
+        <TextBox Name="InputTemplateName"  Grid.Row="0" Grid.Column="1" PlaceholderText="(A-Z, a-z)+(0-9)" TextChanged="TemplateName_TextChanged" />
+        <TextBlock Name="ErrorName" Text="Mandatory field acceptable characters A-Z, a-z and 0-9 (Alphabet starts)" TextWrapping="Wrap" Foreground="Red" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Visibility="Visible" />
+        <TextBlock Text="Accent Color" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,8,0" />
+        <ColorPicker Name="InputTemplateColor" Grid.Row="2" Grid.Column="1" Margin="0,4,0,4" />
+        <TextBlock Text="Remarks" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,8,0" />
+        <TextBox Name="InputRemarks"  Grid.Row="3" Grid.Column="1" PlaceholderText="(option)" />
+    </Grid>
+</ContentDialog>

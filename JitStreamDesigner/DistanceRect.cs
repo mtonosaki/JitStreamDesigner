@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
 using Tono;
 using Tono.Gui;
 
@@ -48,11 +46,11 @@ namespace JitStreamDesigner
             };
         }
 
-        public CodePos<Distance,Distance> LT { get => CodePos<Distance, Distance>.From(L, T);  }
-        public CodePos<Distance, Distance> RB { get => CodePos<Distance, Distance>.From(R, B); }
-        public CodePos<Distance, Distance> RT { get => CodePos<Distance, Distance>.From(R, T); }
-        public CodePos<Distance, Distance> LB { get => CodePos<Distance, Distance>.From(L, B); }
-        public CodePos<Distance, Distance> C { get => CodePos<Distance, Distance>.From((L + R) / 2, (T + B) / 2); }
+        public CodePos<Distance, Distance> LT => CodePos<Distance, Distance>.From(L, T);
+        public CodePos<Distance, Distance> RB => CodePos<Distance, Distance>.From(R, B);
+        public CodePos<Distance, Distance> RT => CodePos<Distance, Distance>.From(R, T);
+        public CodePos<Distance, Distance> LB => CodePos<Distance, Distance>.From(L, B);
+        public CodePos<Distance, Distance> C => CodePos<Distance, Distance>.From((L + R) / 2, (T + B) / 2);
         public Distance Width { get => R - L; set => R = L + value; }
         public Distance Height { get => B - T; set => B = T + value; }
     }

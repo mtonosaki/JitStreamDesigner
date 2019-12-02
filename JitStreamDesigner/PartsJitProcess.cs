@@ -1,4 +1,7 @@
-﻿using Tono;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Windows.UI;
@@ -14,6 +17,11 @@ namespace JitStreamDesigner
     /// </remarks>
     public class PartsJitProcess : PartsJitBase
     {
+        /// <summary>
+        /// Process ID same with Jac
+        /// </summary>
+        public string ID { get; set; }
+
         /// <summary>
         /// Change Base Color
         /// </summary>

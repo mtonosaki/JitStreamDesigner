@@ -119,12 +119,16 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClassTipModel.cs" />
+    <Compile Include="FeatureGuiJacBroker.cs" />
+    <Compile Include="FeatureUndoRedo.cs" />
+    <Compile Include="TemplateDialog.xaml.cs">
+      <DependentUpon>TemplateDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TemplateTipModel.cs" />
     <Compile Include="DataCold.cs" />
     <Compile Include="DataHot.cs" />
     <Compile Include="DistanceRect.cs" />
-    <Compile Include="EventClockUpdatedTokenTrigger.cs" />
-    <Compile Include="FeatureClassListPanel.cs" />
+    <Compile Include="FeatureJitTemplateListPanel.cs" />
     <Compile Include="FeatureClock.cs" />
     <Compile Include="FeatureJitProcess.cs" />
     <Compile Include="FeatureSimulatorBase.cs" />
@@ -140,7 +144,6 @@
     <Compile Include="PartsToolButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NumberDisplay.cs" />
-    <Compile Include="TOKEN.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -215,6 +218,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TemplateDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
