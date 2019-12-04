@@ -43,6 +43,7 @@
             </tg:FeatureToolTip>
             <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
             <tg:FeatureMoveSelectedParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
         </tg:TGuiView.Features>
         <tg:TGuiView.ContextFlyout>
             <MenuFlyout>

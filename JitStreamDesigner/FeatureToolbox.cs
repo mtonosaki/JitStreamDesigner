@@ -130,6 +130,11 @@ namespace JitStreamDesigner
             if (tokenid == TokenIdFinished || tokenid == TokenIdCancelling)
             {
                 Dragging = null;
+                Status["IsEnableSelectingBox"].ValueB = true;
+            }
+            else
+            {
+                Status["IsEnableSelectingBox"].ValueB = false;
             }
         }
     }

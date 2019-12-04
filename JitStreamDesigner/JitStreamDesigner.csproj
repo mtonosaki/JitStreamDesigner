@@ -230,7 +230,7 @@
       <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="Tono.Gui.Uwp">
-      <Version>1.0.14</Version>
+      <Version>1.0.15</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

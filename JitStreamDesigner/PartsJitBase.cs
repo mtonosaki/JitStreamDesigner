@@ -122,5 +122,9 @@ namespace JitStreamDesigner
                 return float.PositiveInfinity;
             }
         }
+        public override bool IsIn(IDrawArea pane, ScreenRect sr)
+        {
+            return sr.IsIn(GetScreenPos(pane));
+        }
     }
 }
