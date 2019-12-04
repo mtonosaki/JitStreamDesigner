@@ -3,10 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Tono;
+using Tono.Gui;
 using Tono.Gui.Uwp;
 using Tono.Jit;
 
@@ -122,17 +125,41 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// Gui.ClearSelection = true
+        /// Gui.UpdateLocation = 'Process.ID'
+        /// </summary>
+        /// <param name="value">JitProcess</param>
+        public void UpdateLocation(object value)
+        {
+            if (value is JitProcess process)
+            {
+                var pt = Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault();
+                Debug.Assert(pt != null);
+                pt.Location = CodePos<Distance, Distance>.From((Distance)process.ChildVriables["LocationX"].Value, (Distance)process.ChildVriables["LocationY"].Value);
+                pt.IsSelected = true;
+                Redraw();
+            }
+            WaitNext();
+        }
+        /// <summary>
+        /// Gui.ClearAllSelection = dummy
         /// </summary>
         /// <param name="value">ignore</param>
-        public void ClearSelection(object value)
+        public void ClearAllSelection(object value)
         {
-            // TODO: not working collectly
-            foreach (ISelectableParts parts in Parts.GetParts(LAYER.JitProcess, a => a is ISelectableParts))
+            var n = 0;
+            foreach (var pt in Parts.GetParts<ISelectableParts>(LAYER.JitProcess))
             {
-                parts.IsSelected = false;
+                if( pt.IsSelected )
+                {
+                    pt.IsSelected = false;
+                    n++;
+                }
             }
-            Redraw();
+            if( n > 0)
+            {
+                Redraw();
+            }
+            WaitNext();
         }
     }
 }

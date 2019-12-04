@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
@@ -173,6 +174,26 @@ namespace JitStreamDesigner
                 Parts.Remove(Pane.Target, pt, LAYER.JitProcess);
             }
             Redraw();
+        }
+
+        [EventCatch(TokenID = TokensGeneral.PartsMoved)]
+        public void PartsMoved(EventTokenPartsMovedTrigger token)
+        {
+            var jacundo = new StringBuilder();
+            var jacredo = new StringBuilder();
+            jacundo.AppendLine("Gui.ClearAllSelection = true");
+            jacredo.AppendLine("Gui.ClearAllSelection = true");
+            foreach (PartsJitProcess pt in token.Parts.Where(a => a is PartsJitProcess))
+            {
+                jacredo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
+                jacredo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
+                jacredo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
+
+                jacundo.AppendLine($@"{pt.ID}.LocationX = {pt.OriginalPosition.X.Cx.m}m");
+                jacundo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
+                jacundo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
+            }
+            SetNewAction(token, jacredo.ToString(), jacundo.ToString());
         }
     }
 
