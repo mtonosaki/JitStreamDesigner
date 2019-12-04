@@ -15,22 +15,12 @@ namespace JitStreamDesigner
     /// <remarks>
     /// Location = Center
     /// </remarks>
-    public class PartsJitProcess : PartsJitBase, ISelectableParts, IMovableParts
+    public class PartsJitProcess : PartsJitBase
     {
-        /// <summary>
-        /// Process ID same with Jac
-        /// </summary>
-        public string ID { get; set; }
-
         /// <summary>
         /// Change Base Color
         /// </summary>
         public override Color BaseColor => base.BaseColor;
-
-        /// <summary>
-        /// Parts Select State
-        /// </summary>
-        public bool IsSelected { get; set; }
 
         /// <summary>
         /// Drawing main
@@ -50,46 +40,6 @@ namespace JitStreamDesigner
             dp.Graphics.DrawRectangle(_(sr), GetColor(dp));
 
             SelectableSize = sr.ToSize();
-        }
-
-        private CodePos<Distance, Distance> PosBak = null;
-
-        public void SaveLocationAsOrigin()
-        {
-            PosBak = Location;
-        }
-
-        public bool IsMoved()
-        {
-            return !PosBak.Equals(Location);
-        }
-
-        public void Move(IDrawArea pane, ScreenSize offset)
-        {
-            var spos0 = GetScreenPos(pane, PosBak);
-            var spos1 = spos0 + offset;
-            var lpos = LayoutPos.From(pane, spos1);
-            var x = CoderX(lpos.X, lpos.Y);
-            var y = CoderY(lpos.X, lpos.Y);
-            Location = CodePos<Distance, Distance>.From(x, y);
-        }
-
-        public ScreenSize SelectableSize { get; private set; }
-
-        public float SelectingScore(IDrawArea pane, ScreenPos pos)
-        {
-            var sp = GetScreenPos(pane);
-            var rect = ScreenRect.FromCS(sp, SelectableSize);
-            if (rect.IsIn(pos))
-            {
-                var len = GeoEu.Length(sp, pos);
-                var vol = len / GeoEu.Length(SelectableSize.ToDoubles());
-                return (float)vol;
-            }
-            else
-            {
-                return float.PositiveInfinity;
-            }
         }
     }
 }
