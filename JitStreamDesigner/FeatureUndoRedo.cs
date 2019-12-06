@@ -37,7 +37,6 @@ namespace JitStreamDesigner
             ButtonEnable(RedoButton, false);
 
             JacInterpreter.RegisterJacTarget(typeof(FeatureGuiJacBroker).Assembly);
-            Hot.UndoStream.Add("// no action here");
         }
 
         /// <summary>
@@ -61,14 +60,14 @@ namespace JitStreamDesigner
         public void Set(EventSetUndoRedoTokenTrigger token)
         {
             // Cut pro-queue data
-            Hot.RedoStream.RemoveRange(Hot.UndoRedoCurrenttPointer, Hot.RedoStream.Count - Hot.UndoRedoCurrenttPointer);
-            Hot.UndoStream.RemoveRange(Hot.UndoRedoCurrenttPointer + 1, Hot.UndoStream.Count - Hot.UndoRedoCurrenttPointer - 1);
+            token.TemplateChip.RedoStream.RemoveRange(token.TemplateChip.UndoRedoCurrenttPointer, token.TemplateChip.RedoStream.Count - token.TemplateChip.UndoRedoCurrenttPointer);
+            token.TemplateChip.UndoStream.RemoveRange(token.TemplateChip.UndoRedoCurrenttPointer + 1, token.TemplateChip.UndoStream.Count - token.TemplateChip.UndoRedoCurrenttPointer - 1);
 
             // add queue
-            Hot.RedoStream.Add(token.JacRedo);
-            Hot.UndoStream.Add(token.JacUndo);
+            token.TemplateChip.RedoStream.Add(token.JacRedo);
+            token.TemplateChip.UndoStream.Add(token.JacUndo);
 
-            Hot.UndoRedoRequestedPointer++;
+            token.TemplateChip.UndoRedoRequestedPointer++;
             Token.Finalize(MoveCurrentPointer);
         }
 
@@ -77,48 +76,49 @@ namespace JitStreamDesigner
         /// </summary>
         private void MoveCurrentPointer()
         {
-            var dir = MathUtil.Sgn(Hot.UndoRedoRequestedPointer - Hot.UndoRedoCurrenttPointer);
-            while (Hot.UndoRedoCurrenttPointer != Hot.UndoRedoRequestedPointer && dir != 0)
+            var dir = MathUtil.Sgn(Hot.ActiveTemplate.UndoRedoRequestedPointer - Hot.ActiveTemplate.UndoRedoCurrenttPointer);
+            while (Hot.ActiveTemplate.UndoRedoCurrenttPointer != Hot.ActiveTemplate.UndoRedoRequestedPointer && dir != 0)
             {
-                string jac = dir > 0 ? Hot.RedoStream[Hot.UndoRedoCurrenttPointer] : Hot.UndoStream[Hot.UndoRedoCurrenttPointer];
+                string jac = dir > 0 ? Hot.ActiveTemplate.RedoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer] : Hot.ActiveTemplate.UndoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer];
 
                 Hot.ActiveTemplate.Jac.Exec(jac);
-                Hot.UndoRedoCurrenttPointer += dir;
+                Hot.ActiveTemplate.UndoRedoCurrenttPointer += dir;
             }
 
-            ButtonEnable(UndoButton, Hot.UndoRedoCurrenttPointer > 0);
-            ButtonEnable(RedoButton, Hot.UndoRedoCurrenttPointer < Hot.RedoStream.Count);
+            ButtonEnable(UndoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer > 0);
+            ButtonEnable(RedoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer < Hot.ActiveTemplate.RedoStream.Count);
         }
 
         [EventCatch(Name = "UndoButton")]
         public void Undo(EventTokenButton token)
         {
-            if (Hot.UndoRedoCurrenttPointer < 1)
+            if (Hot.ActiveTemplate.UndoRedoCurrenttPointer < 1)
             {
                 LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoUndo").Solo();
                 return;
             }
 
-            Hot.UndoRedoRequestedPointer--;
+            Hot.ActiveTemplate.UndoRedoRequestedPointer--;
             Token.Finalize(MoveCurrentPointer);
         }
 
         [EventCatch(Name = "RedoButton")]
         public void Redo(EventTokenButton token)
         {
-            if (Hot.UndoRedoCurrenttPointer > Hot.RedoStream.Count - 1)
+            if (Hot.ActiveTemplate.UndoRedoCurrenttPointer > Hot.ActiveTemplate.RedoStream.Count - 1)
             {
                 LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoRedo").Solo();
                 return;
             }
 
-            Hot.UndoRedoRequestedPointer++;
+            Hot.ActiveTemplate.UndoRedoRequestedPointer++;
             Token.Finalize(MoveCurrentPointer);
         }
     }
 
     public class EventSetUndoRedoTokenTrigger : EventTokenTrigger
     {
+        public TemplateTipModel TemplateChip { get; set; }
         public string JacUndo { get; set; }
         public string JacRedo { get; set; }
     }

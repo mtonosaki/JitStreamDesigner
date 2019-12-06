@@ -97,16 +97,27 @@ namespace JitStreamDesigner
         {
             if (ReferenceEquals(Hot.ActiveTemplate, token.TargetTemplate)) return;
 
+            // Prepare template parts desig
             Hot.ActiveTemplate = token.TargetTemplate;
             BarParts.Text = Hot.ActiveTemplate?.Name;
             BarParts.BackgroundColor = Hot.ActiveTemplate.AccentColor;
             BarParts.Remarks = Hot.ActiveTemplate?.Remarks;
-            Redraw();
 
-            if (object.ReferenceEquals(TargetListView.SelectedItem, token.TargetTemplate) == false)
+            // Rebuild Gui Parts
+            foreach (var tarlayer in LAYER.JitObjects)
+            {
+                foreach (var pt in Parts.GetParts(tarlayer))
+                {
+                    Parts.Remove(Pane.Target, pt, tarlayer);
+                }
+            }
+
+            // neet to exec by Token instead of ListChip Selected
+            if (ReferenceEquals(TargetListView.SelectedItem, token.TargetTemplate) == false)
             {
                 TargetListView.SelectedItem = token.TargetTemplate; // for if not called TargetListView_SelectionChanged
             }
+            Redraw();
         }
 
         /// <summary>
@@ -127,6 +138,8 @@ namespace JitStreamDesigner
                 Remarks = remarks,
                 Jac = new JacInterpreter(),
             };
+            te.UndoStream.Add("// no action here");
+
             var jac = $@"
                 TheStage = new Stage
                     Name = '{templateName}'

@@ -28,26 +28,6 @@ namespace JitStreamDesigner
         public TimeSpan ClockTick { get => PersistTarget.ClockTick; set => PersistTarget.ClockTick = value; }
 
         /// <summary>
-        /// REDO Jac Queue
-        /// </summary>
-        public List<string> RedoStream { get => PersistTarget.RedoStream; set => PersistTarget.RedoStream = value; }
-
-        /// <summary>
-        /// UNDO Jac Queue
-        /// </summary>
-        public List<string> UndoStream { get => PersistTarget.UndoStream; set => PersistTarget.UndoStream = value; }
-
-        /// <summary>
-        /// UNDO/REDO Current Pointer
-        /// </summary>
-        public int UndoRedoCurrenttPointer { get => PersistTarget.UndoRedoCurrenttPointer; set => PersistTarget.UndoRedoCurrenttPointer = value; }
-
-        /// <summary>
-        /// UNDO/REDO Requested Pointer position
-        /// </summary>
-        public int UndoRedoRequestedPointer { get => PersistTarget.UndoRedoRequestedPointer; set => PersistTarget.UndoRedoRequestedPointer = value; }
-
-        /// <summary>
         /// Calclate Simulation time
         /// </summary>
         /// <param name="span"></param>

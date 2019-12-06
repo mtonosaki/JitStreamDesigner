@@ -40,6 +40,7 @@ namespace JitStreamDesigner
                 TokenID = FeatureUndoRedo.TOKEN.SET,
                 JacRedo = redoJac,
                 JacUndo = undoJac,
+                TemplateChip = Hot.ActiveTemplate,
                 Sender = this,
                 Remarks = $"{DateTime.Now}",
             });
