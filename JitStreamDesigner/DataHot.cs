@@ -28,6 +28,11 @@ namespace JitStreamDesigner
         public TimeSpan ClockTick { get => PersistTarget.ClockTick; set => PersistTarget.ClockTick = value; }
 
         /// <summary>
+        /// JitStreamDesigner template list
+        /// </summary>
+        public TemplateTipCollection TemplateList { get => PersistTarget.TemplateList; }
+
+        /// <summary>
         /// Calclate Simulation time
         /// </summary>
         /// <param name="span"></param>
@@ -37,10 +42,6 @@ namespace JitStreamDesigner
             return SimStartTime + span;
         }
 
-        /// <summary>
-        /// JitStreamDesigner template list
-        /// </summary>
-        public TemplateTipCollection TemplateList { get; private set; } = new TemplateTipCollection();
 
         /// <summary>
         /// JitStreamDesigner Template target (GUI)

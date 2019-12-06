@@ -50,24 +50,29 @@ namespace JitStreamDesigner
         /// <summary>
         /// REDO Jac Queue
         /// </summary>
+        [DataMember]
         public List<string> RedoStream { get; set; } = new List<string>();
 
         /// <summary>
         /// UNDO Jac Queue
         /// </summary>
+        [DataMember]
         public List<string> UndoStream { get; set; } = new List<string>();
 
         /// <summary>
         /// UNDO/REDO Current Pointer
         /// </summary>
+        [DataMember]
         public int UndoRedoCurrenttPointer { get; set; }
 
         /// <summary>
         /// UNDO/REDO Requested Pointer position
         /// </summary>
+        [DataMember]
         public int UndoRedoRequestedPointer { get; set; }
 
 
+        [IgnoreDataMember]
         private static readonly Regex hexpattern = new Regex("^[0-9,a-f,A-F]+$");
 
         /// <summary>

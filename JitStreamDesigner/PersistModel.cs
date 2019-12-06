@@ -23,5 +23,12 @@ namespace JitStreamDesigner
         /// </summary>
         [DataMember]
         public TimeSpan ClockTick { get; set; } = TimeSpan.FromSeconds(1);
+
+        /// <summary>
+        /// JitStreamDesigner template list
+        /// </summary>
+        [DataMember]
+        public TemplateTipCollection TemplateList { get; private set; } = new TemplateTipCollection();
+
     }
 }
