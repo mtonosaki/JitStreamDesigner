@@ -46,6 +46,11 @@ namespace JitStreamDesigner
             });
         }
 
+        /// <summary>
+        /// Pane for Jit Model Parts
+        /// </summary>
+        public IDrawArea PaneJitParts { get => View; }
+
 
         public LayoutX DistancePositionerX(CodeX<Distance> x, CodeY<Distance> y)
         {

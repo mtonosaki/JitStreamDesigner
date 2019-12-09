@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Manabu Tonosaki All rights reserved.
 // Licensed under the MIT license.
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Tono;
 using Tono.Gui.Uwp;
 using Tono.Jit;
@@ -21,6 +23,7 @@ namespace JitStreamDesigner
             public const string REDO = "FeatureUndoRedo.REDO";
             public const string UNDO = "FeatureUndoRedo.UNDO";
             public const string SET = "FeatureUndoRedo.SET";
+            public const string QUEUE_CONSUMPTION = "FeatureUndoRedo.QUEUE_CONSUMPTION";
         }
         private TButton UndoButton = null, RedoButton = null;
         private Color ButtonForegroundColor = Colors.White;
@@ -68,25 +71,7 @@ namespace JitStreamDesigner
             token.TemplateChip.UndoStream.Add(token.JacUndo);
 
             token.TemplateChip.UndoRedoRequestedPointer++;
-            Token.Finalize(MoveCurrentPointer);
-        }
-
-        /// <summary>
-        /// Undo / Redo pointer move
-        /// </summary>
-        private void MoveCurrentPointer()
-        {
-            var dir = MathUtil.Sgn(Hot.ActiveTemplate.UndoRedoRequestedPointer - Hot.ActiveTemplate.UndoRedoCurrenttPointer);
-            while (Hot.ActiveTemplate.UndoRedoCurrenttPointer != Hot.ActiveTemplate.UndoRedoRequestedPointer && dir != 0)
-            {
-                string jac = dir > 0 ? Hot.ActiveTemplate.RedoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer] : Hot.ActiveTemplate.UndoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer];
-
-                Hot.ActiveTemplate.Jac.Exec(jac);
-                Hot.ActiveTemplate.UndoRedoCurrenttPointer += dir;
-            }
-
-            ButtonEnable(UndoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer > 0);
-            ButtonEnable(RedoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer < Hot.ActiveTemplate.RedoStream.Count);
+            QueueConsumptionTask(null);
         }
 
         [EventCatch(Name = "UndoButton")]
@@ -99,7 +84,7 @@ namespace JitStreamDesigner
             }
 
             Hot.ActiveTemplate.UndoRedoRequestedPointer--;
-            Token.Finalize(MoveCurrentPointer);
+            QueueConsumptionTask(null);
         }
 
         [EventCatch(Name = "RedoButton")]
@@ -112,14 +97,51 @@ namespace JitStreamDesigner
             }
 
             Hot.ActiveTemplate.UndoRedoRequestedPointer++;
+            QueueConsumptionTask(null);
+        }
+
+        [EventCatch(TokenID = TOKEN.QUEUE_CONSUMPTION)]
+        public void QueueConsumptionTask(EventUndoRedoQueueConsumptionTokenTrigger token)
+        {
             Token.Finalize(MoveCurrentPointer);
+        }
+
+        /// <summary>
+        /// Undo / Redo pointer move
+        /// </summary>
+        private void MoveCurrentPointer()
+        {
+            var dir = MathUtil.Sgn(Hot.ActiveTemplate.UndoRedoRequestedPointer - Hot.ActiveTemplate.UndoRedoCurrenttPointer);
+            while (Hot.ActiveTemplate.UndoRedoCurrenttPointer != Hot.ActiveTemplate.UndoRedoRequestedPointer && dir != 0)
+            {
+                var jac = dir > 0 ? Hot.ActiveTemplate.RedoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer] : Hot.ActiveTemplate.UndoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer];
+                Hot.ActiveTemplate.Jac.Exec(jac);
+                Hot.ActiveTemplate.UndoRedoCurrenttPointer += dir;
+            }
+
+            ButtonEnable(UndoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer > 0);
+            ButtonEnable(RedoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer < Hot.ActiveTemplate.RedoStream.Count);
         }
     }
 
+    /// <summary>
+    /// Set Undo/Redo and activate queue consumption task
+    /// </summary>
     public class EventSetUndoRedoTokenTrigger : EventTokenTrigger
     {
         public TemplateTipModel TemplateChip { get; set; }
         public string JacUndo { get; set; }
         public string JacRedo { get; set; }
+    }
+
+    /// <summary>
+    /// To activate queue consumption task
+    /// </summary>
+    public class EventUndoRedoQueueConsumptionTokenTrigger : EventTokenTrigger
+    {
+        public EventUndoRedoQueueConsumptionTokenTrigger()
+        {
+            TokenID = FeatureUndoRedo.TOKEN.QUEUE_CONSUMPTION;
+        }
     }
 }

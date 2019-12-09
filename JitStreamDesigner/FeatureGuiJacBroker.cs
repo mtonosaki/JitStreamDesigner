@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Tono;
@@ -19,12 +20,57 @@ namespace JitStreamDesigner
     [JacTarget(Name = "GuiBroker")]
     public class FeatureGuiJacBroker : FeatureSimulatorBase
     {
-        private Queue<Action> Actions = new Queue<Action>();
+        private LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
         public override void OnInitialInstance()
         {
             Hot.TheBroker = this;
-            DelayUtil.Start(TimeSpan.FromMilliseconds(50), ActionQueueProc);
+            WaitNext(true);
+        }
+        bool IsOptimized = false;
+
+        private void Optimize()
+        {
+            if (IsOptimized) return;
+
+            bool isClearAll = false;
+            var updatedIds = new Dictionary<string/*Parts.ID*/, bool>();
+            var dels = new List<LinkedListNode<(string Remarks, Action Act)>>();
+            for (var node = Actions.Last; node != null; node = node.Previous)
+            {
+                var ops = node.Value.Remarks.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (ops.Length >= 2)
+                {
+                    switch (ops[0])
+                    {
+                        case "ClearAllSelection":
+                            if (isClearAll == false)
+                            {
+                                isClearAll = true;
+                            }
+                            else
+                            {
+                                dels.Add(node);
+                            }
+                            break;
+                        case "UpdateLocation":
+                            if (updatedIds.ContainsKey(ops[1]))
+                            {
+                                dels.Add(node);
+                            }
+                            else
+                            {
+                                updatedIds[ops[1]] = true;
+                            }
+                            break;
+                    }
+                }
+            }
+            foreach (var del in dels)
+            {
+                Actions.Remove(del);
+            }
+            IsOptimized = true;
         }
 
         private void ActionQueueProc()
@@ -35,13 +81,18 @@ namespace JitStreamDesigner
             }
             else
             {
-                Actions.Dequeue()?.Invoke();
+                Optimize();
+
+                var item = Actions.First;
+                Actions.RemoveFirst();
+
+                item.Value.Act.Invoke();
             }
         }
 
         private void WaitNext(bool isSlow = false)
         {
-            DelayUtil.Start(TimeSpan.FromMilliseconds(isSlow ? 200 : 50), ActionQueueProc);
+            DelayUtil.Start(TimeSpan.FromMilliseconds(isSlow ? 100 : 0), ActionQueueProc);
         }
 
         [JacGetDotValue]
@@ -50,18 +101,39 @@ namespace JitStreamDesigner
             throw new JacException(JacException.Codes.SyntaxError, $"Cannot get a GuiBroker's property");
         }
 
+        private string MakeRemarks(string varname, object value)
+        {
+            if (value is JitProcess process)
+            {
+                return $"{varname} {process.ID} // Process";
+            }
+            return $"{varname} = {value} // not a Jit Object";
+        }
+
         [JacSetDotValue]
         public void SetChildValue(string varname, object value)
         {
             var me = typeof(FeatureGuiJacBroker).GetMethod(varname);
             if (me != null)
             {
-                Actions.Enqueue(() => me.Invoke(this, new object[] { value }));
+                Actions.AddLast((MakeRemarks(varname, value), () => me.Invoke(this, new object[] { value })));
+                IsOptimized = false;
             }
             else
             {
                 throw new JacException(JacException.Codes.NotImplementedMethod, $"Method '{varname}' is not implement in FeatureGuiJacBroker yet.");
             }
+        }
+
+        private bool isBatchMode = false;
+
+        public void BatchMode(object value)
+        {
+            if (value is bool sw)
+            {
+                isBatchMode = sw;
+            }
+            WaitNext();
         }
 
         /// <summary>
@@ -79,7 +151,7 @@ namespace JitStreamDesigner
                     TokenID = FeatureJitTemplateListPanel.TOKEN.TemplateSelectionChanged,
                     Sender = this,
                     Remarks = DateTime.Now.ToString(),
-                }); ;
+                });
                 Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
             }
             else
@@ -103,7 +175,7 @@ namespace JitStreamDesigner
                     Sender = this,
                 });
             }
-            WaitNext();
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
         }
 
         /// <summary>
@@ -121,7 +193,7 @@ namespace JitStreamDesigner
                     Sender = this,
                 });
             }
-            WaitNext();
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
         }
 
         /// <summary>
@@ -143,19 +215,22 @@ namespace JitStreamDesigner
         /// <summary>
         /// Gui.ClearAllSelection = dummy
         /// </summary>
-        /// <param name="value">ignore</param>
+        /// <param name="value">dummy</param>
         public void ClearAllSelection(object value)
         {
             var n = 0;
-            foreach (var pt in Parts.GetParts<ISelectableParts>(LAYER.JitProcess))
+            foreach (var layer in LAYER.JitObjects)
             {
-                if( pt.IsSelected )
+                foreach (var pt in Parts.GetParts<ISelectableParts>(layer))
                 {
-                    pt.IsSelected = false;
-                    n++;
+                    if (pt.IsSelected)
+                    {
+                        pt.IsSelected = false;
+                        n++;
+                    }
                 }
             }
-            if( n > 0)
+            if (n > 0)
             {
                 Redraw();
             }

@@ -229,9 +229,6 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.9</Version>
     </PackageReference>
-    <PackageReference Include="Tono.Gui.Uwp">
-      <Version>1.0.17</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -240,6 +237,10 @@
     <PRIResource Include="Strings\ja-JP\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Tono\TonoGuiUwp\TonoGuiUwp.csproj">
+      <Project>{76364510-f444-4234-a59c-3b0ecf992837}</Project>
+      <Name>TonoGuiUwp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Tono\TonoJit\TonoJit.csproj">
       <Project>{0c59a7eb-eeaf-437f-81ea-f0dbea893191}</Project>
       <Name>TonoJit</Name>

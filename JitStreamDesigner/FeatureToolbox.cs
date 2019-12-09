@@ -95,7 +95,7 @@ namespace JitStreamDesigner
         private PartsToolButton checkSelect(PointerState po)
         {
             var selected = new List<PartsToolButton>();
-            foreach (PartsToolButton btn in Parts.GetParts(LAYER.ToolButtons, p => p is PartsToolButton sp))
+            foreach (var btn in Parts.GetParts<PartsToolButton>(LAYER.ToolButtons))
             {
                 if (btn.Rect.IsIn(po.Position))
                 {
