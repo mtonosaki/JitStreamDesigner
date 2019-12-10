@@ -40,10 +40,16 @@ namespace JitStreamDesigner
                 TokenID = FeatureUndoRedo.TOKEN.SET,
                 JacRedo = redoJac,
                 JacUndo = undoJac,
+                TemplateChip = Hot.ActiveTemplate,
                 Sender = this,
                 Remarks = $"{DateTime.Now}",
             });
         }
+
+        /// <summary>
+        /// Pane for Jit Model Parts
+        /// </summary>
+        public IDrawArea PaneJitParts { get => View; }
 
 
         public LayoutX DistancePositionerX(CodeX<Distance> x, CodeY<Distance> y)

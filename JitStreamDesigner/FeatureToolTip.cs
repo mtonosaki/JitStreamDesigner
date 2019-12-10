@@ -111,8 +111,10 @@ namespace Tono.Gui.Uwp
 
         private void findPartsForTooltip(PointerState po)
         {
-            var parts = Parts.GetParts(TargetLayer, p => p is ITooltipResponse ttr && ttr.SelectingScore(TargetPane, po.Position) <= 1.0f);
-            if (parts.FirstOrDefault() is ITooltipResponse tr)
+            var tr = Parts
+                .GetParts<ITooltipResponse>(TargetLayer, ttr => ttr.SelectingScore(TargetPane, po.Position) <= 1.0f)
+                .FirstOrDefault();
+            if (tr != null)
             {
                 var text = Mes.Get(tr.ToolTipUid);
                 if (tr.Equals(CurrentParts) == false && CurrentText != text)

@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
@@ -52,7 +54,8 @@ namespace JitStreamDesigner
         private FrameworkElement buttonStartText;
         private ProgressBar runningBar;
         private PartsClock ClockParts = null;
-        private DispatcherTimer _timer = null;
+        private DispatcherTimer _sim_clock_timer = null;
+        private DispatcherTimer _zero_ms_timer = null;
 
         public override void OnInitialInstance()
         {
@@ -65,8 +68,6 @@ namespace JitStreamDesigner
                 Clock_Running,
             });
             Status[ClockSwitch].Value = Clock_Stopping; // initial status
-
-
 
             // for Running Bar ON/OFF
             runningBar = (ProgressBar)ControlUtil.FindControl(View, "ClockRunning");
@@ -87,6 +88,19 @@ namespace JitStreamDesigner
             var _ = ClockParts.Seg7.Load7Seg();
 
             BlinkProc();
+
+            _zero_ms_timer = new DispatcherTimer();
+            _zero_ms_timer.Tick += _zero_ms_timer_Tick;
+            _zero_ms_timer.Interval = TimeSpan.FromMilliseconds(1000 - DateTime.Now.Millisecond);
+            _zero_ms_timer.Start();
+        }
+
+        private void _zero_ms_timer_Tick(object sender, object e)
+        {
+            _zero_ms_timer.Stop();
+            Redraw();
+            _zero_ms_timer.Interval = TimeSpan.FromMilliseconds(1000 - DateTime.Now.Millisecond);
+            _zero_ms_timer.Start();
         }
 
         private void BlinkProc()
@@ -97,7 +111,7 @@ namespace JitStreamDesigner
             };
             blinkTimer.Tick += (s, e) =>
             {
-                if (_timer == null)
+                if (_sim_clock_timer == null)
                 {
                     buttonStartText.Visibility = Visibility.Visible;
                 }
@@ -130,20 +144,20 @@ namespace JitStreamDesigner
                 new GradientStop{ Color = Color.FromArgb(255, 0, 48, 160), Offset = 1.0, },
             }, 90);
 
-            _timer = new DispatcherTimer
+            _sim_clock_timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(10),
             };
-            _timer.Tick += OnTick;
-            _timer.Start();
+            _sim_clock_timer.Tick += OnTick;
+            _sim_clock_timer.Start();
             LOG.WriteLine(LLV.INF, $"○ Clock Start : {DateTime.Now.ToString(TimeUtil.FormatYMDHMS)}");
         }
 
         [EventCatch(TokenID = TOKEN.ClockStop, Status = (ClockSwitch + "=" + Clock_Running))]
         public void ClockStop(EventTokenTrigger _)
         {
-            _timer.Stop();
-            _timer = null;
+            _sim_clock_timer.Stop();
+            _sim_clock_timer = null;
             Status[ClockSwitch].Value = Clock_Stopping;
             runningBar.Visibility = Visibility.Collapsed;
             buttonStart.Background = new SolidColorBrush(Colors.Black);
@@ -215,15 +229,15 @@ namespace JitStreamDesigner
         /// <param name="args"></param>
         private void OnTick(object sender, object args)
         {
-            if (_timer == null)    // Stop後にイベントが来た場合のポカヨケ
+            if (_sim_clock_timer == null)    // Stop後にイベントが来た場合のポカヨケ
             {
                 return;
             }
-            _timer.Stop();
+            _sim_clock_timer.Stop();
 
             UpdateSimulationTime(EventTokenDispatchTimerWrapper.From((DispatcherTimer)sender, this, "onTick"), this, Now + Hot.ClockTick);
-            _timer.Interval = TimeSpan.FromMilliseconds(10);
-            _timer.Start();
+            _sim_clock_timer.Interval = TimeSpan.FromMilliseconds(10);
+            _sim_clock_timer.Start();
         }
 
         /// <summary>

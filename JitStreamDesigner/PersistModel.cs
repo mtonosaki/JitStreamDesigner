@@ -25,28 +25,10 @@ namespace JitStreamDesigner
         public TimeSpan ClockTick { get; set; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
-        /// REDO Jac Queue
+        /// JitStreamDesigner template list
         /// </summary>
         [DataMember]
-        public List<string> RedoStream { get; set; } = new List<string>();
+        public TemplateTipCollection TemplateList { get; private set; } = new TemplateTipCollection();
 
-        /// <summary>
-        /// UNDO Jac Queue (First [0] data is a dummy)
-        /// </summary>
-        [DataMember]
-        public List<string> UndoStream { get; set; } = new List<string>();
-
-        /// <summary>
-        /// UNDO/REDO Current Pointer
-        /// </summary>
-        [DataMember]
-        public int UndoRedoCurrenttPointer { get; set; } = 0;
-
-        /// <summary>
-        /// UNDO/REDO Requested Pointer position
-        /// </summary>
-        [DataMember]
-        public int UndoRedoRequestedPointer { get; set; } = 0;
     }
-
 }

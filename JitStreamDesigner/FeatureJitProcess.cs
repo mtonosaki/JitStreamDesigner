@@ -40,7 +40,7 @@ namespace JitStreamDesigner
         public override void OnInitialInstance()
         {
             base.OnInitialInstance();
-            Pane.Target = Pane.Main;
+            Pane.Target = PaneJitParts;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace JitStreamDesigner
 
             CurrentParts = new PartsJitProcess
             {
-                Location = GetCoderPos(Pane.Target, token.Pointer),
+                Location = GetCoderPos(PaneJitParts, token.Pointer),
                 Width = Distance.FromMeter(2.0),
                 Height = Distance.FromMeter(2.0),
                 PositionerX = DistancePositionerX,
@@ -65,7 +65,7 @@ namespace JitStreamDesigner
                 CoderX = DistanceCoderX,
                 CoderY = DistanceCoderY,
             };
-            Parts.Add(Pane.Target, CurrentParts, LAYER.JitProcess);
+            Parts.Add(PaneJitParts, CurrentParts, LAYER.JitProcess);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace JitStreamDesigner
             }
 
             CurrentParts.DesignState = PartsJitBase.DesignStates.Positioning;
-            CurrentParts.Location = GetCoderPos(Pane.Target, token.Pointer);
+            CurrentParts.Location = GetCoderPos(PaneJitParts, token.Pointer);
             Redraw();
         }
 
@@ -97,7 +97,7 @@ namespace JitStreamDesigner
                 return;
             }
 
-            Parts.Remove(Pane.Target, CurrentParts, LAYER.JitProcess);  // delete temporary parts
+            Parts.Remove(PaneJitParts, CurrentParts, LAYER.JitProcess);  // delete temporary parts
             CurrentParts = null;
             Redraw();
         }
@@ -115,7 +115,7 @@ namespace JitStreamDesigner
             }
 
             CurrentParts.DesignState = PartsJitBase.DesignStates.Normal;
-            CurrentParts.Location = GetCoderPos(Pane.Main, token.Pointer);
+            CurrentParts.Location = GetCoderPos(PaneJitParts, token.Pointer);
             var processID = JacInterpreter.MakeID("Process");
             CurrentParts.ID = processID;
 
@@ -129,8 +129,7 @@ namespace JitStreamDesigner
                             LocationY = {CurrentParts.Location.Y.Cy.m}m
                             Width = {CurrentParts.Width.m}m
                             Height = {CurrentParts.Height.m}m
-                            IsSelected = true
-                Gui.Template = '{Hot.ActiveTemplate.ID}'
+                Gui.ClearAllSelection = true
                 Gui.CreateProcess = '{processID}'
             ";
             var jacundo = 
@@ -143,7 +142,7 @@ namespace JitStreamDesigner
             SetNewAction(token, jacredo, jacundo);
 
             // remove toolbox parts. (Expecting to be created by REDO processor)
-            Parts.Remove(Pane.Target, CurrentParts, LAYER.JitProcess);
+            Parts.Remove(PaneJitParts, CurrentParts, LAYER.JitProcess);
             CurrentParts = null;
         }
 
@@ -160,9 +159,8 @@ namespace JitStreamDesigner
                 PositionerY = DistancePositionerY,
                 CoderX = DistanceCoderX,
                 CoderY = DistanceCoderY,
-                IsSelected = DbUtil.ToBoolean(token.Process.ChildVriables["IsSelected"].Value),
             };
-            Parts.Add(Pane.Target, pt, LAYER.JitProcess);
+            Parts.Add(PaneJitParts, pt, LAYER.JitProcess);
             Redraw();
         }
 
@@ -171,7 +169,7 @@ namespace JitStreamDesigner
         {
             foreach (var pt in Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.ID == token.Process.ID))
             {
-                Parts.Remove(Pane.Target, pt, LAYER.JitProcess);
+                Parts.Remove(PaneJitParts, pt, LAYER.JitProcess);
             }
             Redraw();
         }
@@ -179,21 +177,21 @@ namespace JitStreamDesigner
         [EventCatch(TokenID = TokensGeneral.PartsMoved)]
         public void PartsMoved(EventTokenPartsMovedTrigger token)
         {
-            var jacundo = new StringBuilder();
-            var jacredo = new StringBuilder();
-            jacundo.AppendLine("Gui.ClearAllSelection = true");
-            jacredo.AppendLine("Gui.ClearAllSelection = true");
+            var jacUndo = new StringBuilder();
+            var jacRedo = new StringBuilder();
+            jacUndo.AppendLine("Gui.ClearAllSelection = true");
+            jacRedo.AppendLine("Gui.ClearAllSelection = true");
             foreach (PartsJitProcess pt in token.Parts.Where(a => a is PartsJitProcess))
             {
-                jacredo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
-                jacredo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
-                jacredo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
+                jacRedo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
+                jacRedo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
+                jacRedo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
 
-                jacundo.AppendLine($@"{pt.ID}.LocationX = {pt.OriginalPosition.X.Cx.m}m");
-                jacundo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
-                jacundo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
+                jacUndo.AppendLine($@"{pt.ID}.LocationX = {pt.OriginalPosition.X.Cx.m}m");
+                jacUndo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
+                jacUndo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
             }
-            SetNewAction(token, jacredo.ToString(), jacundo.ToString());
+            SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
         }
     }
 

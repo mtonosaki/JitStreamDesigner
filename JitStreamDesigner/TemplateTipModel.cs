@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
@@ -46,8 +47,32 @@ namespace JitStreamDesigner
         [IgnoreDataMember]
         public JitTemplate Template { get; set; } = new JitTemplate();
 
+        /// <summary>
+        /// REDO Jac Queue
+        /// </summary>
+        [DataMember]
+        public List<string> RedoStream { get; set; } = new List<string>();
+
+        /// <summary>
+        /// UNDO Jac Queue
+        /// </summary>
+        [DataMember]
+        public List<string> UndoStream { get; set; } = new List<string>();
+
+        /// <summary>
+        /// UNDO/REDO Current Pointer
+        /// </summary>
+        [DataMember]
+        public int UndoRedoCurrenttPointer { get; set; }
+
+        /// <summary>
+        /// UNDO/REDO Requested Pointer position
+        /// </summary>
+        [DataMember]
+        public int UndoRedoRequestedPointer { get; set; }
 
 
+        [IgnoreDataMember]
         private static readonly Regex hexpattern = new Regex("^[0-9,a-f,A-F]+$");
 
         /// <summary>

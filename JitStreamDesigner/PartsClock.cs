@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Manabu Tonosaki All rights reserved.
 // Licensed under the MIT license.
 
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
+using Windows.UI;
+using Windows.UI.Text;
 
 namespace JitStreamDesigner
 {
@@ -37,6 +40,15 @@ namespace JitStreamDesigner
                 var timestr = $"{now.Year}.!{StrUtil.Right($"_{now.Month}", 2)}.!{StrUtil.Right($"_{now.Day}", 2)}_{StrUtil.Right($"_{now.Hour}", 2)}\b:\b{StrUtil.Right($"0{now.Minute}", 2)}\b:\b{StrUtil.Right($"0{now.Second}", 2)}";
                 Seg7.Draw(dp, timestr, pos, Height);
             }
+
+            // Current Local Time
+            dp.Graphics.DrawText($"Actual time : {DateTime.Now.ToString(TimeUtil.FormatYMDHMS)}", dp.PaneRect.R - ScreenX.From(64), pos.Y - ScreenY.From(24), Colors.DarkGray, new CanvasTextFormat
+            {
+                FontFamily = "Tahoma",
+                FontSize = 11f,
+                FontWeight = FontWeights.Normal,
+                HorizontalAlignment = CanvasHorizontalAlignment.Right,
+            });
         }
     }
 }

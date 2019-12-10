@@ -36,6 +36,7 @@ namespace JitStreamDesigner
             if (IsSelected)
             {
                 dp.Graphics.DrawRectangle(_(sr), SelectingColor, 4f);
+                dp.Graphics.FillRectangle(_(sr), SelectingColor);
             }
             dp.Graphics.DrawRectangle(_(sr), GetColor(dp));
 

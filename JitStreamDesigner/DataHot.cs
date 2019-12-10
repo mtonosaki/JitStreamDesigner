@@ -28,24 +28,9 @@ namespace JitStreamDesigner
         public TimeSpan ClockTick { get => PersistTarget.ClockTick; set => PersistTarget.ClockTick = value; }
 
         /// <summary>
-        /// REDO Jac Queue
+        /// JitStreamDesigner template list
         /// </summary>
-        public List<string> RedoStream { get => PersistTarget.RedoStream; set => PersistTarget.RedoStream = value; }
-
-        /// <summary>
-        /// UNDO Jac Queue
-        /// </summary>
-        public List<string> UndoStream { get => PersistTarget.UndoStream; set => PersistTarget.UndoStream = value; }
-
-        /// <summary>
-        /// UNDO/REDO Current Pointer
-        /// </summary>
-        public int UndoRedoCurrenttPointer { get => PersistTarget.UndoRedoCurrenttPointer; set => PersistTarget.UndoRedoCurrenttPointer = value; }
-
-        /// <summary>
-        /// UNDO/REDO Requested Pointer position
-        /// </summary>
-        public int UndoRedoRequestedPointer { get => PersistTarget.UndoRedoRequestedPointer; set => PersistTarget.UndoRedoRequestedPointer = value; }
+        public TemplateTipCollection TemplateList { get => PersistTarget.TemplateList; }
 
         /// <summary>
         /// Calclate Simulation time
@@ -57,10 +42,6 @@ namespace JitStreamDesigner
             return SimStartTime + span;
         }
 
-        /// <summary>
-        /// JitStreamDesigner template list
-        /// </summary>
-        public TemplateTipCollection TemplateList { get; private set; } = new TemplateTipCollection();
 
         /// <summary>
         /// JitStreamDesigner Template target (GUI)

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Manabu Tonosaki All rights reserved.
 // Licensed under the MIT license.
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Tono;
 using Tono.Gui.Uwp;
 using Tono.Jit;
@@ -21,6 +23,7 @@ namespace JitStreamDesigner
             public const string REDO = "FeatureUndoRedo.REDO";
             public const string UNDO = "FeatureUndoRedo.UNDO";
             public const string SET = "FeatureUndoRedo.SET";
+            public const string QUEUE_CONSUMPTION = "FeatureUndoRedo.QUEUE_CONSUMPTION";
         }
         private TButton UndoButton = null, RedoButton = null;
         private Color ButtonForegroundColor = Colors.White;
@@ -37,7 +40,6 @@ namespace JitStreamDesigner
             ButtonEnable(RedoButton, false);
 
             JacInterpreter.RegisterJacTarget(typeof(FeatureGuiJacBroker).Assembly);
-            Hot.UndoStream.Add("// no action here");
         }
 
         /// <summary>
@@ -61,14 +63,46 @@ namespace JitStreamDesigner
         public void Set(EventSetUndoRedoTokenTrigger token)
         {
             // Cut pro-queue data
-            Hot.RedoStream.RemoveRange(Hot.UndoRedoCurrenttPointer, Hot.RedoStream.Count - Hot.UndoRedoCurrenttPointer);
-            Hot.UndoStream.RemoveRange(Hot.UndoRedoCurrenttPointer + 1, Hot.UndoStream.Count - Hot.UndoRedoCurrenttPointer - 1);
+            token.TemplateChip.RedoStream.RemoveRange(token.TemplateChip.UndoRedoCurrenttPointer, token.TemplateChip.RedoStream.Count - token.TemplateChip.UndoRedoCurrenttPointer);
+            token.TemplateChip.UndoStream.RemoveRange(token.TemplateChip.UndoRedoCurrenttPointer + 1, token.TemplateChip.UndoStream.Count - token.TemplateChip.UndoRedoCurrenttPointer - 1);
 
             // add queue
-            Hot.RedoStream.Add(token.JacRedo);
-            Hot.UndoStream.Add(token.JacUndo);
+            token.TemplateChip.RedoStream.Add(token.JacRedo);
+            token.TemplateChip.UndoStream.Add(token.JacUndo);
 
-            Hot.UndoRedoRequestedPointer++;
+            token.TemplateChip.UndoRedoRequestedPointer++;
+            QueueConsumptionTask(null);
+        }
+
+        [EventCatch(Name = "UndoButton")]
+        public void Undo(EventTokenButton token)
+        {
+            if (Hot.ActiveTemplate.UndoRedoCurrenttPointer < 1)
+            {
+                LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoUndo").Solo();
+                return;
+            }
+
+            Hot.ActiveTemplate.UndoRedoRequestedPointer--;
+            QueueConsumptionTask(null);
+        }
+
+        [EventCatch(Name = "RedoButton")]
+        public void Redo(EventTokenButton token)
+        {
+            if (Hot.ActiveTemplate.UndoRedoCurrenttPointer > Hot.ActiveTemplate.RedoStream.Count - 1)
+            {
+                LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoRedo").Solo();
+                return;
+            }
+
+            Hot.ActiveTemplate.UndoRedoRequestedPointer++;
+            QueueConsumptionTask(null);
+        }
+
+        [EventCatch(TokenID = TOKEN.QUEUE_CONSUMPTION)]
+        public void QueueConsumptionTask(EventUndoRedoQueueConsumptionTokenTrigger token)
+        {
             Token.Finalize(MoveCurrentPointer);
         }
 
@@ -77,49 +111,37 @@ namespace JitStreamDesigner
         /// </summary>
         private void MoveCurrentPointer()
         {
-            var dir = MathUtil.Sgn(Hot.UndoRedoRequestedPointer - Hot.UndoRedoCurrenttPointer);
-            while (Hot.UndoRedoCurrenttPointer != Hot.UndoRedoRequestedPointer && dir != 0)
+            var dir = MathUtil.Sgn(Hot.ActiveTemplate.UndoRedoRequestedPointer - Hot.ActiveTemplate.UndoRedoCurrenttPointer);
+            while (Hot.ActiveTemplate.UndoRedoCurrenttPointer != Hot.ActiveTemplate.UndoRedoRequestedPointer && dir != 0)
             {
-                string jac = dir > 0 ? Hot.RedoStream[Hot.UndoRedoCurrenttPointer] : Hot.UndoStream[Hot.UndoRedoCurrenttPointer];
-
+                var jac = dir > 0 ? Hot.ActiveTemplate.RedoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer] : Hot.ActiveTemplate.UndoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer];
                 Hot.ActiveTemplate.Jac.Exec(jac);
-                Hot.UndoRedoCurrenttPointer += dir;
+                Hot.ActiveTemplate.UndoRedoCurrenttPointer += dir;
             }
 
-            ButtonEnable(UndoButton, Hot.UndoRedoCurrenttPointer > 0);
-            ButtonEnable(RedoButton, Hot.UndoRedoCurrenttPointer < Hot.RedoStream.Count);
-        }
-
-        [EventCatch(Name = "UndoButton")]
-        public void Undo(EventTokenButton token)
-        {
-            if (Hot.UndoRedoCurrenttPointer < 1)
-            {
-                LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoUndo").Solo();
-                return;
-            }
-
-            Hot.UndoRedoRequestedPointer--;
-            Token.Finalize(MoveCurrentPointer);
-        }
-
-        [EventCatch(Name = "RedoButton")]
-        public void Redo(EventTokenButton token)
-        {
-            if (Hot.UndoRedoCurrenttPointer > Hot.RedoStream.Count - 1)
-            {
-                LOG.AddMes(LLV.WAR, "FeatureUndoRedo-NoRedo").Solo();
-                return;
-            }
-
-            Hot.UndoRedoRequestedPointer++;
-            Token.Finalize(MoveCurrentPointer);
+            ButtonEnable(UndoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer > 0);
+            ButtonEnable(RedoButton, Hot.ActiveTemplate.UndoRedoCurrenttPointer < Hot.ActiveTemplate.RedoStream.Count);
         }
     }
 
+    /// <summary>
+    /// Set Undo/Redo and activate queue consumption task
+    /// </summary>
     public class EventSetUndoRedoTokenTrigger : EventTokenTrigger
     {
+        public TemplateTipModel TemplateChip { get; set; }
         public string JacUndo { get; set; }
         public string JacRedo { get; set; }
+    }
+
+    /// <summary>
+    /// To activate queue consumption task
+    /// </summary>
+    public class EventUndoRedoQueueConsumptionTokenTrigger : EventTokenTrigger
+    {
+        public EventUndoRedoQueueConsumptionTokenTrigger()
+        {
+            TokenID = FeatureUndoRedo.TOKEN.QUEUE_CONSUMPTION;
+        }
     }
 }

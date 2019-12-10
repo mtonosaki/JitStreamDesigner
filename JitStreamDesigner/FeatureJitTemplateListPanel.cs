@@ -56,9 +56,11 @@ namespace JitStreamDesigner
             DelayUtil.Start(TimeSpan.FromMilliseconds(200), () =>
             {
                 AddTemplateChip("@Default", Colors.Yellow, "Free GUI space");
+                AddTemplateChip("@Test", Colors.Blue, "Test Template");
+                TargetListView.SelectedItem = Hot.TemplateList.First();   // auto select the new item
             });
 
-            // Draw preparation
+            // Template Name Parts
             Pane.Target = Pane["LogPanel"]; // to get priority draw layer
             BarParts = new PartsActiveTemplate
             {
@@ -67,20 +69,19 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// List selection change UWP Control event handling
-        /// To change UWP event to token trigger
+        /// UWP Control event handling : List selection change 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void TargetListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Bridge from UWP event to Gui.Token
             var tar = e.AddedItems.LastOrDefault() as TemplateTipModel;
             if (tar != Hot.ActiveTemplate)
             {
                 Token.AddNew(new EventTokenTemplateChangedTrigger
                 {
                     TargetTemplate = tar,
-                    TokenID = TOKEN.TemplateSelectionChanged,
                     Sender = this,
                     Remarks = "Select changed List View to change active template",
                 });
@@ -97,16 +98,36 @@ namespace JitStreamDesigner
         {
             if (ReferenceEquals(Hot.ActiveTemplate, token.TargetTemplate)) return;
 
+            // Prepare template parts desig
             Hot.ActiveTemplate = token.TargetTemplate;
             BarParts.Text = Hot.ActiveTemplate?.Name;
             BarParts.BackgroundColor = Hot.ActiveTemplate.AccentColor;
             BarParts.Remarks = Hot.ActiveTemplate?.Remarks;
-            Redraw();
 
-            if (object.ReferenceEquals(TargetListView.SelectedItem, token.TargetTemplate) == false)
+            // Rebuild Gui Parts
+            foreach (var tarlayer in LAYER.JitObjects)
+            {
+                foreach (var pt in Parts.GetParts(tarlayer))
+                {
+                    Parts.Remove(PaneJitParts, pt, tarlayer);
+                }
+            }
+
+            // Rebuild Jac and Template
+            ResetJac(Hot.ActiveTemplate);
+            Hot.ActiveTemplate.UndoRedoCurrenttPointer = 0;
+            Token.Link(token, new EventUndoRedoQueueConsumptionTokenTrigger
+            {
+                Sender = this,
+                Remarks = "Template Changed",
+            });
+
+            // neet to exec by Token instead of ListChip Selected
+            if (ReferenceEquals(TargetListView.SelectedItem, token.TargetTemplate) == false)
             {
                 TargetListView.SelectedItem = token.TargetTemplate; // for if not called TargetListView_SelectionChanged
             }
+            Redraw();
         }
 
         /// <summary>
@@ -127,21 +148,32 @@ namespace JitStreamDesigner
                 Remarks = remarks,
                 Jac = new JacInterpreter(),
             };
+            te.UndoStream.Add("// no action here");
+            ResetJac(te);
+            Hot.TemplateList.Add(te);
+        }
+
+        private void ResetJac(TemplateTipModel te)
+        {
+            te.Jac.Reset();
+
             var jac = $@"
                 TheStage = new Stage
-                    Name = '{templateName}'
-                    AccentColor = {accentColor.ToString()}
-                    Remarks = '{remarks}'
+                    Name = '{te.Template.Name}'
+                    AccentColor = {te.AccentColor.ToString()}
+                    Remarks = '{te.Remarks}'
             ";
             te.Jac.Exec(jac);
             te.Jac["Gui"] = Hot.TheBroker;
-
-            Hot.TemplateList.Add(te);
-            TargetListView.SelectedItem = te;   // auto select the new item
         }
 
+        /// <summary>
+        /// Xaml Button Click Event of Add Template
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [EventCatch]
-        public async Task AddTemplate(EventTokenButton token)
+        public async Task AddTemplateButton(EventTokenButton token)
         {
             try
             {
@@ -172,6 +204,11 @@ namespace JitStreamDesigner
     public class EventTokenTemplateChangedTrigger : EventTokenTrigger
     {
         public TemplateTipModel TargetTemplate { get; set; }
+
+        public EventTokenTemplateChangedTrigger()
+        {
+            TokenID = FeatureJitTemplateListPanel.TOKEN.TemplateSelectionChanged;
+        }
     }
 
     /// <summary>
