@@ -39,6 +39,15 @@ namespace JitStreamDesigner
             {
                 var timestr = $"{now.Year}.!{StrUtil.Right($"_{now.Month}", 2)}.!{StrUtil.Right($"_{now.Day}", 2)}_{StrUtil.Right($"_{now.Hour}", 2)}\b:\b{StrUtil.Right($"0{now.Minute}", 2)}\b:\b{StrUtil.Right($"0{now.Second}", 2)}";
                 Seg7.Draw(dp, timestr, pos, Height);
+
+                // Sim Time Caption
+                dp.Graphics.DrawText($"Sim time :", pos.X - ScreenX.From(8), pos.Y + ScreenY.From(20), Colors.Cyan, new CanvasTextFormat
+                {
+                    FontFamily = "Tahoma",
+                    FontSize = 11f,
+                    FontWeight = FontWeights.Normal,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Right,
+                });
             }
 
             // Current Local Time

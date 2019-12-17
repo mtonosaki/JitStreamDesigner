@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Manabu Tonosaki All rights reserved.
 // Licensed under the MIT license.
 
+using Newtonsoft.Json;
 using System;
 using Tono.Gui.Uwp;
 using Windows.UI.Xaml.Controls;

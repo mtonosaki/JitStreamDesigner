@@ -17,8 +17,6 @@
             <local:DataHot />
         </tg:TGuiView.DataHot>
         <tg:TGuiView.Features>
-            <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
-            <local:FeatureJitTemplateListPanel ListeningButtonNames="ButtonAddTemplate" TargetListView="{x:Bind TemplateList}"/>
             <local:FeatureToolbox>
                 <local:FeatureToolbox.Buttons>
                     <local:PartsToolButtonProcess Name="Process" ToolTipUid="PartsToolButtonProcess" />
@@ -27,13 +25,6 @@
                     <local:PartsToolButtonKanban Name="Kanban" ToolTipUid="PartsToolButtonKanban" />
                 </local:FeatureToolbox.Buttons>
             </local:FeatureToolbox>
-            <local:FeatureJitProcess />
-            <local:FeatureUndoRedo ListeningButtonNames="UndoButton,RedoButton" />
-            <local:FeatureGuiJacBroker />
-            <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
-            <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
-            <tg:FeatureScrollDrag />
-            <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
             <tg:FeatureToolTip 
                 TargetPane="{x:Bind ToolBox}" TargetLayer="{x:Bind local:LAYER.ToolButtons}"
                 TooltipPane="{x:Bind ToolBox}" TooltipLayer="{x:Bind tg:FeatureToolTip.DefaultLayer}">
@@ -41,9 +32,19 @@
                     <tg:PartsTooltip />
                 </tg:FeatureToolTip.PartsTooltip>
             </tg:FeatureToolTip>
+            <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
+            <local:FeatureJitTemplateListPanel ListeningButtonNames="ButtonAddTemplate" TargetListView="{x:Bind TemplateList}"/>
+            <local:FeatureJitProcess />
+            <local:FeatureUndoRedo ListeningButtonNames="UndoButton,RedoButton" />
+            <local:FeatureGuiJacBroker />
+            <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
+            <tg:FeatureScrollDrag />
+            <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
             <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
             <tg:FeatureMoveSelectedParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
             <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
+            <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
+            <local:FeatureSaveStudy ListeningButtonNames="SaveStudyButton" />
         </tg:TGuiView.Features>
         <tg:TGuiView.ContextFlyout>
             <MenuFlyout>
@@ -69,14 +70,16 @@
                         <RowDefinition Height="36" />
                         <RowDefinition Height="36" />
                         <RowDefinition Height="36" />
+                        <RowDefinition Height="36" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Uid="LabelOpen"      FontSize="12" Grid.Row="0" FlowDirection="RightToLeft" />
-                    <TextBlock x:Uid="LabelTemplateMode" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
-                    <TextBlock x:Uid="LabelStageMode" FontSize="12" Grid.Row="2" FlowDirection="RightToLeft" />
+                    <TextBlock x:Uid="LabelOpen" FontSize="12" Grid.Row="0" FlowDirection="RightToLeft" />
+                    <TextBlock x:Uid="LabelSave" FontSize="12" Grid.Row="1" FlowDirection="RightToLeft" />
+                    <TextBlock x:Uid="LabelTemplateMode" FontSize="12" Grid.Row="2" FlowDirection="RightToLeft" />
+                    <TextBlock x:Uid="LabelStageMode" FontSize="12" Grid.Row="3" FlowDirection="RightToLeft" />
                     <tg:TButton Name="ButtonAddTemplate" x:Uid="ButtonAddTemplate" 
-                                Grid.Row="4" 
+                                Grid.Row="5" 
                                 Content="Add new template" 
                                 Margin="4,4,4,4"
                                 HorizontalAlignment="Left" 
@@ -85,7 +88,7 @@
                               CanReorderItems="True" AllowDrop="True"
                               IsMultiSelectCheckBoxEnabled="False"
                               SingleSelectionFollowsFocus="True"
-                              Grid.Row="3">
+                              Grid.Row="4">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="x:String">
                                 <StackPanel Orientation="Horizontal">
@@ -143,6 +146,14 @@
                 <FontIcon FontFamily="Segoe UI Symbol" Glyph="&#xe132;" HorizontalAlignment="Center" VerticalAlignment="Center" FocusVisualPrimaryBrush="{x:Null}" Width="32" Height="32" FontSize="18" Opacity="0.75"/>
                 <tg:TButton.KeyboardAccelerators>
                     <KeyboardAccelerator Modifiers="Control" Key="O"/>
+                </tg:TButton.KeyboardAccelerators>
+            </tg:TButton>
+            <tg:TButton Name="SaveStudyButton" x:Uid="SaveStudyButton"
+                        Margin="0,4,0,0"
+                        Background="Transparent" Height="32" Width="48" >
+                <FontIcon FontFamily="Segoe UI Symbol" Glyph="&#xe19c;" HorizontalAlignment="Center" VerticalAlignment="Center" FocusVisualPrimaryBrush="{x:Null}" Width="32" Height="32" FontSize="18" Opacity="0.75"/>
+                <tg:TButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="S"/>
                 </tg:TButton.KeyboardAccelerators>
             </tg:TButton>
             <Button x:Uid="ButtonTemplateMode" 
