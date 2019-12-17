@@ -45,6 +45,7 @@
             <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <local:FeatureSaveStudy ListeningButtonNames="SaveStudyButton" />
+            <local:FeatureOpenStudy ListeningButtonNames="OpenStudyButton" />
         </tg:TGuiView.Features>
         <tg:TGuiView.ContextFlyout>
             <MenuFlyout>

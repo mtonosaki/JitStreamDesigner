@@ -42,13 +42,13 @@
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="jitstreamdesigner.model.study.json.jmj">
+          <uap:FileTypeAssociation Name="jitstreamdesigner.model.study.json.jmt">
             <uap:SupportedFileTypes>
-              <uap:FileType ContentType="text/json">.jmj</uap:FileType>
+              <uap:FileType ContentType="text/json">.jmt</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Jit Stream Designer Model/Study File</uap:DisplayName>
             <uap:Logo>@Res\JitStreamDesignerIcon44.png</uap:Logo>
-            <uap:InfoTip>Design your new operations with Just-in-time model</uap:InfoTip>
+            <uap:InfoTip>Design your new operations with Just-in-time model Text format</uap:InfoTip>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

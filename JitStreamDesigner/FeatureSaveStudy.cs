@@ -25,7 +25,7 @@ namespace JitStreamDesigner
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 SuggestedFileName = $"Jit Model {(DateTime.Now.ToString("yyyyMMdd-HHmmss"))}",
             };
-            fd.FileTypeChoices.Add("Jit Stream Designer", new List<string>() { ".jmj", ".josn", ".txt" });
+            fd.FileTypeChoices.Add("Jit Stream Designer", new List<string>() { ".jmt", ".json", ".txt" });
             var file = await fd.PickSaveFileAsync();
             await WriteAsJson(file);
             LOG.AddMes(LLV.INF, "FeatureSaveStudy-SaveCompletely", file.Name, file.Path);
@@ -44,7 +44,7 @@ namespace JitStreamDesigner
             sb.AppendLine("JitStreamDesigner jmt File");
             sb.AppendLine($"{{\"FormatVersion\":1.0}}");
             sb.AppendLine(SEPARATOR);
-            sb.AppendLine($"{{ \"TemplateList.Count\":{Hot.TemplateList.Count} }}");
+            sb.AppendLine($"{{\"TemplateList.Count\":{Hot.TemplateList.Count}}}");
             foreach (var temp in Hot.TemplateList)
             {
                 sb.AppendLine(SEPARATOR);
@@ -52,7 +52,17 @@ namespace JitStreamDesigner
                 sb.AppendLine(json);
             }
             sb.AppendLine(SEPARATOR);
-            sb.AppendLine($"{{ \"ActiveTemplate.ID\":{Hot.ActiveTemplate.ID} }}");
+            sb.AppendLine($"{{\"ActiveTemplate.ID\":\"{Hot.ActiveTemplate.ID}\"}}");
+            sb.AppendLine(SEPARATOR);
+            sb.AppendLine($"{{\"View.ScrollX\":\"{Pane.Main.ScrollX}\"}}");
+            sb.AppendLine(SEPARATOR);
+            sb.AppendLine($"{{\"View.ScrollY\":\"{Pane.Main.ScrollY}\"}}");
+            sb.AppendLine(SEPARATOR);
+            sb.AppendLine($"{{\"View.ZoomX\":\"{Pane.Main.ZoomX}\"}}");
+            sb.AppendLine(SEPARATOR);
+            sb.AppendLine($"{{\"View.ZoomY\":\"{Pane.Main.ZoomX}\"}}");
+            sb.AppendLine(SEPARATOR);
+            sb.AppendLine($"{{\"Sim.Clock\":{JsonConvert.SerializeObject(Now)}}}");
 
             await FileIO.WriteTextAsync(file, sb.ToString());
 

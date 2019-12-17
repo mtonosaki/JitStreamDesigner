@@ -5,6 +5,7 @@ using System;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
+using Tono.Jit;
 
 namespace JitStreamDesigner
 {
@@ -45,6 +46,29 @@ namespace JitStreamDesigner
                 Remarks = $"{DateTime.Now}",
             });
         }
+
+        /// <summary>
+        /// Reset Jac
+        /// </summary>
+        /// <param name="te"></param>
+        protected void ResetJac(TemplateTipModel te)
+        {
+            if(te.Jac == null)
+            {
+                te.Jac = new JacInterpreter();
+            }
+            te.Jac.Reset();
+
+            var jac = $@"
+                TheStage = new Stage
+                    Name = '{te.Template.Name}'
+                    AccentColor = {te.AccentColor.ToString()}
+                    Remarks = '{te.Remarks}'
+            ";
+            te.Jac.Exec(jac);
+            te.Jac["Gui"] = Hot.TheBroker;
+        }
+
 
         /// <summary>
         /// Pane for Jit Model Parts
