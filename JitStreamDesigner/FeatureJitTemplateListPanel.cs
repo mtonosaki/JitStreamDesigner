@@ -56,7 +56,6 @@ namespace JitStreamDesigner
             DelayUtil.Start(TimeSpan.FromMilliseconds(200), () =>
             {
                 AddTemplateChip("@Default", Colors.Yellow, "Free GUI space");
-                AddTemplateChip("@Test", Colors.Blue, "Test Template");
                 TargetListView.SelectedItem = Hot.TemplateList.First();   // auto select the new item
             });
 
@@ -66,6 +65,18 @@ namespace JitStreamDesigner
             {
             };
             Parts.Add(Pane.Target, BarParts, LAYER.ActiveTemplate);
+        }
+
+        [EventCatch(TokenID = TokensGeneral.Scrolled)]
+        public void ScrollChanged(EventTokenPaneChanged token)
+        {
+            Hot.ActiveTemplate.Scroll = (Pane.Main.ScrollX, Pane.Main.ScrollY);
+        }
+
+        [EventCatch(TokenID = TokensGeneral.Zoomed)]
+        public void ZoomChanged(EventTokenPaneChanged token)
+        {
+            Hot.ActiveTemplate.Zoom = (Pane.Main.ZoomX, Pane.Main.ZoomY);
         }
 
         /// <summary>
@@ -127,6 +138,13 @@ namespace JitStreamDesigner
             {
                 TargetListView.SelectedItem = token.TargetTemplate; // for if not called TargetListView_SelectionChanged
             }
+
+            // Restore View
+            View.ScrollX = Hot.ActiveTemplate.Scroll.X;
+            View.ScrollY = Hot.ActiveTemplate.Scroll.Y;
+            View.ZoomX = Hot.ActiveTemplate.Zoom.X;
+            View.ZoomY = Hot.ActiveTemplate.Zoom.Y;
+
             Redraw();
         }
 
@@ -147,6 +165,8 @@ namespace JitStreamDesigner
                 AccentColor = accentColor,
                 Remarks = remarks,
                 Jac = new JacInterpreter(),
+                Scroll = (View.ScrollX, View.ScrollY),
+                Zoom = (View.ZoomX, View.ZoomY),
             };
             te.UndoStream.Add("// no action here");
             ResetJac(te);

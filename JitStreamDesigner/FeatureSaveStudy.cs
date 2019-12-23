@@ -4,6 +4,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,16 +23,18 @@ namespace JitStreamDesigner
             var fd = new FileSavePicker
             {
                 DefaultFileExtension = ".jmt",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                SuggestedFileName = $"Jit Model {(DateTime.Now.ToString("yyyyMMdd-HHmmss"))}",
+                SuggestedFileName = Cold.StudyFilePath != null ? Path.GetFileName(Cold.StudyFilePath) : $"Jit Model {(DateTime.Now.ToString("yyyyMMdd-HHmmss"))}",
             };
             fd.FileTypeChoices.Add("Jit Stream Designer", new List<string>() { ".jmt", ".json", ".txt" });
             var file = await fd.PickSaveFileAsync();
             await WriteAsJson(file);
             LOG.AddMes(LLV.INF, "FeatureSaveStudy-SaveCompletely", file.Name, file.Path);
+            ControlUtil.SetTitleText(file.Name);
+            Cold.StudyFilePath = file.Path;
+            ConfigUtil.Set("LastStudyFilePath", Cold.StudyFilePath);
         }
 
-        public const string SEPARATOR = ":::/!/:::";
+        public const string SEPARATOR = "====JMTSECTION====";
 
         /// <summary>
         /// Save data as Json format
@@ -41,8 +44,7 @@ namespace JitStreamDesigner
         public async Task WriteAsJson(StorageFile file)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("JitStreamDesigner jmt File");
-            sb.AppendLine($"{{\"FormatVersion\":1.0}}");
+            sb.AppendLine($"{{\"FormatVersion\":\"JMT1.0\"}}");
             sb.AppendLine(SEPARATOR);
             sb.AppendLine($"{{\"TemplateList.Count\":{Hot.TemplateList.Count}}}");
             foreach (var temp in Hot.TemplateList)
@@ -53,14 +55,6 @@ namespace JitStreamDesigner
             }
             sb.AppendLine(SEPARATOR);
             sb.AppendLine($"{{\"ActiveTemplate.ID\":\"{Hot.ActiveTemplate.ID}\"}}");
-            sb.AppendLine(SEPARATOR);
-            sb.AppendLine($"{{\"View.ScrollX\":\"{Pane.Main.ScrollX}\"}}");
-            sb.AppendLine(SEPARATOR);
-            sb.AppendLine($"{{\"View.ScrollY\":\"{Pane.Main.ScrollY}\"}}");
-            sb.AppendLine(SEPARATOR);
-            sb.AppendLine($"{{\"View.ZoomX\":\"{Pane.Main.ZoomX}\"}}");
-            sb.AppendLine(SEPARATOR);
-            sb.AppendLine($"{{\"View.ZoomY\":\"{Pane.Main.ZoomX}\"}}");
             sb.AppendLine(SEPARATOR);
             sb.AppendLine($"{{\"Sim.Clock\":{JsonConvert.SerializeObject(Now)}}}");
 

@@ -23,15 +23,19 @@ namespace JitStreamDesigner
         {
             var fd = new FileOpenPicker
             {
-                SuggestedStartLocation = PickerLocationId.Desktop,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
             };
+            var last = ConfigUtil.Get("LastStudyFilePath", string.Empty);
             fd.FileTypeFilter.Add(".jmt");
             var file = await fd.PickSingleFileAsync();
             await LoadFromJson(file, token);
             LOG.AddMes(LLV.INF, "FeatureOpenStudy-LoadCompletely", file.Name, file.Path);
+            ControlUtil.SetTitleText(file.Name);
+            Cold.StudyFilePath = file.Path;
+            ConfigUtil.Set("LastStudyFilePath", Cold.StudyFilePath);
         }
 
-        public const string SEPARATOR = ":::/!/:::";
+        public const string SEPARATOR = FeatureSaveStudy.SEPARATOR;
 
         /// <summary>
         /// Save data as Json format
@@ -74,28 +78,10 @@ namespace JitStreamDesigner
                             Hot.ActiveTemplate = Hot.TemplateList.Where(a => a.ID.Equals(id)).FirstOrDefault();
                             break;
                         }
-                        case "View.ScrollX":
+                        case "Sim.Clock":
                         {
-                            var val = jv.Value<double>();
-                            Pane.Main.ScrollX = val;
-                            break;
-                        }
-                        case "View.ScrollY":
-                        {
-                            var val = jv.Value<double>();
-                            Pane.Main.ScrollY = val;
-                            break;
-                        }
-                        case "View.ZoomX":
-                        {
-                            var val = jv.Value<double>();
-                            Pane.Main.ZoomX = val;
-                            break;
-                        }
-                        case "View.ZoomY":
-                        {
-                            var val = jv.Value<double>();
-                            Pane.Main.ZoomY = val;
+                            var val = jv.Value<DateTime>();
+                            Now = val;
                             break;
                         }
                     }
