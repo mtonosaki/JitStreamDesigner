@@ -15,7 +15,7 @@
 
   <Properties>
     <DisplayName>JitStreamDesigner</DisplayName>
-    <PublisherDisplayName>戸ノ崎学</PublisherDisplayName>
+    <PublisherDisplayName>Manabu Tonosaki</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -40,6 +40,18 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="jitstreamdesigner.model.study.json.jmt">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/json">.jmt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Jit Stream Designer Model/Study File</uap:DisplayName>
+            <uap:Logo>@Res\JitStreamDesignerIcon44.png</uap:Logo>
+            <uap:InfoTip>Design your new operations with Just-in-time model Text format</uap:InfoTip>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

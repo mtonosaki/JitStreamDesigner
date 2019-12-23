@@ -18,6 +18,29 @@ namespace JitStreamDesigner
             Suspending += OnSuspending;
         }
 
+        protected override void OnFileActivated(FileActivatedEventArgs e)
+        {
+            base.OnFileActivated(e);
+
+            var rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    OnResuming();
+                }
+                Window.Current.Content = rootFrame;
+            }
+
+            if (rootFrame.Content == null)
+            {
+                rootFrame.Navigate(typeof(MainPage), null);
+            }
+            Window.Current.Activate();
+        }
+
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;

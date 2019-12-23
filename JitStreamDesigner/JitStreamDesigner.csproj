@@ -120,6 +120,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="FeatureGuiJacBroker.cs" />
+    <Compile Include="FeatureOpenStudy.cs" />
+    <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="TemplateDialog.xaml.cs">
@@ -152,6 +154,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="%40Res\JitStreamDesignerIcon44.png" />
+    <Content Include="%40Res\JitStreamDesignerIcon64.png" />
     <Content Include="Assets\btnLogPanel.png" />
     <Content Include="Assets\btnLogPanelOff.png" />
     <Content Include="Assets\Error16.png" />
@@ -228,6 +232,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.9</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

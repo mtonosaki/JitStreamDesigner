@@ -153,20 +153,6 @@ namespace JitStreamDesigner
             Hot.TemplateList.Add(te);
         }
 
-        private void ResetJac(TemplateTipModel te)
-        {
-            te.Jac.Reset();
-
-            var jac = $@"
-                TheStage = new Stage
-                    Name = '{te.Template.Name}'
-                    AccentColor = {te.AccentColor.ToString()}
-                    Remarks = '{te.Remarks}'
-            ";
-            te.Jac.Exec(jac);
-            te.Jac["Gui"] = Hot.TheBroker;
-        }
-
         /// <summary>
         /// Xaml Button Click Event of Add Template
         /// </summary>

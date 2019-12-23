@@ -199,4 +199,16 @@
   <data name="FeatureUndoRedo-NoUndo" xml:space="preserve">
     <value>No more Undo data...</value>
   </data>
+  <data name="SaveStudyButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save Study file  [Ctrl+S]</value>
+  </data>
+  <data name="LabelSave.Text" xml:space="preserve">
+    <value>Save Study</value>
+  </data>
+  <data name="FeatureSaveStudy-SaveCompletely" xml:space="preserve">
+    <value>Saved to "{0}"   Full path = {1}</value>
+  </data>
+  <data name="FeatureOpenStudy-LoadCompletely" xml:space="preserve">
+    <value>Loaded  "{1}"</value>
+  </data>
 </root>
