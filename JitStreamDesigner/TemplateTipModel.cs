@@ -71,6 +71,18 @@ namespace JitStreamDesigner
         [DataMember]
         public int UndoRedoRequestedPointer { get; set; }
 
+        /// <summary>
+        /// Work scroll position
+        /// </summary>
+        [DataMember]
+        public (double X, double Y) Scroll { get; set; }
+
+        /// <summary>
+        /// Work zoom position
+        /// </summary>
+        [DataMember]
+        public (double X, double Y) Zoom { get; set; }
+
 
         [IgnoreDataMember]
         private static readonly Regex hexpattern = new Regex("^[0-9,a-f,A-F]+$");

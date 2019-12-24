@@ -121,9 +121,13 @@
     </Compile>
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
+    <Compile Include="FeatureProperties.cs" />
     <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
     <Compile Include="PersistModel.cs" />
+    <Compile Include="PropertyProcess.xaml.cs">
+      <DependentUpon>PropertyProcess.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TemplateDialog.xaml.cs">
       <DependentUpon>TemplateDialog.xaml</DependentUpon>
     </Compile>
@@ -171,6 +175,7 @@
     <Content Include="Assets\Lump16.png" />
     <Content Include="Assets\NoSheet16.png" />
     <Content Include="Assets\Paper16.png" />
+    <Content Include="Assets\Round.png" />
     <Content Include="Assets\s13-0.png" />
     <Content Include="Assets\s13-1.png" />
     <Content Include="Assets\s13-2.png" />
@@ -223,6 +228,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PropertyProcess.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TemplateDialog.xaml">
       <SubType>Designer</SubType>

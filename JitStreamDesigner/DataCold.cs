@@ -10,5 +10,6 @@ namespace JitStreamDesigner
     /// </summary>
     public class DataCold : DataColdBase
     {
+        public string StudyFilePath { get; set; } = null;
     }
 }

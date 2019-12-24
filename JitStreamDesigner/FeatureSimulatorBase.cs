@@ -27,7 +27,11 @@ namespace JitStreamDesigner
         /// <summary>
         /// Simulator clock current time
         /// </summary>
-        public DateTime Now { get; set; }
+        public DateTime Now
+        {
+            get => Hot.Now;
+            set => Hot.Now = value;
+        }
 
         /// <summary>
         /// Set JIT model edit action and send Jac to FeatureUndoRedo

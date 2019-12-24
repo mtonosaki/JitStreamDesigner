@@ -8,6 +8,7 @@ using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Tono.Jit;
+using Windows.UI.Xaml.Controls;
 
 namespace JitStreamDesigner
 {
@@ -119,7 +120,7 @@ namespace JitStreamDesigner
             var processID = JacInterpreter.MakeID("Process");
             CurrentParts.ID = processID;
 
-            var jacredo = 
+            var jacredo =
             $@"
                 TheStage
                     Procs
@@ -132,7 +133,7 @@ namespace JitStreamDesigner
                 Gui.ClearAllSelection = true
                 Gui.CreateProcess = '{processID}'
             ";
-            var jacundo = 
+            var jacundo =
             $@"
                 Gui.RemoveProcess = '{processID}'
                 TheStage
@@ -192,6 +193,21 @@ namespace JitStreamDesigner
                 jacUndo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
             }
             SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
+        }
+
+        [EventCatch(TokenID = TokensGeneral.PartsSelectChanged)]
+        public void PartsSelected(EventTokenPartsSelectChangedTrigger token)
+        {
+            var tars = token.PartStates.Where(a => a.sw).Where(a => a.parts is PartsJitProcess).Select(a => (PartsJitProcess)a.parts);
+            foreach (var pt in tars)
+            {
+                Token.Link(token, new EventTokenTriggerPropertyOpen
+                {
+                    Target = Hot.ActiveTemplate.Jac[pt.ID],
+                    Sender = this,
+                    Remarks = "At parts selected",
+                });
+            }
         }
     }
 
