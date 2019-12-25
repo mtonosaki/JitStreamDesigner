@@ -211,4 +211,7 @@
   <data name="FeatureOpenStudy-LoadCompletely" xml:space="preserve">
     <value>Loaded  "{1}"</value>
   </data>
+  <data name="InstanceNameError.Text" xml:space="preserve">
+    <value>A-Z, a-z and 0-9 only</value>
+  </data>
 </root>

@@ -16,10 +16,10 @@ namespace JitStreamDesigner
     /// Feature : GUI Process
     /// </summary>
     /// <remarks>
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCreating, Name = "Process")] EventTokenTriggerToolDragging
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCreating,    Name = "Process")] EventTokenTriggerToolDragging
     /// [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Process")] EventTokenTriggerToolDragging
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdFinished, Name = "Process")] EventTokenTriggerToolDragging 
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Process")] EventTokenTriggerToolDragging 
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdFinished,    Name = "Process")] EventTokenTriggerToolDragging 
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling,  Name = "Process")] EventTokenTriggerToolDragging 
     ///
     /// [EventCatch(TokenID = TOKEN.CREATE)] EventTokenCreateProcessPartsTrigger
     /// [EventCatch(TokenID = TOKEN.REMOVE)] EventTokenCreateProcessPartsTrigger
