@@ -30,6 +30,12 @@ namespace JitStreamDesigner
             {
                 Kill(new NotImplementedException("FeatureProperties need a StackPanel named 'PropertyCasettes' to show property controls."));
             }
+
+            redosaver = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(200),
+            };
+            redosaver.Tick += Redosaver_Tick;
         }
 
         [EventCatch(TokenID = TOKEN.PROPERTYOPEN)]
@@ -41,23 +47,77 @@ namespace JitStreamDesigner
                 if (obj is UIElement ue)
                 {
                     Casettes.Children.Remove(ue);
-                    Casettes.Children.Insert(0, ue);
                 }
-                else
+                PropertyProcess pp;
+                Casettes.Children.Insert(0, pp = new PropertyProcess
                 {
-                    Casettes.Children.Insert(0, new PropertyProcess
-                    {
-                        Name = proc.ID,
-                        ProcessID = proc.ID,
-                        ProcessName = proc.Name,
-                        X = (Distance)proc.ChildVriables["LocationX"].Value,
-                        Y = (Distance)proc.ChildVriables["LocationY"].Value,
-                        W = (Distance)proc.ChildVriables["Width"].Value,
-                        H = (Distance)proc.ChildVriables["Height"].Value,
+                    Target = proc,
+                });
+                pp.PropertyChanged += OnPropertyChanged;
+            }
+        }
 
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                    });
+        StringBuilder jacUndo = new StringBuilder();
+        StringBuilder jacRedo = new StringBuilder();
+
+        DispatcherTimer redosaver = new DispatcherTimer();
+
+        /// <summary>
+        /// Make chunk of REDO/UNDO (for Round function that change two properties W and H)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Redosaver_Tick(object sender, object e)
+        {
+            redosaver.Stop();
+            if (jacRedo.Length < 1)
+            {
+                return;
+            }
+            SetNewAction(null, jacRedo.ToString(), jacUndo.ToString());
+            jacRedo.Clear();
+            jacUndo.Clear();
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (sender is PropertyProcess model)
+            {
+                switch (e.PropertyName)
+                {
+                    case "InstanceName":
+                        jacRedo.AppendLine($@"{model.Target.ID}.Name = '{model.InstanceName}'");
+                        jacRedo.AppendLine($@"Gui.UpdateName = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"{model.Target.ID}.Name = '{model.PreviousValue[e.PropertyName]}'");
+                        jacUndo.AppendLine($@"Gui.UpdateName = '{model.Target.ID}'");
+                        break;
+                    case "X":
+                        jacRedo.AppendLine($@"{model.Target.ID}.LocationX = {model.X}");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"{model.Target.ID}.LocationX = {model.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        break;
+                    case "Y":
+                        jacRedo.AppendLine($@"{model.Target.ID}.LocationY = {model.Y}");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"{model.Target.ID}.LocationY = {model.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        break;
+                    case "W":
+                        jacRedo.AppendLine($@"{model.Target.ID}.Width = {model.W}");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"{model.Target.ID}.Width = {model.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        break;
+                    case "H":
+                        jacRedo.AppendLine($@"{model.Target.ID}.Height = {model.H}");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"{model.Target.ID}.Height = {model.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        break;
                 }
+                redosaver.Stop();
+                redosaver.Start();
             }
         }
     }

@@ -211,4 +211,7 @@
   <data name="FeatureOpenStudy-LoadCompletely" xml:space="preserve">
     <value>"{0}" をロードしました。  パス = {1}</value>
   </data>
+  <data name="InstanceNameError.Text" xml:space="preserve">
+    <value>次の文字だけで入力してください: A-Z, a-z, 0-9 </value>
+  </data>
 </root>

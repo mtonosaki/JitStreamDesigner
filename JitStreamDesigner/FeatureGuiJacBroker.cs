@@ -213,6 +213,34 @@ namespace JitStreamDesigner
             WaitNext();
         }
         /// <summary>
+        /// Gui.UpdateLocation = 'Process.ID'
+        /// </summary>
+        /// <param name="value">JitProcess</param>
+        public void UpdateSize(object value)
+        {
+            if (value is JitProcess process)
+            {
+                var pt = Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault();
+                Debug.Assert(pt != null);
+                pt.Width = (Distance)process.ChildVriables["Width"].Value;
+                pt.Height = (Distance)process.ChildVriables["Height"].Value;
+                pt.IsSelected = true;
+                Redraw();
+            }
+            WaitNext();
+        }
+        /// <summary>
+        /// Gui.UpdateLocation = 'Process.ID'
+        /// </summary>
+        /// <param name="value">JitProcess</param>
+        public void UpdateName(object value)
+        {
+            // TODO: ここで、パーツではなく、プロパティダイアログのNameを更新する処理を入れる
+            WaitNext();
+        }
+
+
+        /// <summary>
         /// Gui.ClearAllSelection = dummy
         /// </summary>
         /// <param name="value">dummy</param>

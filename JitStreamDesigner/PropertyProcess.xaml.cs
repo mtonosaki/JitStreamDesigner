@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Tono;
+using Tono.Gui.Uwp;
+using Tono.Jit;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -18,25 +21,125 @@ using Windows.UI.Xaml.Navigation;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyProcess : UserControl
+    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private JitProcess target;
+        /// <summary>
+        /// Target Jit Object
+        /// </summary>
+        public JitProcess Target
+        {
+            get => target;
+            set
+            {
+                target = value;
+                Name = target.ID;           // Control.Name to find chip
+                InstanceID = target.ID;
+                InstanceName = target.Name;
+                X = $"{((Distance)target.ChildVriables["LocationX"].Value).m}m";
+                Y = $"{((Distance)target.ChildVriables["LocationY"].Value).m}m";
+                W = $"{((Distance)target.ChildVriables["Width"].Value).m}m";
+                H = $"{((Distance)target.ChildVriables["Height"].Value).m}m";
+            }
+        }
+
+        public string InstanceID
+        {
+            get => Target.ID;
+            set => new NotSupportedException();
+        }
+
+        public Dictionary<string, object> PreviousValue { get; } = new Dictionary<string, object>();
+
+        private string instanceName;
+        /// <summary>
+        /// ViewModel : Instance Name
+        /// </summary>
+        public string InstanceName
+        {
+            get => instanceName;
+            set
+            {
+                if (instanceName != value)
+                {
+                    PreviousValue["InstanceName"] = instanceName;
+                    instanceName = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("InstanceName"));
+                }
+            }
+        }
+
+        private string x = "0m";
+        public string X
+        {
+            get => x;
+            set
+            {
+                if (Distance.Parse(value) != Distance.Parse(x))
+                {
+                    PreviousValue["X"] = x;
+                    x = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X"));
+                }
+            }
+        }
+        private string y = "0m";
+        public string Y
+        {
+            get => y;
+            set
+            {
+                if (Distance.Parse(value) != Distance.Parse(y))
+                {
+                    PreviousValue["Y"] = y;
+                    y = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y"));
+                }
+            }
+        }
+        private string w = "0m";
+        public string W
+        {
+            get => w;
+            set
+            {
+                if (Distance.Parse(value) != Distance.Parse(w))
+                {
+                    PreviousValue["W"] = w;
+                    w = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("W"));
+                }
+            }
+        }
+        private string h = "0m";
+        public string H
+        {
+            get => h;
+            set
+            {
+                if (Distance.Parse(value) != Distance.Parse(h))
+                {
+                    PreviousValue["H"] = h;
+                    h = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("H"));
+                }
+            }
+        }
+
+
         public PropertyProcess()
         {
             this.InitializeComponent();
         }
-        public string ProcessID { get => InstanceID.Text; set => InstanceID.Text = value; }
-        public string ProcessName { get => InstanceName.Text; set => InstanceName.Text = value; }
-        public Distance X { get => Distance.Parse(InstanceX.Text); set => InstanceX.Text = $"{value.m}m"; }
-        public Distance Y { get => Distance.Parse(InstanceY.Text); set => InstanceY.Text = $"{value.m}m"; }
-        public Distance W { get => Distance.Parse(InstanceW.Text); set => InstanceW.Text = $"{value.m}m"; }
-        public Distance H { get => Distance.Parse(InstanceH.Text); set => InstanceH.Text = $"{value.m}m"; }
 
         private void Button_Round_Click(object sender, RoutedEventArgs e)
         {
-            X = Distance.FromMeter(Math.Round(X.m));
-            Y = Distance.FromMeter(Math.Round(Y.m));
-            W = Distance.FromMeter(Math.Round(W.m));
-            H = Distance.FromMeter(Math.Round(H.m));
+            X = $"{Math.Round(Distance.Parse(X).m)}m";
+            Y = $"{Math.Round(Distance.Parse(Y).m)}m";
+            W = $"{Math.Round(Distance.Parse(W).m)}m";
+            H = $"{Math.Round(Distance.Parse(H).m)}m";
         }
     }
 }

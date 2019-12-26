@@ -3,7 +3,9 @@
 
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using Tono.Gui.Uwp;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace JitStreamDesigner
