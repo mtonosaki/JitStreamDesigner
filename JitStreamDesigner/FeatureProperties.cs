@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using System;
+using System.ComponentModel;
 using System.Text;
-using System.Threading.Tasks;
 using Tono;
 using Tono.Gui.Uwp;
 using Tono.Jit;
@@ -87,37 +87,97 @@ namespace JitStreamDesigner
                 {
                     case "InstanceName":
                         jacRedo.AppendLine($@"{model.Target.ID}.Name = '{model.InstanceName}'");
-                        jacRedo.AppendLine($@"Gui.UpdateName = '{model.Target.ID}'");
+                        jacRedo.AppendLine($@"Gui.UpdateName = {model.Target.ID}");
                         jacUndo.AppendLine($@"{model.Target.ID}.Name = '{model.PreviousValue[e.PropertyName]}'");
-                        jacUndo.AppendLine($@"Gui.UpdateName = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"Gui.UpdateName = {model.Target.ID}");
                         break;
                     case "X":
                         jacRedo.AppendLine($@"{model.Target.ID}.LocationX = {model.X}");
-                        jacRedo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
                         jacUndo.AppendLine($@"{model.Target.ID}.LocationX = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
                         break;
                     case "Y":
                         jacRedo.AppendLine($@"{model.Target.ID}.LocationY = {model.Y}");
-                        jacRedo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
                         jacUndo.AppendLine($@"{model.Target.ID}.LocationY = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateLocation = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
                         break;
                     case "W":
                         jacRedo.AppendLine($@"{model.Target.ID}.Width = {model.W}");
-                        jacRedo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
                         jacUndo.AppendLine($@"{model.Target.ID}.Width = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
                         break;
                     case "H":
                         jacRedo.AppendLine($@"{model.Target.ID}.Height = {model.H}");
-                        jacRedo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
                         jacUndo.AppendLine($@"{model.Target.ID}.Height = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateSize = '{model.Target.ID}'");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
                         break;
                 }
                 redosaver.Stop();
                 redosaver.Start();
+            }
+        }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.LocationChanged)]
+        public void LocationChanged(EventTokenJitVariableTrigger token)
+        {
+            if (token.Target is IJitObjectID tar && token.Target is JitVariable va)
+            {
+                if (Casettes.FindName(tar.ID) is IPropertyXy chip)
+                {
+                    var pp = chip as INotifyPropertyChanged;
+                    pp.PropertyChanged -= OnPropertyChanged;
+
+                    chip.X = $"{((Distance)va.ChildVriables["LocationX"].Value).m}m";
+                    chip.Y = $"{((Distance)va.ChildVriables["LocationY"].Value).m}m";
+
+                    pp.PropertyChanged += OnPropertyChanged;
+                }
+            }
+        }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.SizeChanged)]
+        public void SizeChanged(EventTokenJitVariableTrigger token)
+        {
+            if (token.Target is IJitObjectID tar && token.Target is JitVariable va)
+            {
+                if (Casettes.FindName(tar.ID) is IPropertyWh chip)
+                {
+                    var pp = chip as INotifyPropertyChanged;
+                    pp.PropertyChanged -= OnPropertyChanged;
+
+                    chip.W = $"{((Distance)va.ChildVriables["Width"].Value).m}m";
+                    chip.H = $"{((Distance)va.ChildVriables["Height"].Value).m}m";
+
+                    pp.PropertyChanged += OnPropertyChanged;
+                }
+            }
+        }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.NameChanged)]
+        public void NameChanged(EventTokenJitVariableTrigger token)
+        {
+            if (token.Target is IJitObjectID tar && token.Target is JitVariable va)
+            {
+                if (Casettes.FindName(tar.ID) is IPropertyInstanceName chip && chip.InstanceName != va.Name)
+                {
+                    var pp = chip as INotifyPropertyChanged;
+                    pp.PropertyChanged -= OnPropertyChanged;
+                    chip.InstanceName = va.Name;
+                    pp.PropertyChanged += OnPropertyChanged;
+                }
+            }
+        }
+
+        [EventCatch(TokenID = FeatureJitProcess.TOKEN.REMOVE)]
+        public void ProcessRemoved(EventTokenProcessPartsTrigger token)
+        {
+            if (Casettes.FindName(token.Process.ID) is UserControl chip)
+            {
+                Casettes.Children.Remove(chip);
             }
         }
     }

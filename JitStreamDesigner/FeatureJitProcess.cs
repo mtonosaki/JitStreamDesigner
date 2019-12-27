@@ -131,14 +131,14 @@ namespace JitStreamDesigner
                             Width = {CurrentParts.Width.m}m
                             Height = {CurrentParts.Height.m}m
                 Gui.ClearAllSelection = true
-                Gui.CreateProcess = '{processID}'
+                Gui.CreateProcess = {processID}
             ";
             var jacundo =
             $@"
-                Gui.RemoveProcess = '{processID}'
+                Gui.RemoveProcess = {processID}
                 TheStage
                     Procs
-                        remove '{processID}'
+                        remove {processID}
             ";
             SetNewAction(token, jacredo, jacundo);
 
@@ -186,11 +186,11 @@ namespace JitStreamDesigner
             {
                 jacRedo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
                 jacRedo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
-                jacRedo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
+                jacRedo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
 
                 jacUndo.AppendLine($@"{pt.ID}.LocationX = {pt.OriginalPosition.X.Cx.m}m");
                 jacUndo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
-                jacUndo.AppendLine($@"Gui.UpdateLocation = '{pt.ID}'");
+                jacUndo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
             }
             SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
         }
