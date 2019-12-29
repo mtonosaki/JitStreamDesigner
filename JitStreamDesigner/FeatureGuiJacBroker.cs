@@ -20,6 +20,12 @@ namespace JitStreamDesigner
     [JacTarget(Name = "GuiBroker")]
     public class FeatureGuiJacBroker : FeatureSimulatorBase
     {
+        public static class TOKEN
+        {
+            public const string NameChanged = "FeatureGuiJacBrokerNameChanged";
+            public const string SizeChanged = "FeatureGuiJacBrokerSizeChanged";
+            public const string LocationChanged = "FeatureGuiJacBrokerLocationChanged";
+        }
         private LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
         public override void OnInitialInstance()
@@ -204,11 +210,19 @@ namespace JitStreamDesigner
         {
             if (value is JitProcess process)
             {
-                var pt = Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault();
-                Debug.Assert(pt != null);
-                pt.Location = CodePos<Distance, Distance>.From((Distance)process.ChildVriables["LocationX"].Value, (Distance)process.ChildVriables["LocationY"].Value);
-                pt.IsSelected = true;
-                Redraw();
+                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault() is PartsJitBase pt)
+                {
+                    pt.Location = CodePos<Distance, Distance>.From((Distance)process.ChildVriables["LocationX"].Value, (Distance)process.ChildVriables["LocationY"].Value);
+                    pt.IsSelected = true;
+                    Redraw();
+
+                    Token.AddNew(new EventTokenJitVariableTrigger
+                    {
+                        TokenID = TOKEN.LocationChanged,
+                        Target = process,
+                        Sender = this,
+                    });
+                }
             }
             WaitNext();
         }
@@ -220,22 +234,42 @@ namespace JitStreamDesigner
         {
             if (value is JitProcess process)
             {
-                var pt = Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault();
-                Debug.Assert(pt != null);
-                pt.Width = (Distance)process.ChildVriables["Width"].Value;
-                pt.Height = (Distance)process.ChildVriables["Height"].Value;
-                pt.IsSelected = true;
-                Redraw();
+                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault() is PartsJitBase pt)
+                {
+                    pt.Width = (Distance)process.ChildVriables["Width"].Value;
+                    pt.Height = (Distance)process.ChildVriables["Height"].Value;
+                    pt.IsSelected = true;
+                    Redraw();
+
+                    Token.AddNew(new EventTokenJitVariableTrigger
+                    {
+                        TokenID = TOKEN.SizeChanged,
+                        Target = process,
+                        Sender = this,
+                    });
+                }
             }
             WaitNext();
         }
+
         /// <summary>
         /// Gui.UpdateLocation = 'Process.ID'
         /// </summary>
         /// <param name="value">JitProcess</param>
         public void UpdateName(object value)
         {
-            // TODO: ここで、パーツではなく、プロパティダイアログのNameを更新する処理を入れる
+            if (value is IJitObjectID va)
+            {
+                var tar = Hot.ActiveTemplate.Jac[va.ID];
+
+                Token.AddNew(new EventTokenJitVariableTrigger
+                {
+                    TokenID = TOKEN.NameChanged,
+                    Target = va,
+                    Sender = this,
+                    Remarks = "Jac:Name Changed",
+                });
+            }
             WaitNext();
         }
 
@@ -264,5 +298,13 @@ namespace JitStreamDesigner
             }
             WaitNext();
         }
+    }
+
+    /// <summary>
+    /// Variable message
+    /// </summary>
+    public class EventTokenJitVariableTrigger : EventTokenTrigger
+    {
+        public IJitObjectID Target { get; set; }
     }
 }

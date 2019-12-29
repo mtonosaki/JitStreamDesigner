@@ -1,27 +1,35 @@
-﻿using System;
+﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Tono;
-using Tono.Gui.Uwp;
 using Tono.Jit;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // ユーザー コントロールの項目テンプレートについては、https://go.microsoft.com/fwlink/?LinkId=234236 を参照してください
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged
+    public interface IPropertyInstanceName : IJitObjectID
+    {
+        string InstanceName { get; set; }
+    };
+
+    public interface IPropertyXy : IJitObjectID
+    {
+        string X { get;set; }
+        string Y { get; set; }
+    }
+    public interface IPropertyWh : IJitObjectID
+    {
+        string W { get; set; }
+        string H { get; set; }
+    }
+
+    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,7 +44,6 @@ namespace JitStreamDesigner
             {
                 target = value;
                 Name = target.ID;           // Control.Name to find chip
-                InstanceID = target.ID;
                 InstanceName = target.Name;
                 X = $"{((Distance)target.ChildVriables["LocationX"].Value).m}m";
                 Y = $"{((Distance)target.ChildVriables["LocationY"].Value).m}m";
@@ -45,7 +52,7 @@ namespace JitStreamDesigner
             }
         }
 
-        public string InstanceID
+        public string ID
         {
             get => Target.ID;
             set => new NotSupportedException();

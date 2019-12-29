@@ -20,7 +20,7 @@
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0" Width="22" Height="22" Source="./Assets/tbProcess.png" />
             <TextBlock Grid.Column="1" Margin="2,0,0,0" FontWeight="Bold">Process</TextBlock>
-            <TextBlock Text="{x:Bind InstanceID,Mode=OneTime}" Grid.Column="2" Margin="0,0,4,0" FontSize="9" HorizontalAlignment="Right" VerticalAlignment="Center" >ID=123456789</TextBlock>
+            <TextBlock Text="{x:Bind ID,Mode=OneTime}" Grid.Column="2" Margin="0,0,4,0" FontSize="9" HorizontalAlignment="Right" VerticalAlignment="Center" >ID=123456789</TextBlock>
         </Grid>
         <Grid HorizontalAlignment="Stretch" Margin="0,0,4,0">
             <Grid.ColumnDefinitions>
