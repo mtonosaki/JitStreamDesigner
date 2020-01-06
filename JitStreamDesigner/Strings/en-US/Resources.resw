@@ -214,4 +214,7 @@
   <data name="InstanceNameError.Text" xml:space="preserve">
     <value>A-Z, a-z and 0-9 only</value>
   </data>
+  <data name="InstanceTimeSpanError.Text" xml:space="preserve">
+    <value>TimeSpan format : 34.5 + Unit(H/M/S/MS/D/W)</value>
+  </data>
 </root>

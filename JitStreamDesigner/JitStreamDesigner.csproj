@@ -128,6 +128,9 @@
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PropertyCoSpan.xaml.cs">
+      <DependentUpon>PropertyCoSpan.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyProcess.xaml.cs">
       <DependentUpon>PropertyProcess.xaml</DependentUpon>
     </Compile>
@@ -154,6 +157,7 @@
     <Compile Include="PartsToolButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NumberDisplay.cs" />
+    <Compile Include="XamlTimeSpanToStringConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -165,6 +169,7 @@
     <Content Include="%40Res\JitStreamDesignerIcon64.png" />
     <Content Include="Assets\btnLogPanel.png" />
     <Content Include="Assets\btnLogPanelOff.png" />
+    <Content Include="Assets\CoSpan.png" />
     <Content Include="Assets\Error16.png" />
     <Content Include="Assets\Gear16.png" />
     <Content Include="Assets\icon128.png" />
@@ -233,6 +238,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PropertiesCase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCoSpan.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

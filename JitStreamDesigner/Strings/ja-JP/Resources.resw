@@ -214,4 +214,7 @@
   <data name="InstanceNameError.Text" xml:space="preserve">
     <value>次の文字だけで入力してください: A-Z, a-z, 0-9 </value>
   </data>
+  <data name="InstanceTimeSpanError.Text" xml:space="preserve">
+    <value>時間形式 : 1.23 + 単位(H/M/S/MS/D/W)</value>
+  </data>
 </root>

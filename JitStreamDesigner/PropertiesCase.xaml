@@ -9,9 +9,9 @@
     mc:Ignorable="d"
     RequestedTheme="Dark"
     d:DesignHeight="600"
-    d:DesignWidth="300">
+    d:DesignWidth="500">
 
-    <ScrollViewer Name="TopView"
+    <ScrollViewer x:Name="View"
         VerticalScrollMode="Enabled"
         VerticalScrollBarVisibility="Visible"
         HorizontalScrollMode="Enabled"
@@ -19,11 +19,19 @@
         <ScrollViewer.Background>
             <AcrylicBrush TintColor="#22FF0000"/>
         </ScrollViewer.Background>
-        <StackPanel Name="Layer1"
+        <StackPanel x:Name="Screen"
             Width="600" 
             Orientation="Horizontal">
-            <StackPanel Width="290" />
-            <StackPanel Width="290" />
+            <StackPanel x:Name="Level1" Width="290">
+                <local:PropertyProcess />
+                <local:PropertyProcess />
+                <local:PropertyProcess />
+            </StackPanel>
+            <StackPanel x:Name="Level2" Width="290">
+                <local:PropertyCoSpan />
+                <local:PropertyCoSpan />
+            </StackPanel>
+            <StackPanel x:Name="Level3" Width="290" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

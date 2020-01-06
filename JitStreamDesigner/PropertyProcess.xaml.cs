@@ -34,6 +34,7 @@ namespace JitStreamDesigner
         public event PropertyChangedEventHandler PropertyChanged;
 
         private JitProcess target;
+
         /// <summary>
         /// Target Jit Object
         /// </summary>
@@ -54,7 +55,7 @@ namespace JitStreamDesigner
 
         public string ID
         {
-            get => Target.ID;
+            get => Target?.ID ?? "(n/a)";
             set => new NotSupportedException();
         }
 
