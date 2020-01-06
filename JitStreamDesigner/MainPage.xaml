@@ -54,19 +54,13 @@
                 <tg:TMenuFlyoutItem Name="OpenLogText" x:Uid="OpenLogText" Text="Open Log" />
             </MenuFlyout>
         </tg:TGuiView.ContextFlyout>
-        <ScrollViewer
+        <local:PropertyCase Name="PropertyCase"
             Margin="0,4,48,0"
             Width="300"
-            VerticalScrollMode="Auto"
-            HorizontalScrollMode="Disabled"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.Above="LogPanel"
             RelativePanel.AlignRightWithPanel="True">
-            <ScrollViewer.Background>
-                <AcrylicBrush TintColor="#22FF0000"/>
-            </ScrollViewer.Background>
-            <StackPanel Name="PropertyCasettes" />
-        </ScrollViewer>
+        </local:PropertyCase>
         <SplitView x:Name="Splitter"
                    IsPaneOpen="{Binding ElementName=HamburgerButton,Path=IsChecked, Mode=TwoWay}" 
                    FlowDirection="RightToLeft"

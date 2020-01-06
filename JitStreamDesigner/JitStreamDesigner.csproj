@@ -125,6 +125,9 @@
     <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
     <Compile Include="PersistModel.cs" />
+    <Compile Include="PropertiesCase.xaml.cs">
+      <DependentUpon>PropertiesCase.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyProcess.xaml.cs">
       <DependentUpon>PropertyProcess.xaml</DependentUpon>
     </Compile>
@@ -228,6 +231,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PropertiesCase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PropertyProcess.xaml">
       <SubType>Designer</SubType>
