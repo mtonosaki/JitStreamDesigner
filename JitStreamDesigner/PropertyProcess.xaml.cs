@@ -9,26 +9,8 @@ using Tono.Jit;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-// ユーザー コントロールの項目テンプレートについては、https://go.microsoft.com/fwlink/?LinkId=234236 を参照してください
-
 namespace JitStreamDesigner
 {
-    public interface IPropertyInstanceName : IJitObjectID
-    {
-        string InstanceName { get; set; }
-    };
-
-    public interface IPropertyXy : IJitObjectID
-    {
-        string X { get;set; }
-        string Y { get; set; }
-    }
-    public interface IPropertyWh : IJitObjectID
-    {
-        string W { get; set; }
-        string H { get; set; }
-    }
-
     public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -148,6 +130,18 @@ namespace JitStreamDesigner
             Y = $"{Math.Round(Distance.Parse(Y).m)}m";
             W = $"{Math.Round(Distance.Parse(W).m)}m";
             H = $"{Math.Round(Distance.Parse(H).m)}m";
+        }
+
+        private async void CiAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var pal = new CiPalette();
+            var ret = await pal.ShowAsync();
+        }
+
+        private async void CoAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var pal = new CoPalette();
+            var ret = await pal.ShowAsync();
         }
     }
 }

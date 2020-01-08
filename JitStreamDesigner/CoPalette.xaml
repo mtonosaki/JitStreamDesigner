@@ -1,0 +1,56 @@
+﻿<ContentDialog
+    x:Class="JitStreamDesigner.CoPalette"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JitStreamDesigner"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:jit="using:Tono.Jit"
+    RequestedTheme="Dark"
+    CloseButtonText="Cancel"
+    Title="Out-Constraint (Co)">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CoSpan.Type}" Click="Add_Click" />
+        <Image Grid.Row="0" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CoSpan.png" />
+        <TextBlock Grid.Row="0" Grid.Column="2" Margin="8" Text="Co Span" FontWeight="Bold" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="0" Grid.Column="3" x:Uid="DescriptionCoSpan" TextWrapping="WrapWholeWords">
+            DUMMY Keep time span from preceding work at next process.
+        </TextBlock>
+        <Rectangle Grid.Row="1" Grid.ColumnSpan="4" Height="1" Margin="4" Fill="SteelBlue" />
+
+        <Button Grid.Row="2" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CoMaxCost.Type}" Click="Add_Click" />
+        <Image Grid.Row="2" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CoMaxCost.png" />
+        <TextBlock Grid.Row="2" Grid.Column="2" Margin="8" Text="Co Max Cost" FontWeight="Bold" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="2" Grid.Column="3" x:Uid="DescriptionCoMaxCost" TextWrapping="WrapWholeWords">
+            DUMMY If the maximum cost is going to exceeded in the next process, the work waits in the previous process.
+        </TextBlock>
+        <Rectangle Grid.Row="3" Grid.ColumnSpan="4" Height="1" Margin="4" Fill="SteelBlue" />
+
+        <Button Grid.Row="4" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CoJoinFrom.Type}" Click="Add_Click" />
+        <Image Grid.Row="4" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CoJoinFrom.png" />
+        <TextBlock Grid.Row="4" Grid.Column="2" Margin="8" Text="Co Join From" FontWeight="Bold" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="4" Grid.Column="3" x:Uid="DescriptionCoJoinFrom" TextWrapping="WrapWholeWords">
+            DUMMY Get work from specified process to be joined when work can be confluence condition.
+        </TextBlock>
+    </Grid>
+</ContentDialog>

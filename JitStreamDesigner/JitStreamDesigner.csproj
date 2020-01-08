@@ -119,11 +119,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CiPalette.xaml.cs">
+      <DependentUpon>CiPalette.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CoPalette.xaml.cs">
+      <DependentUpon>CoPalette.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
     <Compile Include="FeatureProperties.cs" />
     <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
+    <Compile Include="IProperties.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>
@@ -169,6 +176,10 @@
     <Content Include="%40Res\JitStreamDesignerIcon64.png" />
     <Content Include="Assets\btnLogPanel.png" />
     <Content Include="Assets\btnLogPanelOff.png" />
+    <Content Include="Assets\CiDelay.png" />
+    <Content Include="Assets\CiSwitchNextLink.png" />
+    <Content Include="Assets\CoJoinFrom.png" />
+    <Content Include="Assets\CoMaxCost.png" />
     <Content Include="Assets\CoSpan.png" />
     <Content Include="Assets\Error16.png" />
     <Content Include="Assets\Gear16.png" />
@@ -179,10 +190,13 @@
     <Content Include="Assets\icon48.png" />
     <Content Include="Assets\icon64.png" />
     <Content Include="Assets\icon96.png" />
+    <Content Include="Assets\CiPickTo.png" />
+    <Content Include="Assets\CiKanbanReturn.png" />
     <Content Include="Assets\LogPanelTitileDesign.png" />
     <Content Include="Assets\Lump16.png" />
     <Content Include="Assets\NoSheet16.png" />
     <Content Include="Assets\Paper16.png" />
+    <Content Include="Assets\Process.png" />
     <Content Include="Assets\Round.png" />
     <Content Include="Assets\s13-0.png" />
     <Content Include="Assets\s13-1.png" />
@@ -227,12 +241,21 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Add.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CiPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CoPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

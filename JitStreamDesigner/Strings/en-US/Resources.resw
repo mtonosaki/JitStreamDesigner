@@ -217,4 +217,29 @@
   <data name="InstanceTimeSpanError.Text" xml:space="preserve">
     <value>TimeSpan format : 34.5 + Unit(H/M/S/MS/D/W)</value>
   </data>
+  <data name="CioAddButton.Content" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="DescriptionCiDelay.Text" xml:space="preserve">
+    <value>Set waiting time to stay in the entered Process.</value>
+  </data>
+  <data name="DescriptionCiKanbanReturn.Text" xml:space="preserve">
+    <value>Return Kanban when Works entered to the Process.</value>
+  </data>
+  <data name="DescriptionCiPickTo.Text" xml:space="preserve">
+    <value>Request to push children Works into other Process.</value>
+  </data>
+  <data name="DescriptionCiSwitchNextLink.Text" xml:space="preserve">
+    <value>Switch next Process with parameter</value>
+  </data>
+  <data name="DescriptionCoJoinFrom.Text" xml:space="preserve">
+    <value>Let Work at previous Process wait when there is no signal-like-Work in side Process. Then join a signal-Work as a child to the Work that come from previous Process</value>
+    <comment>横工程にワークが発生するまで、前工程のOUTを抑制。INできる時には前工程からのワーク内に横工程のワークを子ワークとして結合。</comment>
+  </data>
+  <data name="DescriptionCoMaxCost.Text" xml:space="preserve">
+    <value>The Work waits in the previous Process, if the maximum cost is going to exceeded in the next Process.</value>
+  </data>
+  <data name="DescriptionCoSpan.Text" xml:space="preserve">
+    <value>Let Work at previous Process wait to keep time span from leading Work.</value>
+  </data>
 </root>

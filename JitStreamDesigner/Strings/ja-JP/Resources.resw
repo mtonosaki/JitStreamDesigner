@@ -217,4 +217,28 @@
   <data name="InstanceTimeSpanError.Text" xml:space="preserve">
     <value>時間形式 : 1.23 + 単位(H/M/S/MS/D/W)</value>
   </data>
+  <data name="CioAddButton.Content" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="DescriptionCiDelay.Text" xml:space="preserve">
+    <value>ワーク退出までの滞留時間を指定する制約</value>
+  </data>
+  <data name="DescriptionCiKanbanReturn.Text" xml:space="preserve">
+    <value>ワーク侵入時に かんばん を 返却する</value>
+  </data>
+  <data name="DescriptionCiPickTo.Text" xml:space="preserve">
+    <value>ワーク侵入時に 子ワークを 指定プロセスに送る</value>
+  </data>
+  <data name="DescriptionCiSwitchNextLink.Text" xml:space="preserve">
+    <value>次のプッシュプロセスを切り替える</value>
+  </data>
+  <data name="DescriptionCoJoinFrom.Text" xml:space="preserve">
+    <value>横工程にワークが発生するまで、前工程のOUTを抑制。INできる時には前工程からのワーク内に横工程のワークを子ワークとして結合。</value>
+  </data>
+  <data name="DescriptionCoMaxCost.Text" xml:space="preserve">
+    <value>自工程の最大コストを評価して、前工程のOUTを抑制。</value>
+  </data>
+  <data name="DescriptionCoSpan.Text" xml:space="preserve">
+    <value>自工程にワークが入る最小間隔を指定する</value>
+  </data>
 </root>

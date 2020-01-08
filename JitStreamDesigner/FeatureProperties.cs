@@ -2,13 +2,17 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using Tono;
 using Tono.Gui.Uwp;
 using Tono.Jit;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace JitStreamDesigner
 {
@@ -19,16 +23,18 @@ namespace JitStreamDesigner
             public const string PROPERTYOPEN = "FeaturePropertiesOpen";
         };
 
-        private StackPanel Casettes = null;
+        private ScrollViewer ScrollView = null;
+        private StackPanel Screen = null;
 
         public override void OnInitialInstance()
         {
             base.OnInitialInstance();
 
-            Casettes = ControlUtil.FindControl(View, "PropertyCasettes") as StackPanel;
-            if (Casettes == null)
+            ScrollView = ControlUtil.FindControl(View, "View") as ScrollViewer;
+            Screen = ControlUtil.FindControl(View, "Screen") as StackPanel;
+            if (Screen == null || ScrollView == null)
             {
-                Kill(new NotImplementedException("FeatureProperties need a StackPanel named 'PropertyCasettes' to show property controls."));
+                Kill(new NotImplementedException("FeatureProperties need both a StackPanel named 'Screen' and a ScrollViewer named 'View'."));
             }
 
             redosaver = new DispatcherTimer
@@ -38,22 +44,94 @@ namespace JitStreamDesigner
             redosaver.Tick += Redosaver_Tick;
         }
 
+        private (StackPanel Parent, UIElement Cassette) FindCassette(string xname)
+        {
+            var cassettes =
+                from lane0 in Screen.Children
+                let lane = lane0 as StackPanel
+                where lane != null
+                from cas0 in lane.Children
+                let cassette = cas0 as FrameworkElement
+                where cassette != null
+                where cassette.Name == xname
+                select (lane, cassette);
+            return cassettes.FirstOrDefault();
+        }
+
+        private StackPanel SetLevel(int level)
+        {
+            // delete level lane
+            var dels =
+                from lane0 in Screen.Children
+                let lane = lane0 as FrameworkElement
+                where lane?.Name.StartsWith("Level_") ?? false
+                let lno = int.Parse(lane.Name.Substring(6))
+                where lno >= level
+                select lane;
+
+            foreach (var lane in dels.ToArray())
+            {
+                Screen.Children.Remove(lane);
+            }
+            Screen.Width = 300 * level;
+
+            StackPanel tarlane;
+            Screen.Children.Add(tarlane = new StackPanel
+            {
+                Name = $"Level_{level}",
+                Width = 290,
+                Background = new SolidColorBrush(Color.FromArgb(40, 0, 255, 0)),
+            });
+            return tarlane;
+        }
+
+        private UIElement AddCassette(Func<UIElement> instanciator)
+        {
+            var npc = instanciator.Invoke();
+            ((INotifyPropertyChanged)npc).PropertyChanged += OnPropertyChanged;
+
+            var lane = SetLevel(1);
+            lane.Children.Add(npc);
+
+            return npc;
+        }
+
+        private void RemoveCassette(string xname)
+        {
+            var res = FindCassette(xname);
+            if (res != default)
+            {
+                res.Parent.Children.Remove(res.Cassette);
+            }
+        }
+
+        private UIElement FocusIfExist(string xname)
+        {
+            var pp = FindCassette(xname);
+            if (pp != default)
+            {
+                // TODO: 先頭に持ってくる
+                // TODO: 次レベルのカセットが xnameでなければ、それらを消す
+            }
+            return pp.Cassette;
+        }
+
         [EventCatch(TokenID = TOKEN.PROPERTYOPEN)]
         public void PropertyOpen(EventTokenTriggerPropertyOpen token)
         {
+            if (token.Target is IJitObjectID oid)
+            {
+                if (FocusIfExist(oid.ID) != null)
+                {
+                    return;
+                }
+            }
             if (token.Target is JitProcess proc)
             {
-                var obj = Casettes.FindName(proc.ID);
-                if (obj is UIElement ue)
-                {
-                    Casettes.Children.Remove(ue);
-                }
-                PropertyProcess pp;
-                Casettes.Children.Insert(0, pp = new PropertyProcess
+                AddCassette(() => new PropertyProcess
                 {
                     Target = proc,
                 });
-                pp.PropertyChanged += OnPropertyChanged;
             }
         }
 
@@ -121,64 +199,52 @@ namespace JitStreamDesigner
             }
         }
 
+        private void UpdateCassette<TCassette>(EventTokenJitVariableTrigger token, Action<TCassette, JitVariable> updateAction)
+        {
+            if (token.From is IJitObjectID tar && token.From is JitVariable va)
+            {
+                if (FindCassette(tar.ID).Cassette is TCassette cassette)
+                {
+                    ((INotifyPropertyChanged)cassette).PropertyChanged -= OnPropertyChanged;
+                    updateAction.Invoke(cassette, va);
+                    ((INotifyPropertyChanged)cassette).PropertyChanged += OnPropertyChanged;
+                }
+            }
+        }
+
         [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.LocationChanged)]
         public void LocationChanged(EventTokenJitVariableTrigger token)
         {
-            if (token.Target is IJitObjectID tar && token.Target is JitVariable va)
+            UpdateCassette<IPropertyXy>(token, (cassette, tokenFrom) =>
             {
-                if (Casettes.FindName(tar.ID) is IPropertyXy chip)
-                {
-                    var pp = chip as INotifyPropertyChanged;
-                    pp.PropertyChanged -= OnPropertyChanged;
-
-                    chip.X = $"{((Distance)va.ChildVriables["LocationX"].Value).m}m";
-                    chip.Y = $"{((Distance)va.ChildVriables["LocationY"].Value).m}m";
-
-                    pp.PropertyChanged += OnPropertyChanged;
-                }
-            }
+                cassette.X = $"{((Distance)tokenFrom.ChildVriables["LocationX"].Value).m}m";
+                cassette.Y = $"{((Distance)tokenFrom.ChildVriables["LocationY"].Value).m}m";
+            });
         }
 
         [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.SizeChanged)]
         public void SizeChanged(EventTokenJitVariableTrigger token)
         {
-            if (token.Target is IJitObjectID tar && token.Target is JitVariable va)
+            UpdateCassette<IPropertyWh>(token, (cassette, tokenFrom) =>
             {
-                if (Casettes.FindName(tar.ID) is IPropertyWh chip)
-                {
-                    var pp = chip as INotifyPropertyChanged;
-                    pp.PropertyChanged -= OnPropertyChanged;
-
-                    chip.W = $"{((Distance)va.ChildVriables["Width"].Value).m}m";
-                    chip.H = $"{((Distance)va.ChildVriables["Height"].Value).m}m";
-
-                    pp.PropertyChanged += OnPropertyChanged;
-                }
-            }
+                cassette.W = $"{((Distance)tokenFrom.ChildVriables["Width"].Value).m}m";
+                cassette.H = $"{((Distance)tokenFrom.ChildVriables["Height"].Value).m}m";
+            });
         }
 
         [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.NameChanged)]
         public void NameChanged(EventTokenJitVariableTrigger token)
         {
-            if (token.Target is IJitObjectID tar && token.Target is JitVariable va)
+            UpdateCassette<IPropertyInstanceName>(token, (cassette, tokenFrom) =>
             {
-                if (Casettes.FindName(tar.ID) is IPropertyInstanceName chip && chip.InstanceName != va.Name)
-                {
-                    var pp = chip as INotifyPropertyChanged;
-                    pp.PropertyChanged -= OnPropertyChanged;
-                    chip.InstanceName = va.Name;
-                    pp.PropertyChanged += OnPropertyChanged;
-                }
-            }
+                cassette.InstanceName = tokenFrom.Name;
+            });
         }
 
         [EventCatch(TokenID = FeatureJitProcess.TOKEN.REMOVE)]
         public void ProcessRemoved(EventTokenProcessPartsTrigger token)
         {
-            if (Casettes.FindName(token.Process.ID) is UserControl chip)
-            {
-                Casettes.Children.Remove(chip);
-            }
+            RemoveCassette(token.Process.ID);
         }
     }
 
