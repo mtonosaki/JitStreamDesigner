@@ -4,36 +4,42 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Tono;
 using Tono.Jit;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
-// ユーザー コントロールの項目テンプレートについては、https://go.microsoft.com/fwlink/?LinkId=234236 を参照してください
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace JitStreamDesigner
 {
-    public interface IPropertyInstanceName : IJitObjectID
-    {
-        string InstanceName { get; set; }
-    };
-
-    public interface IPropertyXy : IJitObjectID
-    {
-        string X { get;set; }
-        string Y { get; set; }
-    }
-    public interface IPropertyWh : IJitObjectID
-    {
-        string W { get; set; }
-        string H { get; set; }
-    }
-
     public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private JitProcess target;
+
+        public PropertyProcess()
+        {
+            this.InitializeComponent();
+            CleanDesignDummy();
+
+        }
+
+        private void CleanDesignDummy()
+        {
+            foreach (var lane in new[] { CiLane, CoLane })
+            {
+                var dels = lane.Children.Where(a => a is FrameworkElement).Select(a => (FrameworkElement)a).Where(a => a.Name.StartsWith("Cio_")).ToArray();
+                foreach (var del in dels)
+                {
+                    lane.Children.Remove(del);
+                }
+            }
+        }
+
         /// <summary>
         /// Target Jit Object
         /// </summary>
@@ -54,7 +60,7 @@ namespace JitStreamDesigner
 
         public string ID
         {
-            get => Target.ID;
+            get => Target?.ID ?? "(n/a)";
             set => new NotSupportedException();
         }
 
@@ -135,10 +141,10 @@ namespace JitStreamDesigner
             }
         }
 
-
-        public PropertyProcess()
+        public string GetCiMajorValue(string id)
         {
-            this.InitializeComponent();
+            var cio = Target.Cios.Where(a => a.ID == id).FirstOrDefault();
+            return cio?.MakeShortValue() ?? "";
         }
 
         private void Button_Round_Click(object sender, RoutedEventArgs e)
@@ -147,6 +153,73 @@ namespace JitStreamDesigner
             Y = $"{Math.Round(Distance.Parse(Y).m)}m";
             W = $"{Math.Round(Distance.Parse(W).m)}m";
             H = $"{Math.Round(Distance.Parse(H).m)}m";
+        }
+
+        private async void CiAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var pal = new CiPalette();
+            var ret = await pal.ShowAsync();
+            if (Activator.CreateInstance(pal.SelectedCommand) is CiBase ci)
+            {
+                AddCioButton(ci, CiLane);
+            }
+        }
+
+        private async void CoAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var pal = new CoPalette();
+            var ret = await pal.ShowAsync();
+            if (Activator.CreateInstance(pal.SelectedConstraint) is CoBase co)
+            {
+                AddCioButton(co, CoLane);
+            }
+        }
+
+        private void AddCioButton(CioBase cio, StackPanel lane)
+        {
+            Target.CioAdd(cio);  // Add in-command to Process
+
+            //< Button x: Name = "Cio_Dummy1" Background = "Transparent" Margin = "0,-6" >
+            //  < Button.Content >
+            //      < StackPanel Orientation = "Horizontal" >
+            //          < Image Width = "18" Height = "18" Source = "./Assets/CiDelay.png" />
+            //          < TextBlock VerticalAlignment = "Center" Foreground = "White" FontSize = "9" >< Run >= 25.2S </ Run ></ TextBlock >
+            //      </ StackPanel >
+            //  </ Button.Content >
+            //</ Button >
+
+            StackPanel btnContent;
+            Button btn;
+            lane.Children.Insert(lane.Children.Count - 1, btn = new Button
+            {
+                Name = $"Cio_{cio.ID}",
+                Background = new SolidColorBrush(Colors.Transparent),
+                Margin = new Thickness { Left = 0, Top = -6, Right = 0, Bottom = -6 },
+                Content = btnContent = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                },
+            });
+            btnContent.Children.Add(new Image
+            {
+                Width = 18,
+                Height = 18,
+                Source = new BitmapImage(new Uri($"ms-appx:///Assets/{cio.GetType().Name}.png")),
+            });
+            var shortCaption = GetCiMajorValue(cio.ID);
+            if (string.IsNullOrEmpty(shortCaption) == false)
+            {
+                TextBlock btnCaption;
+                btnContent.Children.Add(btnCaption = new TextBlock
+                {
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = new SolidColorBrush(Colors.White),
+                    FontSize = 10,
+                });
+                btnCaption.Text = $" {shortCaption}";
+            }
+
+            ToolTipService.SetToolTip(btn, $"{cio.GetType().Name} {cio.MakeShortValue()}");
         }
     }
 }

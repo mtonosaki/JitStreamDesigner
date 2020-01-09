@@ -219,7 +219,7 @@ namespace JitStreamDesigner
                     Token.AddNew(new EventTokenJitVariableTrigger
                     {
                         TokenID = TOKEN.LocationChanged,
-                        Target = process,
+                        From = process,
                         Sender = this,
                     });
                 }
@@ -244,7 +244,7 @@ namespace JitStreamDesigner
                     Token.AddNew(new EventTokenJitVariableTrigger
                     {
                         TokenID = TOKEN.SizeChanged,
-                        Target = process,
+                        From = process,
                         Sender = this,
                     });
                 }
@@ -265,7 +265,7 @@ namespace JitStreamDesigner
                 Token.AddNew(new EventTokenJitVariableTrigger
                 {
                     TokenID = TOKEN.NameChanged,
-                    Target = va,
+                    From = va,
                     Sender = this,
                     Remarks = "Jac:Name Changed",
                 });
@@ -305,6 +305,9 @@ namespace JitStreamDesigner
     /// </summary>
     public class EventTokenJitVariableTrigger : EventTokenTrigger
     {
-        public IJitObjectID Target { get; set; }
+        /// <summary>
+        /// Value changed target
+        /// </summary>
+        public IJitObjectID From { get; set; }
     }
 }
