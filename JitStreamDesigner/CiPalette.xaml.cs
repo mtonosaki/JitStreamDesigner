@@ -19,9 +19,20 @@ namespace JitStreamDesigner
 {
     public sealed partial class CiPalette : ContentDialog
     {
+        public Type SelectedCommand { get; private set; }
+
         public CiPalette()
         {
             this.InitializeComponent();
+        }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement fe)
+            {
+                SelectedCommand = fe.Tag as Type;   // Expecting to have set Type of CiBase to Button.Tag
+            }
+            Hide();
         }
     }
 }

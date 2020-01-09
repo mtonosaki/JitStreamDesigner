@@ -43,7 +43,6 @@ namespace JitStreamDesigner
 
         public Dictionary<string, object> PreviousValue { get; } = new Dictionary<string, object>();
 
-
         private string span = "0S";
         public string Span
         {

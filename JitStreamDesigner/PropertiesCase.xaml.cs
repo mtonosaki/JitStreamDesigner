@@ -22,6 +22,12 @@ namespace JitStreamDesigner
         public PropertyCase()
         {
             this.InitializeComponent();
+            CleanDesignDummy();
+        }
+
+        private void CleanDesignDummy()
+        {
+            Screen.Children.Clear();
         }
     }
 }

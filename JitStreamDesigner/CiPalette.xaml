@@ -30,7 +30,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiDelay.Type}" />
+        <Button Grid.Row="0" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiDelay.Type}" Click="Add_Click" />
         <Image Grid.Row="0" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CiDelay.png" />
         <TextBlock Grid.Row="0" Grid.Column="2" Margin="8" Text="Ci Delay" FontWeight="Bold" VerticalAlignment="Center" />
         <TextBlock Grid.Row="0" Grid.Column="3" x:Uid="DescriptionCiDelay" TextWrapping="WrapWholeWords">
@@ -38,7 +38,7 @@
         </TextBlock>
         <Rectangle Grid.Row="1" Grid.ColumnSpan="4" Height="1" Margin="4" Fill="SteelBlue" />
 
-        <Button Grid.Row="2" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiKanbanReturn.Type}" />
+        <Button Grid.Row="2" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiKanbanReturn.Type}" Click="Add_Click" />
         <Image Grid.Row="2" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CiKanbanReturn.png" />
         <TextBlock Grid.Row="2" Grid.Column="2" Margin="8" Text="Ci Kanban Return" FontWeight="Bold" VerticalAlignment="Center" />
         <TextBlock Grid.Row="2" Grid.Column="3" x:Uid="DescriptionCiKanbanReturn" TextWrapping="WrapWholeWords">
@@ -46,7 +46,7 @@
         </TextBlock>
         <Rectangle Grid.Row="3" Grid.ColumnSpan="4" Height="1" Margin="4" Fill="SteelBlue" />
 
-        <Button Grid.Row="4" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiPickTo.Type}" />
+        <Button Grid.Row="4" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiPickTo.Type}" Click="Add_Click" />
         <Image Grid.Row="4" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CiPickTo.png" />
         <TextBlock Grid.Row="4" Grid.Column="2" Margin="8" Text="Ci Pick to" FontWeight="Bold" VerticalAlignment="Center" />
         <TextBlock Grid.Row="4" Grid.Column="3" x:Uid="DescriptionCiPickTo" TextWrapping="WrapWholeWords">
@@ -54,7 +54,7 @@
         </TextBlock>
         <Rectangle Grid.Row="5" Grid.ColumnSpan="4" Height="1" Margin="4" Fill="SteelBlue" />
 
-        <Button Grid.Row="6" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiSwitchNextLink.Type}" />
+        <Button Grid.Row="6" Grid.Column="0" Margin="2" Content="add" x:Uid="CioAddButton" Tag="{x:Bind jit:CiSwitchNextLink.Type}" Click="Add_Click" />
         <Image Grid.Row="6" Grid.Column="1" Margin="8" Width="32" Height="32" Source="/Assets/CiSwitchNextLink.png" />
         <TextBlock Grid.Row="6" Grid.Column="2" Margin="8" Text="Ci Switch Next Link" FontWeight="Bold" VerticalAlignment="Center" />
         <TextBlock Grid.Row="6" Grid.Column="3" x:Uid="DescriptionCiSwitchNextLink" TextWrapping="WrapWholeWords">

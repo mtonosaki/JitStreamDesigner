@@ -30,7 +30,7 @@ namespace JitStreamDesigner
         {
             if (sender is FrameworkElement fe)
             {
-                SelectedConstraint = fe.Tag as Type;
+                SelectedConstraint = fe.Tag as Type;   // Expecting to have set Type of CoBase to Button.Tag
             }
             Hide();
         }
