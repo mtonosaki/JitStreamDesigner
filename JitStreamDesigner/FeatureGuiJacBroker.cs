@@ -25,6 +25,7 @@ namespace JitStreamDesigner
             public const string NameChanged = "FeatureGuiJacBrokerNameChanged";
             public const string SizeChanged = "FeatureGuiJacBrokerSizeChanged";
             public const string LocationChanged = "FeatureGuiJacBrokerLocationChanged";
+            public const string CioChanged = "FeatureGuiJacBrokerCioChanged";
         }
         private LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
@@ -203,7 +204,7 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// Gui.UpdateLocation = 'Process.ID'
+        /// Gui.UpdateLocation = Process.ID
         /// </summary>
         /// <param name="value">JitProcess</param>
         public void UpdateLocation(object value)
@@ -227,7 +228,7 @@ namespace JitStreamDesigner
             WaitNext();
         }
         /// <summary>
-        /// Gui.UpdateLocation = 'Process.ID'
+        /// Gui.UpdateSize = Process.ID
         /// </summary>
         /// <param name="value">JitProcess</param>
         public void UpdateSize(object value)
@@ -253,7 +254,7 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// Gui.UpdateLocation = 'Process.ID'
+        /// Gui.UpdateName = Process.ID
         /// </summary>
         /// <param name="value">JitProcess</param>
         public void UpdateName(object value)
@@ -270,6 +271,27 @@ namespace JitStreamDesigner
                     Remarks = "Jac:Name Changed",
                 });
             }
+            WaitNext();
+        }
+
+        /// <summary>
+        /// Gui.UpdateProcessCio = Process.ID
+        /// </summary>
+        /// <param name="value"></param>
+        public void UpdateProcessCio(object value)
+        {
+            var co = value.ToString().Split(',');
+            Debug.Assert(co.Length == 3);
+
+            Token.AddNew(new EventTokenJitCioTrigger
+            {
+                TokenID = TOKEN.CioChanged,
+                Action = co[0],
+                TargetProcessID = co[1],
+                FromCioID = co[2],
+                Sender = this,
+                Remarks = "Jac:Gui:Cio Changed",
+            });
             WaitNext();
         }
 
@@ -309,5 +331,26 @@ namespace JitStreamDesigner
         /// Value changed target
         /// </summary>
         public IJitObjectID From { get; set; }
+    }
+
+    /// <summary>
+    /// Cio message
+    /// </summary>
+    public class EventTokenJitCioTrigger : EventTokenTrigger
+    {
+        /// <summary>
+        /// add / remove / update
+        /// </summary>
+        public string Action { get; set; }
+
+        /// <summary>
+        /// The process that have Cio
+        /// </summary>
+        public string TargetProcessID { get; set; }
+
+        /// <summary>
+        /// Value changed target
+        /// </summary>
+        public string FromCioID { get; set; }
     }
 }

@@ -15,9 +15,16 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh
+    public class NewUndoRedoEventArgs : EventArgs
+    {
+        public string NewRedo { get; set; }
+        public string NewUndo { get; set; }
+    }
+
+    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh, IPropertySpecificUndoRedo
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
 
         private JitProcess target;
 
@@ -25,7 +32,6 @@ namespace JitStreamDesigner
         {
             this.InitializeComponent();
             CleanDesignDummy();
-
         }
 
         private void CleanDesignDummy()
@@ -155,23 +161,72 @@ namespace JitStreamDesigner
             H = $"{Math.Round(Distance.Parse(H).m)}m";
         }
 
-        private async void CiAdd_Click(object sender, RoutedEventArgs e)
+        private async void CioAdd_Click(object sender, RoutedEventArgs e)
         {
-            var pal = new CiPalette();
-            var ret = await pal.ShowAsync();
-            if (Activator.CreateInstance(pal.SelectedCommand) is CiBase ci)
+            ICioSelectedClass pal = null;
+            if (sender is FrameworkElement btn)
             {
-                AddCioButton(ci, CiLane);
+                switch (btn.Name)
+                {
+                    case "CiAddButton":
+                        pal = new CiPalette();
+                        break;
+                    case "CoAddButton":
+                        pal = new CoPalette();
+                        break;
+                }
+            }
+            var ret = await ((ContentDialog)pal).ShowAsync();
+            if (pal.Selected != null)
+            {
+                var id = JacInterpreter.MakeID("CIO");
+                NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
+                {
+                    NewRedo = $"{Target.ID}\r\n" +                              // Process.ID
+                              $"    Cio\r\n" +                                  // Cio Collection
+                              $"        add new {pal.Selected.Name}\r\n" +      // Add the selected Ci/Co
+                              $"            ID = '{id}'\r\n" +                  // Specified ID because it will be used by Undo with same ID
+                              $"Gui.UpdateProcessCio = 'add,{Target.ID},{id}'\r\n",
+
+                    NewUndo = $"Gui.UpdateProcessCio = 'remove,{Target.ID},{id}'\r\n"+
+                              $"{Target.ID}\r\n" +
+                              $"    Cio\r\n" +
+                              $"        remove {id}\r\n",
+                });
+                // wait REDO mechanism to add CioButton
             }
         }
 
-        private async void CoAdd_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action">add/remove that set at Jac(Undo/Redo) above</param>
+        /// <param name="cio"></param>
+        public void UpdateCioButton(string action, string cioid)
         {
-            var pal = new CoPalette();
-            var ret = await pal.ShowAsync();
-            if (Activator.CreateInstance(pal.SelectedConstraint) is CoBase co)
+            // TODO: cioボタンが既存なら、追加しない
+            if (action.Equals("add"))
             {
-                AddCioButton(co, CoLane);
+                var cio = Target.Cios.Where(a => a.ID == cioid).FirstOrDefault();
+                if (cio is CiBase)
+                {
+                    AddCioButton(cio, CiLane);
+                }
+                if (cio is CoBase)
+                {
+                    AddCioButton(cio, CoLane);
+                }
+            }
+            if (action.Equals("remove"))
+            {
+                foreach (var lane in new[] { CiLane, CoLane })
+                {
+                    var dels = lane.Children.Select(a => (Button)a).Where(a => a.Name == $"Cio_{cioid}").ToArray();
+                    foreach (var del in dels)
+                    {
+                        lane.Children.Remove(del);
+                    }
+                }
             }
         }
 

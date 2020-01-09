@@ -85,15 +85,22 @@ namespace JitStreamDesigner
             return tarlane;
         }
 
-        private UIElement AddCassette(Func<UIElement> instanciator)
+        private (StackPanel Parent, UIElement Cassette) AddCassette(Func<UIElement> instanciator)
         {
             var npc = instanciator.Invoke();
-            ((INotifyPropertyChanged)npc).PropertyChanged += OnPropertyChanged;
+            if (npc is INotifyPropertyChanged inpc)
+            {
+                inpc.PropertyChanged += OnPropertyChanged;
+            }
+            if (npc is IPropertySpecificUndoRedo sur)
+            {
+                sur.NewUndoRedo += OnNewUndoRedo;
+            }
 
             var lane = SetLevel(1);
             lane.Children.Add(npc);
 
-            return npc;
+            return (lane, npc);
         }
 
         private void RemoveCassette(string xname)
@@ -105,7 +112,7 @@ namespace JitStreamDesigner
             }
         }
 
-        private UIElement FocusIfExist(string xname)
+        private UIElement AddOrFocus(string xname, Func<UIElement> instanciator)
         {
             var pp = FindCassette(xname);
             if (pp != default)
@@ -113,22 +120,19 @@ namespace JitStreamDesigner
                 // TODO: 先頭に持ってくる
                 // TODO: 次レベルのカセットが xnameでなければ、それらを消す
             }
+            else
+            {
+                pp = AddCassette(instanciator);
+            }
             return pp.Cassette;
         }
 
         [EventCatch(TokenID = TOKEN.PROPERTYOPEN)]
         public void PropertyOpen(EventTokenTriggerPropertyOpen token)
         {
-            if (token.Target is IJitObjectID oid)
-            {
-                if (FocusIfExist(oid.ID) != null)
-                {
-                    return;
-                }
-            }
             if (token.Target is JitProcess proc)
             {
-                AddCassette(() => new PropertyProcess
+                AddOrFocus(proc.ID, () => new PropertyProcess
                 {
                     Target = proc,
                 });
@@ -159,44 +163,78 @@ namespace JitStreamDesigner
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (sender is PropertyProcess model)
+            redosaver.Stop();
+            redosaver.Start();
+
+            // GENERAL PROPERTY
+            if (sender is IPropertyInstanceName name && e.PropertyName == "InstanceName")
+            {
+                jacRedo.AppendLine($@"{name.ID}.Name = '{name.InstanceName}'");
+                jacRedo.AppendLine($@"Gui.UpdateName = {name.ID}");
+                jacUndo.AppendLine($@"{name.ID}.Name = '{name.PreviousValue[e.PropertyName]}'");
+                jacUndo.AppendLine($@"Gui.UpdateName = {name.ID}");
+                return;
+            }
+            if (sender is IPropertyXy xy)
             {
                 switch (e.PropertyName)
                 {
-                    case "InstanceName":
-                        jacRedo.AppendLine($@"{model.Target.ID}.Name = '{model.InstanceName}'");
-                        jacRedo.AppendLine($@"Gui.UpdateName = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.Name = '{model.PreviousValue[e.PropertyName]}'");
-                        jacUndo.AppendLine($@"Gui.UpdateName = {model.Target.ID}");
-                        break;
                     case "X":
-                        jacRedo.AppendLine($@"{model.Target.ID}.LocationX = {model.X}");
-                        jacRedo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.LocationX = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        break;
+                        jacRedo.AppendLine($@"{xy.ID}.LocationX = {xy.X}");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        jacUndo.AppendLine($@"{xy.ID}.LocationX = {xy.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        return;
                     case "Y":
-                        jacRedo.AppendLine($@"{model.Target.ID}.LocationY = {model.Y}");
-                        jacRedo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.LocationY = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        break;
-                    case "W":
-                        jacRedo.AppendLine($@"{model.Target.ID}.Width = {model.W}");
-                        jacRedo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.Width = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        break;
-                    case "H":
-                        jacRedo.AppendLine($@"{model.Target.ID}.Height = {model.H}");
-                        jacRedo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.Height = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        break;
+                        jacRedo.AppendLine($@"{xy.ID}.LocationY = {xy.Y}");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        jacUndo.AppendLine($@"{xy.ID}.LocationY = {xy.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        return;
                 }
-                redosaver.Stop();
-                redosaver.Start();
             }
+            if (sender is IPropertyWh wh)
+            {
+                switch (e.PropertyName)
+                {
+                    case "W":
+                        jacRedo.AppendLine($@"{wh.ID}.Width = {wh.W}");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        jacUndo.AppendLine($@"{wh.ID}.Width = {wh.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        return;
+                    case "H":
+                        jacRedo.AppendLine($@"{wh.ID}.Height = {wh.H}");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        jacUndo.AppendLine($@"{wh.ID}.Height = {wh.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// treat original property change to support UNDO/REDO
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnNewUndoRedo(object sender, NewUndoRedoEventArgs e)
+        {
+            jacRedo.AppendLine(e.NewRedo);
+            jacUndo.AppendLine(e.NewUndo);
+
+            redosaver.Stop();
+            redosaver.Start();
+        }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CioChanged)]
+        public void CioChanged(EventTokenJitCioTrigger token)
+        {
+            var pp = AddOrFocus(token.TargetProcessID, () => new PropertyProcess
+            {
+                Target = Hot.ActiveTemplate.Jac.GetProcess(token.TargetProcessID),
+            });
+            ((PropertyProcess)pp).UpdateCioButton(token.Action, token.FromCioID);
         }
 
         private void UpdateCassette<TCassette>(EventTokenJitVariableTrigger token, Action<TCassette, JitVariable> updateAction)

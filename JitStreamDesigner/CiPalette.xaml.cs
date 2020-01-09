@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,13 +16,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// コンテンツ ダイアログの項目テンプレートについては、https://go.microsoft.com/fwlink/?LinkId=234238 を参照してください
-
 namespace JitStreamDesigner
 {
-    public sealed partial class CiPalette : ContentDialog
+    public interface ICioSelectedClass
     {
-        public Type SelectedCommand { get; private set; }
+        Type Selected { get; }
+    }
+
+    public sealed partial class CiPalette : ContentDialog, ICioSelectedClass
+    {
+        public Type Selected { get; private set; }
 
         public CiPalette()
         {
@@ -30,7 +36,7 @@ namespace JitStreamDesigner
         {
             if (sender is FrameworkElement fe)
             {
-                SelectedCommand = fe.Tag as Type;   // Expecting to have set Type of CiBase to Button.Tag
+                Selected = fe.Tag as Type;   // Expecting to have set Type of CiBase to Button.Tag
             }
             Hide();
         }

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+// Copyright (c) Manabu Tonosaki All rights reserved.
+// Licensed under the MIT license.
+
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -13,13 +16,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// コンテンツ ダイアログの項目テンプレートについては、https://go.microsoft.com/fwlink/?LinkId=234238 を参照してください
-
 namespace JitStreamDesigner
 {
-    public sealed partial class CoPalette : ContentDialog
+    public sealed partial class CoPalette : ContentDialog, ICioSelectedClass
     {
-        public Type SelectedConstraint { get; private set; }
+        public Type Selected { get; private set; }
 
         public CoPalette()
         {
@@ -30,7 +31,7 @@ namespace JitStreamDesigner
         {
             if (sender is FrameworkElement fe)
             {
-                SelectedConstraint = fe.Tag as Type;   // Expecting to have set Type of CoBase to Button.Tag
+                Selected = fe.Tag as Type;   // Expecting to have set Type of CoBase to Button.Tag
             }
             Hide();
         }
