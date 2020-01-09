@@ -55,7 +55,7 @@
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                    <Button Background="Transparent" Margin="0,-6" Click="CiAdd_Click">
+                    <Button x:Uid="CiAddButton" Background="Transparent" Margin="0,-6" Click="CiAdd_Click">
                         <Button.Content>
                             <Image Width="18" Height="18" Source="./Assets/Add.png" />
                         </Button.Content>
@@ -78,7 +78,7 @@
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                    <Button Background="Transparent" Margin="0,-6" Click="CoAdd_Click">
+                    <Button x:Uid="CoAddButton" Background="Transparent" Margin="0,-6" Click="CoAdd_Click">
                         <Button.Content>
                             <Image Width="18" Height="18" Source="./Assets/Add.png" />
                         </Button.Content>

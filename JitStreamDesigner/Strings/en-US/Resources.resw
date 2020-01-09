@@ -242,4 +242,10 @@
   <data name="DescriptionCoSpan.Text" xml:space="preserve">
     <value>Let Work at previous Process wait to keep time span from leading Work.</value>
   </data>
+  <data name="CiAddButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add an In-Command</value>
+  </data>
+  <data name="CoAddButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add an Out-Constraint</value>
+  </data>
 </root>

@@ -241,4 +241,10 @@
   <data name="DescriptionCoSpan.Text" xml:space="preserve">
     <value>自工程にワークが入る最小間隔を指定する</value>
   </data>
+  <data name="CiAddButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>In-Command 追加</value>
+  </data>
+  <data name="CoAddButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Out-Constraint 追加</value>
+  </data>
 </root>
