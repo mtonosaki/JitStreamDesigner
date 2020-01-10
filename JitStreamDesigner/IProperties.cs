@@ -7,7 +7,15 @@ using Tono.Jit;
 
 namespace JitStreamDesigner
 {
-    public interface IPropertySpecificUndoRedo
+    public interface ISetPropertyTarget
+    {
+        void SetPropertyTarget(object target);
+    }
+    public interface IEventPropertyCioOpen
+    {
+        event EventHandler<CioClickedEventArgs> CioClicked;
+    }
+    public interface IEventPropertySpecificUndoRedo
     {
         event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
     }

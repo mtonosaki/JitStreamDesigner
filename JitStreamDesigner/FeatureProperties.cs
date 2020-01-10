@@ -81,8 +81,32 @@ namespace JitStreamDesigner
                 Name = $"Level_{level}",
                 Width = 290,
                 Background = new SolidColorBrush(Color.FromArgb(40, 0, 255, 0)),
+                Orientation = Orientation.Vertical,
             });
+            if (level > 1)
+            {
+                Button backButton;
+                tarlane.Children.Add(backButton = new Button
+                {
+                    Content = "← Back",
+                    Background = new SolidColorBrush(Colors.Transparent),
+                    Tag = level - 1,
+                });
+                backButton.Click += LaneBackButton_Click;
+            }
             return tarlane;
+        }
+
+        private void LaneBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var alane = Screen.Children.Where(a => ((FrameworkElement)a).Name.StartsWith("Level_")).FirstOrDefault() as FrameworkElement;
+            var btn = sender as Button;
+            var toLevel = (int)btn.Tag;
+
+            // auto scroll to show back cassette
+            ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
+            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            ScrollView.ChangeView(alane.Width * (toLevel - 1), null, null, false);
         }
 
         private (StackPanel Parent, UIElement Cassette) AddCassette(Func<UIElement> instanciator)
@@ -92,15 +116,45 @@ namespace JitStreamDesigner
             {
                 inpc.PropertyChanged += OnPropertyChanged;
             }
-            if (npc is IPropertySpecificUndoRedo sur)
+            if (npc is IEventPropertySpecificUndoRedo sur)
             {
                 sur.NewUndoRedo += OnNewUndoRedo;
+            }
+            if (npc is IEventPropertyCioOpen pco)
+            {
+                pco.CioClicked += OnCioClicked;
             }
 
             var lane = SetLevel(1); // remove the all lanes and add a first lane
             lane.Children.Add(npc); // add a propery cassette
 
             return (lane, npc);
+        }
+
+        /// <summary>
+        /// Open Ci/Co property casette
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnCioClicked(object sender, CioClickedEventArgs e)
+        {
+            var res = FindCassette(e.TargetProcess.ID);
+            var level = int.Parse(StrUtil.MidSkip(res.Parent.Name, "Level_"));
+            var lane = SetLevel(level + 1);
+            var cassetteType = GetType().Assembly.GetTypes().Where(a => a.Name == $"Property{e.Cio.GetType().Name}").FirstOrDefault();
+            var cioCassette = Activator.CreateInstance(cassetteType) as UIElement;
+            lane.Children.Add(cioCassette);
+            if (cioCassette is ISetPropertyTarget sp)
+            {
+                sp.SetPropertyTarget(e.Cio);
+            }
+            DelayUtil.Start(TimeSpan.FromMilliseconds(20), () =>
+            {
+                // auto scroll to show new cassette
+                ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
+                ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                ScrollView.ChangeView(lane.Width * level, null, null, false);
+            });
         }
 
         private void RemoveCassette(string xname)

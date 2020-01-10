@@ -16,20 +16,29 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace JitStreamDesigner
 {
-    public class NewUndoRedoEventArgs : EventArgs
+    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh, IEventPropertySpecificUndoRedo, IEventPropertyCioOpen, ISetPropertyTarget
     {
-        public string NewRedo { get; set; }
-        public string NewUndo { get; set; }
-    }
-
-    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh, IPropertySpecificUndoRedo
-    {
+        /// <summary>
+        /// Property Changed event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Request to save new Undo/Redo Jac
+        /// </summary>
         public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
+
+        /// <summary>
+        /// Ci/Co buttons in Ci/Co Lane Clicked event (to open Ci/Co property casette)
+        /// </summary>
+        public event EventHandler<CioClickedEventArgs> CioClicked;
 
         private JitProcess target;
         private const string CIOBUTTON_MARKER = "CB_";
 
+        /// <summary>
+        /// the constructor
+        /// </summary>
         public PropertyProcess()
         {
             this.InitializeComponent();
@@ -246,7 +255,7 @@ namespace JitStreamDesigner
         private void AddCioButton(CioBase cio)
         {
             var lane = cio is CiBase ? CiLane : CoLane;
-            if( lane.Children.Where(a => ((FrameworkElement)a).Name.StartsWith($"{CIOBUTTON_MARKER}{cio.ID}")).FirstOrDefault() != null)
+            if (lane.Children.Where(a => ((FrameworkElement)a).Name.StartsWith($"{CIOBUTTON_MARKER}{cio.ID}")).FirstOrDefault() != null)
             {
                 return; // Already added button
             }
@@ -292,6 +301,38 @@ namespace JitStreamDesigner
             }
 
             ToolTipService.SetToolTip(btn, $"{cio.GetType().Name} {cio.MakeShortValue()}");
+            btn.Click += CioButton_Click;
+            btn.Tag = cio;
         }
+
+        private void CioButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+
+            CioClicked?.Invoke(this, new CioClickedEventArgs
+            {
+                TargetProcess = Target,
+                Cio = (CioBase)btn.Tag,
+            });
+        }
+
+        public void SetPropertyTarget(object target)
+        {
+            if (target is JitProcess proc)
+            {
+                Target = proc;
+            }
+        }
+    }
+    public class NewUndoRedoEventArgs : EventArgs
+    {
+        public string NewRedo { get; set; }
+        public string NewUndo { get; set; }
+    }
+
+    public class CioClickedEventArgs : EventArgs
+    {
+        public JitProcess TargetProcess { get; set; }
+        public CioBase Cio { get; set; }
     }
 }
