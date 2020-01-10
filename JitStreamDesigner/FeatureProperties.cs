@@ -97,8 +97,8 @@ namespace JitStreamDesigner
                 sur.NewUndoRedo += OnNewUndoRedo;
             }
 
-            var lane = SetLevel(1);
-            lane.Children.Add(npc);
+            var lane = SetLevel(1); // remove the all lanes and add a first lane
+            lane.Children.Add(npc); // add a propery cassette
 
             return (lane, npc);
         }

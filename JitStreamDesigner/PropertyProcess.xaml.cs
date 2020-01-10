@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using Tono;
 using Tono.Jit;
+using Windows.ApplicationModel;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,6 +28,7 @@ namespace JitStreamDesigner
         public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
 
         private JitProcess target;
+        private const string CIOBUTTON_MARKER = "CB_";
 
         public PropertyProcess()
         {
@@ -36,9 +38,22 @@ namespace JitStreamDesigner
 
         private void CleanDesignDummy()
         {
+            ClearCioButtons();
+        }
+
+        public Visibility HideWhenRun
+        {
+            get
+            {
+                return DesignMode.DesignModeEnabled ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private void ClearCioButtons()
+        {
             foreach (var lane in new[] { CiLane, CoLane })
             {
-                var dels = lane.Children.Where(a => a is FrameworkElement).Select(a => (FrameworkElement)a).Where(a => a.Name.StartsWith("Cio_")).ToArray();
+                var dels = lane.Children.Where(a => a is FrameworkElement).Select(a => (FrameworkElement)a).Where(a => a.Name.StartsWith(CIOBUTTON_MARKER)).ToArray();
                 foreach (var del in dels)
                 {
                     lane.Children.Remove(del);
@@ -61,6 +76,12 @@ namespace JitStreamDesigner
                 Y = $"{((Distance)target.ChildVriables["LocationY"].Value).m}m";
                 W = $"{((Distance)target.ChildVriables["Width"].Value).m}m";
                 H = $"{((Distance)target.ChildVriables["Height"].Value).m}m";
+
+                ClearCioButtons();
+                foreach (var cio in Target.Cios)
+                {
+                    AddCioButton(cio);
+                }
             }
         }
 
@@ -188,7 +209,7 @@ namespace JitStreamDesigner
                               $"            ID = '{id}'\r\n" +                  // Specified ID because it will be used by Undo with same ID
                               $"Gui.UpdateProcessCio = 'add,{Target.ID},{id}'\r\n",
 
-                    NewUndo = $"Gui.UpdateProcessCio = 'remove,{Target.ID},{id}'\r\n"+
+                    NewUndo = $"Gui.UpdateProcessCio = 'remove,{Target.ID},{id}'\r\n" +
                               $"{Target.ID}\r\n" +
                               $"    Cio\r\n" +
                               $"        remove {id}\r\n",
@@ -198,30 +219,22 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
-        /// 
+        /// Come from Gui.Broker
         /// </summary>
         /// <param name="action">add/remove that set at Jac(Undo/Redo) above</param>
         /// <param name="cio"></param>
         public void UpdateCioButton(string action, string cioid)
         {
-            // TODO: cioボタンが既存なら、追加しない
             if (action.Equals("add"))
             {
                 var cio = Target.Cios.Where(a => a.ID == cioid).FirstOrDefault();
-                if (cio is CiBase)
-                {
-                    AddCioButton(cio, CiLane);
-                }
-                if (cio is CoBase)
-                {
-                    AddCioButton(cio, CoLane);
-                }
+                AddCioButton(cio);
             }
             if (action.Equals("remove"))
             {
                 foreach (var lane in new[] { CiLane, CoLane })
                 {
-                    var dels = lane.Children.Select(a => (Button)a).Where(a => a.Name == $"Cio_{cioid}").ToArray();
+                    var dels = lane.Children.Select(a => (Button)a).Where(a => a.Name == $"{CIOBUTTON_MARKER}{cioid}").ToArray();
                     foreach (var del in dels)
                     {
                         lane.Children.Remove(del);
@@ -230,11 +243,15 @@ namespace JitStreamDesigner
             }
         }
 
-        private void AddCioButton(CioBase cio, StackPanel lane)
+        private void AddCioButton(CioBase cio)
         {
-            Target.CioAdd(cio);  // Add in-command to Process
+            var lane = cio is CiBase ? CiLane : CoLane;
+            if( lane.Children.Where(a => ((FrameworkElement)a).Name.StartsWith($"{CIOBUTTON_MARKER}{cio.ID}")).FirstOrDefault() != null)
+            {
+                return; // Already added button
+            }
 
-            //< Button x: Name = "Cio_Dummy1" Background = "Transparent" Margin = "0,-6" >
+            //< Button x: Name = "CB_Dummy1" Background = "Transparent" Margin = "0,-6" >
             //  < Button.Content >
             //      < StackPanel Orientation = "Horizontal" >
             //          < Image Width = "18" Height = "18" Source = "./Assets/CiDelay.png" />
@@ -247,7 +264,7 @@ namespace JitStreamDesigner
             Button btn;
             lane.Children.Insert(lane.Children.Count - 1, btn = new Button
             {
-                Name = $"Cio_{cio.ID}",
+                Name = $"{CIOBUTTON_MARKER}{cio.ID}",
                 Background = new SolidColorBrush(Colors.Transparent),
                 Margin = new Thickness { Left = 0, Top = -6, Right = 0, Bottom = -6 },
                 Content = btnContent = new StackPanel
