@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using Tono;
 using Tono.Jit;
+using Windows.ApplicationModel;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,24 +16,53 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh
+    public sealed partial class PropertyProcess : UserControl, INotifyPropertyChanged, IPropertyInstanceName, IPropertyXy, IPropertyWh, IEventPropertySpecificUndoRedo, IEventPropertyCioOpen, ISetPropertyTarget
     {
+        /// <summary>
+        /// Property Changed event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private JitProcess target;
+        /// <summary>
+        /// Request to save new Undo/Redo Jac
+        /// </summary>
+        public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
 
+        /// <summary>
+        /// Ci/Co buttons in Ci/Co Lane Clicked event (to open Ci/Co property casette)
+        /// </summary>
+        public event EventHandler<CioClickedEventArgs> CioClicked;
+
+        private JitProcess target;
+        private const string CIOBUTTON_MARKER = "CB_";
+
+        /// <summary>
+        /// the constructor
+        /// </summary>
         public PropertyProcess()
         {
             this.InitializeComponent();
             CleanDesignDummy();
-
         }
 
         private void CleanDesignDummy()
         {
+            ClearCioButtons();
+        }
+
+        public Visibility HideWhenRun
+        {
+            get
+            {
+                return DesignMode.DesignModeEnabled ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private void ClearCioButtons()
+        {
             foreach (var lane in new[] { CiLane, CoLane })
             {
-                var dels = lane.Children.Where(a => a is FrameworkElement).Select(a => (FrameworkElement)a).Where(a => a.Name.StartsWith("Cio_")).ToArray();
+                var dels = lane.Children.Where(a => a is FrameworkElement).Select(a => (FrameworkElement)a).Where(a => a.Name.StartsWith(CIOBUTTON_MARKER)).ToArray();
                 foreach (var del in dels)
                 {
                     lane.Children.Remove(del);
@@ -55,6 +85,12 @@ namespace JitStreamDesigner
                 Y = $"{((Distance)target.ChildVriables["LocationY"].Value).m}m";
                 W = $"{((Distance)target.ChildVriables["Width"].Value).m}m";
                 H = $"{((Distance)target.ChildVriables["Height"].Value).m}m";
+
+                ClearCioButtons();
+                foreach (var cio in Target.Cios)
+                {
+                    AddCioButton(cio);
+                }
             }
         }
 
@@ -155,31 +191,76 @@ namespace JitStreamDesigner
             H = $"{Math.Round(Distance.Parse(H).m)}m";
         }
 
-        private async void CiAdd_Click(object sender, RoutedEventArgs e)
+        private async void CioAdd_Click(object sender, RoutedEventArgs e)
         {
-            var pal = new CiPalette();
-            var ret = await pal.ShowAsync();
-            if (Activator.CreateInstance(pal.SelectedCommand) is CiBase ci)
+            ICioSelectedClass pal = null;
+            if (sender is FrameworkElement btn)
             {
-                AddCioButton(ci, CiLane);
+                switch (btn.Name)
+                {
+                    case "CiAddButton":
+                        pal = new CiPalette();
+                        break;
+                    case "CoAddButton":
+                        pal = new CoPalette();
+                        break;
+                }
+            }
+            var ret = await ((ContentDialog)pal).ShowAsync();
+            if (pal.Selected != null)
+            {
+                var id = JacInterpreter.MakeID("CIO");
+                NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
+                {
+                    NewRedo = $"{Target.ID}\r\n" +                              // Process.ID
+                              $"    Cio\r\n" +                                  // Cio Collection
+                              $"        add new {pal.Selected.Name}\r\n" +      // Add the selected Ci/Co
+                              $"            ID = '{id}'\r\n" +                  // Specified ID because it will be used by Undo with same ID
+                              $"Gui.UpdateProcessCio = 'add,{Target.ID},{id}'\r\n",
+
+                    NewUndo = $"Gui.UpdateProcessCio = 'remove,{Target.ID},{id}'\r\n" +
+                              $"{Target.ID}\r\n" +
+                              $"    Cio\r\n" +
+                              $"        remove {id}\r\n",
+                });
+                // wait REDO mechanism to add CioButton
             }
         }
 
-        private async void CoAdd_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Come from Gui.Broker
+        /// </summary>
+        /// <param name="action">add/remove that set at Jac(Undo/Redo) above</param>
+        /// <param name="cio"></param>
+        public void UpdateCioButton(string action, string cioid)
         {
-            var pal = new CoPalette();
-            var ret = await pal.ShowAsync();
-            if (Activator.CreateInstance(pal.SelectedConstraint) is CoBase co)
+            if (action.Equals("add"))
             {
-                AddCioButton(co, CoLane);
+                var cio = Target.Cios.Where(a => a.ID == cioid).FirstOrDefault();
+                AddCioButton(cio);
+            }
+            if (action.Equals("remove"))
+            {
+                foreach (var lane in new[] { CiLane, CoLane })
+                {
+                    var dels = lane.Children.Select(a => (Button)a).Where(a => a.Name == $"{CIOBUTTON_MARKER}{cioid}").ToArray();
+                    foreach (var del in dels)
+                    {
+                        lane.Children.Remove(del);
+                    }
+                }
             }
         }
 
-        private void AddCioButton(CioBase cio, StackPanel lane)
+        private void AddCioButton(CioBase cio)
         {
-            Target.CioAdd(cio);  // Add in-command to Process
+            var lane = cio is CiBase ? CiLane : CoLane;
+            if (lane.Children.Where(a => ((FrameworkElement)a).Name.StartsWith($"{CIOBUTTON_MARKER}{cio.ID}")).FirstOrDefault() != null)
+            {
+                return; // Already added button
+            }
 
-            //< Button x: Name = "Cio_Dummy1" Background = "Transparent" Margin = "0,-6" >
+            //< Button x: Name = "CB_Dummy1" Background = "Transparent" Margin = "0,-6" >
             //  < Button.Content >
             //      < StackPanel Orientation = "Horizontal" >
             //          < Image Width = "18" Height = "18" Source = "./Assets/CiDelay.png" />
@@ -192,7 +273,7 @@ namespace JitStreamDesigner
             Button btn;
             lane.Children.Insert(lane.Children.Count - 1, btn = new Button
             {
-                Name = $"Cio_{cio.ID}",
+                Name = $"{CIOBUTTON_MARKER}{cio.ID}",
                 Background = new SolidColorBrush(Colors.Transparent),
                 Margin = new Thickness { Left = 0, Top = -6, Right = 0, Bottom = -6 },
                 Content = btnContent = new StackPanel
@@ -220,6 +301,38 @@ namespace JitStreamDesigner
             }
 
             ToolTipService.SetToolTip(btn, $"{cio.GetType().Name} {cio.MakeShortValue()}");
+            btn.Click += CioButton_Click;
+            btn.Tag = cio;
         }
+
+        private void CioButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+
+            CioClicked?.Invoke(this, new CioClickedEventArgs
+            {
+                TargetProcess = Target,
+                Cio = (CioBase)btn.Tag,
+            });
+        }
+
+        public void SetPropertyTarget(object target)
+        {
+            if (target is JitProcess proc)
+            {
+                Target = proc;
+            }
+        }
+    }
+    public class NewUndoRedoEventArgs : EventArgs
+    {
+        public string NewRedo { get; set; }
+        public string NewUndo { get; set; }
+    }
+
+    public class CioClickedEventArgs : EventArgs
+    {
+        public JitProcess TargetProcess { get; set; }
+        public CioBase Cio { get; set; }
     }
 }

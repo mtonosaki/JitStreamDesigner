@@ -12,7 +12,7 @@
 
     <StackPanel
         BorderBrush="Black" BorderThickness="2"
-        Background="#22ff0000" Padding="0,0,0,16" Margin="2,2,4,4">
+        Background="#22ff0000" Margin="2,2,4,4">
         <Grid HorizontalAlignment="Stretch" Background="#ff550000" Margin="0,0,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -24,7 +24,6 @@
                 <Run FontWeight="Bold" Foreground="White">Span</Run>
                 <Span Foreground="White" FontSize="10">- Out Constraint</Span>
             </TextBlock>
-            <TextBlock Text="{x:Bind ID,Mode=OneTime}" Grid.Column="2" Margin="0,0,4,0" FontSize="9" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="Gray" >ID=123456789</TextBlock>
         </Grid>
         <Grid HorizontalAlignment="Stretch" Margin="4,0,4,0">
             <Grid.ColumnDefinitions>
@@ -46,5 +45,6 @@
             <tg:TTextValidate Grid.Row="2"  Grid.Column="1" Text="{x:Bind PorlingSpan,Mode=TwoWay}"  ErrorMessageText="{x:Bind PorlingError}" Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
             <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="PorlingError" x:Uid="InstanceTimeSpanError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>
         </Grid>
+        <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>
     </StackPanel>
 </UserControl>

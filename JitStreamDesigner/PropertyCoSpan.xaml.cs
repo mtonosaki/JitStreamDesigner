@@ -17,12 +17,24 @@ using Windows.UI.Xaml.Navigation;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyCoSpan : UserControl, INotifyPropertyChanged
+    public sealed partial class PropertyCoSpan : UserControl, INotifyPropertyChanged, ISetPropertyTarget
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private CoSpan target;
+        public PropertyCoSpan()
+        {
+            this.InitializeComponent();
+        }
 
+        public void SetPropertyTarget(object target)
+        {
+            if (target is CoSpan co)
+            {
+                Target = co;
+            }
+        }
+
+        private CoSpan target;
         /// <summary>
         /// Target Jit Object
         /// </summary>
@@ -32,6 +44,8 @@ namespace JitStreamDesigner
             set
             {
                 target = value;
+                Span = JacInterpreter.MakeTimeSpanString(target.Span);
+                PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
             }
         }
 
@@ -71,11 +85,6 @@ namespace JitStreamDesigner
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PorlingSpan"));
                 }
             }
-        }
-
-        public PropertyCoSpan()
-        {
-            this.InitializeComponent();
         }
     }
 }

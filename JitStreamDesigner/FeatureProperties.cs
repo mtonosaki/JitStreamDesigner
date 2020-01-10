@@ -81,19 +81,80 @@ namespace JitStreamDesigner
                 Name = $"Level_{level}",
                 Width = 290,
                 Background = new SolidColorBrush(Color.FromArgb(40, 0, 255, 0)),
+                Orientation = Orientation.Vertical,
             });
+            if (level > 1)
+            {
+                Button backButton;
+                tarlane.Children.Add(backButton = new Button
+                {
+                    Content = "← Back",
+                    Background = new SolidColorBrush(Colors.Transparent),
+                    Tag = level - 1,
+                });
+                backButton.Click += LaneBackButton_Click;
+            }
             return tarlane;
         }
 
-        private UIElement AddCassette(Func<UIElement> instanciator)
+        private void LaneBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var alane = Screen.Children.Where(a => ((FrameworkElement)a).Name.StartsWith("Level_")).FirstOrDefault() as FrameworkElement;
+            var btn = sender as Button;
+            var toLevel = (int)btn.Tag;
+
+            // auto scroll to show back cassette
+            ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
+            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            ScrollView.ChangeView(alane.Width * (toLevel - 1), null, null, false);
+        }
+
+        private (StackPanel Parent, UIElement Cassette) AddCassette(Func<UIElement> instanciator)
         {
             var npc = instanciator.Invoke();
-            ((INotifyPropertyChanged)npc).PropertyChanged += OnPropertyChanged;
+            if (npc is INotifyPropertyChanged inpc)
+            {
+                inpc.PropertyChanged += OnPropertyChanged;
+            }
+            if (npc is IEventPropertySpecificUndoRedo sur)
+            {
+                sur.NewUndoRedo += OnNewUndoRedo;
+            }
+            if (npc is IEventPropertyCioOpen pco)
+            {
+                pco.CioClicked += OnCioClicked;
+            }
 
-            var lane = SetLevel(1);
-            lane.Children.Add(npc);
+            var lane = SetLevel(1); // remove the all lanes and add a first lane
+            lane.Children.Add(npc); // add a propery cassette
 
-            return npc;
+            return (lane, npc);
+        }
+
+        /// <summary>
+        /// Open Ci/Co property casette
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnCioClicked(object sender, CioClickedEventArgs e)
+        {
+            var res = FindCassette(e.TargetProcess.ID);
+            var level = int.Parse(StrUtil.MidSkip(res.Parent.Name, "Level_"));
+            var lane = SetLevel(level + 1);
+            var cassetteType = GetType().Assembly.GetTypes().Where(a => a.Name == $"Property{e.Cio.GetType().Name}").FirstOrDefault();
+            var cioCassette = Activator.CreateInstance(cassetteType) as UIElement;
+            lane.Children.Add(cioCassette);
+            if (cioCassette is ISetPropertyTarget sp)
+            {
+                sp.SetPropertyTarget(e.Cio);
+            }
+            DelayUtil.Start(TimeSpan.FromMilliseconds(20), () =>
+            {
+                // auto scroll to show new cassette
+                ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
+                ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                ScrollView.ChangeView(lane.Width * level, null, null, false);
+            });
         }
 
         private void RemoveCassette(string xname)
@@ -105,7 +166,7 @@ namespace JitStreamDesigner
             }
         }
 
-        private UIElement FocusIfExist(string xname)
+        private UIElement AddOrFocus(string xname, Func<UIElement> instanciator)
         {
             var pp = FindCassette(xname);
             if (pp != default)
@@ -113,22 +174,19 @@ namespace JitStreamDesigner
                 // TODO: 先頭に持ってくる
                 // TODO: 次レベルのカセットが xnameでなければ、それらを消す
             }
+            else
+            {
+                pp = AddCassette(instanciator);
+            }
             return pp.Cassette;
         }
 
         [EventCatch(TokenID = TOKEN.PROPERTYOPEN)]
         public void PropertyOpen(EventTokenTriggerPropertyOpen token)
         {
-            if (token.Target is IJitObjectID oid)
-            {
-                if (FocusIfExist(oid.ID) != null)
-                {
-                    return;
-                }
-            }
             if (token.Target is JitProcess proc)
             {
-                AddCassette(() => new PropertyProcess
+                AddOrFocus(proc.ID, () => new PropertyProcess
                 {
                     Target = proc,
                 });
@@ -159,44 +217,78 @@ namespace JitStreamDesigner
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (sender is PropertyProcess model)
+            redosaver.Stop();
+            redosaver.Start();
+
+            // GENERAL PROPERTY
+            if (sender is IPropertyInstanceName name && e.PropertyName == "InstanceName")
+            {
+                jacRedo.AppendLine($@"{name.ID}.Name = '{name.InstanceName}'");
+                jacRedo.AppendLine($@"Gui.UpdateName = {name.ID}");
+                jacUndo.AppendLine($@"{name.ID}.Name = '{name.PreviousValue[e.PropertyName]}'");
+                jacUndo.AppendLine($@"Gui.UpdateName = {name.ID}");
+                return;
+            }
+            if (sender is IPropertyXy xy)
             {
                 switch (e.PropertyName)
                 {
-                    case "InstanceName":
-                        jacRedo.AppendLine($@"{model.Target.ID}.Name = '{model.InstanceName}'");
-                        jacRedo.AppendLine($@"Gui.UpdateName = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.Name = '{model.PreviousValue[e.PropertyName]}'");
-                        jacUndo.AppendLine($@"Gui.UpdateName = {model.Target.ID}");
-                        break;
                     case "X":
-                        jacRedo.AppendLine($@"{model.Target.ID}.LocationX = {model.X}");
-                        jacRedo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.LocationX = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        break;
+                        jacRedo.AppendLine($@"{xy.ID}.LocationX = {xy.X}");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        jacUndo.AppendLine($@"{xy.ID}.LocationX = {xy.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        return;
                     case "Y":
-                        jacRedo.AppendLine($@"{model.Target.ID}.LocationY = {model.Y}");
-                        jacRedo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.LocationY = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateLocation = {model.Target.ID}");
-                        break;
-                    case "W":
-                        jacRedo.AppendLine($@"{model.Target.ID}.Width = {model.W}");
-                        jacRedo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.Width = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        break;
-                    case "H":
-                        jacRedo.AppendLine($@"{model.Target.ID}.Height = {model.H}");
-                        jacRedo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        jacUndo.AppendLine($@"{model.Target.ID}.Height = {model.PreviousValue[e.PropertyName]}");
-                        jacUndo.AppendLine($@"Gui.UpdateSize = {model.Target.ID}");
-                        break;
+                        jacRedo.AppendLine($@"{xy.ID}.LocationY = {xy.Y}");
+                        jacRedo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        jacUndo.AppendLine($@"{xy.ID}.LocationY = {xy.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateLocation = {xy.ID}");
+                        return;
                 }
-                redosaver.Stop();
-                redosaver.Start();
             }
+            if (sender is IPropertyWh wh)
+            {
+                switch (e.PropertyName)
+                {
+                    case "W":
+                        jacRedo.AppendLine($@"{wh.ID}.Width = {wh.W}");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        jacUndo.AppendLine($@"{wh.ID}.Width = {wh.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        return;
+                    case "H":
+                        jacRedo.AppendLine($@"{wh.ID}.Height = {wh.H}");
+                        jacRedo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        jacUndo.AppendLine($@"{wh.ID}.Height = {wh.PreviousValue[e.PropertyName]}");
+                        jacUndo.AppendLine($@"Gui.UpdateSize = {wh.ID}");
+                        return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// treat original property change to support UNDO/REDO
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnNewUndoRedo(object sender, NewUndoRedoEventArgs e)
+        {
+            jacRedo.AppendLine(e.NewRedo);
+            jacUndo.AppendLine(e.NewUndo);
+
+            redosaver.Stop();
+            redosaver.Start();
+        }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CioChanged)]
+        public void CioChanged(EventTokenJitCioTrigger token)
+        {
+            var pp = AddOrFocus(token.TargetProcessID, () => new PropertyProcess
+            {
+                Target = Hot.ActiveTemplate.Jac.GetProcess(token.TargetProcessID),
+            });
+            ((PropertyProcess)pp).UpdateCioButton(token.Action, token.FromCioID);
         }
 
         private void UpdateCassette<TCassette>(EventTokenJitVariableTrigger token, Action<TCassette, JitVariable> updateAction)

@@ -12,7 +12,7 @@
 
     <StackPanel
         BorderBrush="Black" BorderThickness="2"
-        Background="#220000ff" Padding="0,0,0,16" Margin="2,2,4,4">
+        Background="#220000ff" Margin="2,2,4,4">
         <Grid HorizontalAlignment="Stretch" Background="SteelBlue" Margin="0,0,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -21,7 +21,6 @@
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0" Width="22" Height="22" Source="./Assets/Process.png" />
             <TextBlock Grid.Column="1" Margin="2,0,0,0" Foreground="White" FontWeight="Bold">Process</TextBlock>
-            <TextBlock Text="{x:Bind ID,Mode=OneTime}" Grid.Column="2" Margin="0,0,4,0" FontSize="8" Foreground="#88000000" HorizontalAlignment="Right" VerticalAlignment="Center" >ID=123456789</TextBlock>
         </Grid>
         <Grid HorizontalAlignment="Stretch" Margin="4">
             <Grid.ColumnDefinitions>
@@ -37,7 +36,9 @@
             </Grid.RowDefinitions>
             <TextBlock Margin="2,0,8,0" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name</TextBlock>
             <tg:TTextValidate Text="{x:Bind InstanceName,Mode=TwoWay}"  ErrorMessageText="{x:Bind InstanceNameError}" Pattern="^[a-zA-Z]+[a-zA-Z0-9]*$|^::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::$"  Grid.Row="0"  Grid.Column="1" />
-            <TextBlock Name="InstanceNameError" x:Uid="InstanceNameError" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Foreground="Red" Text="A-Z, a-z, 0-9 only here"/>
+            <TextBlock Name="InstanceNameError" x:Uid="InstanceNameError" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Foreground="Red" Visibility="{x:Bind HideWhenRun, Mode=OneTime}">
+                A-Z, a-z, 0-9 only here
+            </TextBlock>
 
             <TextBlock Grid.Row="3" Margin="24,0,0,0">Ci</TextBlock>
             <ScrollViewer Grid.Row="3" Grid.Column="1" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" VerticalScrollMode="Disabled">
@@ -47,7 +48,7 @@
                     Margin="2"
                     BorderThickness="0.25"
                     BorderBrush="Black">
-                    <Button x:Name="Cio_Dummy1" Background="Transparent" Margin="0,-6">
+                    <Button x:Name="CB_Dummy1" Background="Transparent" Margin="0,-6">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="18" Height="18" Source="./Assets/CiDelay.png" />
@@ -55,7 +56,7 @@
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                    <Button x:Uid="CiAddButton" Background="Transparent" Margin="0,-6" Click="CiAdd_Click">
+                    <Button x:Name="CiAddButton" x:Uid="CiAddButton" Background="Transparent" Margin="0,-6" Click="CioAdd_Click">
                         <Button.Content>
                             <Image Width="18" Height="18" Source="./Assets/Add.png" />
                         </Button.Content>
@@ -70,7 +71,7 @@
                     Background="#66000000"
                     BorderThickness="0.25"
                     BorderBrush="Black">
-                    <Button x:Name="Cio_Dummy2" Background="Transparent" Margin="0,-6">
+                    <Button x:Name="CB_Dummy2" Background="Transparent" Margin="0,-6">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="18" Height="18" Source="./Assets/CoSpan.png" />
@@ -78,7 +79,7 @@
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                    <Button x:Uid="CoAddButton" Background="Transparent" Margin="0,-6" Click="CoAdd_Click">
+                    <Button x:Name="CoAddButton" x:Uid="CoAddButton" Background="Transparent" Margin="0,-6" Click="CioAdd_Click">
                         <Button.Content>
                             <Image Width="18" Height="18" Source="./Assets/Add.png" />
                         </Button.Content>
@@ -121,6 +122,9 @@
                 </Button.Content>
             </Button>
         </Grid>
-        <TextBlock Name="DistanceError" Margin="4,0,0,0" HorizontalAlignment="Right" Foreground="Red">Distance should be set as 123.4m format</TextBlock>
+        <TextBlock Name="DistanceError" Margin="4,0,0,0" HorizontalAlignment="Right" Foreground="Red" Visibility="{x:Bind HideWhenRun, Mode=OneTime}">
+            Distance should be set as 123.4m format
+        </TextBlock>
+        <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>
     </StackPanel>
 </UserControl>
