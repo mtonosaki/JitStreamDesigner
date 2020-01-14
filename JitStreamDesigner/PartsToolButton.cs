@@ -1,4 +1,4 @@
-﻿// Copyright (c) Manabu Tonosaki All rights reserved.
+﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
 using Microsoft.Graphics.Canvas;

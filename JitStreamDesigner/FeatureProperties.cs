@@ -1,4 +1,4 @@
-﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
 using System;
@@ -287,8 +287,9 @@ namespace JitStreamDesigner
             var pp = AddOrFocus(token.TargetProcessID, () => new PropertyProcess
             {
                 Target = Hot.ActiveTemplate.Jac.GetProcess(token.TargetProcessID),
-            });
-            ((PropertyProcess)pp).UpdateCioButton(token.Action, token.FromCioID);
+            }) as PropertyProcess;
+
+            pp.UpdateCioButton(token.Action, token.FromCioID);  // Add/Remove Ci/Co button in Process Cassette
         }
 
         private void UpdateCassette<TCassette>(EventTokenJitVariableTrigger token, Action<TCassette, JitVariable> updateAction)
@@ -338,14 +339,5 @@ namespace JitStreamDesigner
         {
             RemoveCassette(token.Process.ID);
         }
-    }
-
-    /// <summary>
-    /// Creating Jit-instance
-    /// </summary>
-    public class EventTokenTriggerPropertyOpen : EventTokenTrigger
-    {
-        public override string TokenID { get => FeatureProperties.TOKEN.PROPERTYOPEN; set => throw new NotSupportedException(); }
-        public object Target { get; set; }
     }
 }

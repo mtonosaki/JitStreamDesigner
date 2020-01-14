@@ -125,6 +125,7 @@
     <Compile Include="CoPalette.xaml.cs">
       <DependentUpon>CoPalette.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EventTokenTriggerPropertyOpen.cs" />
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
     <Compile Include="FeatureProperties.cs" />

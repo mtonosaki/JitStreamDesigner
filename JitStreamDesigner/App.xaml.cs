@@ -1,4 +1,7 @@
-﻿using System;
+﻿// (c) 2020 Manabu Tonosaki
+// Licensed under the MIT license.
+
+using System;
 using Tono.Gui.Uwp;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
