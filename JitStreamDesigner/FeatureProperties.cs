@@ -122,7 +122,7 @@ namespace JitStreamDesigner
             }
             if (npc is IEventPropertyCioOpen pco)
             {
-                pco.CioClicked += OnCioClicked;
+                pco.CioClicked += OnCioButtonInProcessClicked;
             }
 
             var lane = SetLevel(1); // remove the all lanes and add a first lane
@@ -136,13 +136,19 @@ namespace JitStreamDesigner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnCioClicked(object sender, CioClickedEventArgs e)
+        private void OnCioButtonInProcessClicked(object sender, CioClickedEventArgs e)
         {
             var res = FindCassette(e.TargetProcess.ID);
             var level = int.Parse(StrUtil.MidSkip(res.Parent.Name, "Level_"));
             var lane = SetLevel(level + 1);
             var cassetteType = GetType().Assembly.GetTypes().Where(a => a.Name == $"Property{e.Cio.GetType().Name}").FirstOrDefault();
             var cioCassette = Activator.CreateInstance(cassetteType) as UIElement;
+            //if (cioCassette is INotifyPropertyChanged npc) npc.PropertyChanged += OnPropertyChanged; // Ci/Co Cassette : NOT SUPPORT PropertyChange. Need to use OnNewUndoRedo
+            if (cioCassette is IEventPropertySpecificUndoRedo sur)
+            {
+                sur.NewUndoRedo += OnNewUndoRedo;
+            }
+
             lane.Children.Add(cioCassette);
             if (cioCassette is ISetPropertyTarget sp)
             {
@@ -281,8 +287,8 @@ namespace JitStreamDesigner
             redosaver.Start();
         }
 
-        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CioChanged)]
-        public void CioChanged(EventTokenJitCioTrigger token)
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CioNewRemoveChanged)]
+        public void CioNewRemoveChanged(EventTokenJitCioTrigger token)
         {
             var pp = AddOrFocus(token.TargetProcessID, () => new PropertyProcess
             {
@@ -291,6 +297,13 @@ namespace JitStreamDesigner
 
             pp.UpdateCioButton(token.Action, token.FromCioID);  // Add/Remove Ci/Co button in Process Cassette
         }
+
+        public void CassetteValueChanged(EventTokenCassetteValueChangedTrigger token)
+        {
+            var cassette = FindCassette(token.CassetteID);
+
+        }
+
 
         private void UpdateCassette<TCassette>(EventTokenJitVariableTrigger token, Action<TCassette, JitVariable> updateAction)
         {

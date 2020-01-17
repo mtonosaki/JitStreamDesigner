@@ -119,19 +119,21 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CioClickedEventArgs.cs" />
     <Compile Include="CiPalette.xaml.cs">
       <DependentUpon>CiPalette.xaml</DependentUpon>
     </Compile>
     <Compile Include="CoPalette.xaml.cs">
       <DependentUpon>CoPalette.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EventTokenTriggerPropertyOpen.cs" />
+    <Compile Include="EventTokenTriggersForGui.cs" />
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
     <Compile Include="FeatureProperties.cs" />
     <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
     <Compile Include="IProperties.cs" />
+    <Compile Include="NewUndoRedoEventArgs.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>

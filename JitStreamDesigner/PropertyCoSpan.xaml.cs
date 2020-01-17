@@ -4,37 +4,39 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Tono.Jit;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyCoSpan : UserControl, INotifyPropertyChanged, ISetPropertyTarget
+    public sealed partial class PropertyCoSpan : UserControl, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
+        private bool IsFireEvents = true;
 
         public PropertyCoSpan()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Try to set target from object type
+        /// </summary>
+        /// <param name="target"></param>
         public void SetPropertyTarget(object target)
         {
             if (target is CoSpan co)
             {
                 Target = co;
             }
+        }
+
+        public void UpdateCassette()
+        {
+            IsFireEvents = false;
+            Span = JacInterpreter.MakeTimeSpanString(target.Span);
+            PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
+            IsFireEvents = true;
         }
 
         private CoSpan target;
@@ -47,8 +49,7 @@ namespace JitStreamDesigner
             set
             {
                 target = value;
-                Span = JacInterpreter.MakeTimeSpanString(target.Span);
-                PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
+                UpdateCassette();
             }
         }
 
@@ -66,11 +67,22 @@ namespace JitStreamDesigner
             get => span;
             set
             {
-                //if (Distance.Parse(value) != Distance.Parse(x))
+                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(span))
                 {
                     PreviousValue["Span"] = span;
                     span = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Span"));
+                    if (IsFireEvents)
+                    {
+                        NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
+                        {
+                            NewRedo = $"{Target.ID}\r\n" +
+                                      $"    Span = {span}\r\n" +
+                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
+                            NewUndo = $"{Target.ID}\r\n" +
+                                      $"    Span = {PreviousValue["Span"]}\r\n" +
+                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
+                        });
+                    }
                 }
             }
         }
@@ -81,11 +93,18 @@ namespace JitStreamDesigner
             get => porlingspan;
             set
             {
-                //if (Distance.Parse(value) != Distance.Parse(x))
+                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(porlingspan))
                 {
                     PreviousValue["PorlingSpan"] = span;
                     porlingspan = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PorlingSpan"));
+                    if (IsFireEvents)
+                    {
+                        NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
+                        {
+                            NewRedo = $"",
+                            NewUndo = $"",
+                        });
+                    }
                 }
             }
         }

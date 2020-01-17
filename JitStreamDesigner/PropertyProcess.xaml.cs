@@ -260,6 +260,7 @@ namespace JitStreamDesigner
                 return; // Already added button
             }
 
+            // XAML SAMPLE
             //< Button x: Name = "CB_Dummy1" Background = "Transparent" Margin = "0,-6" >
             //  < Button.Content >
             //      < StackPanel Orientation = "Horizontal" >
@@ -323,16 +324,5 @@ namespace JitStreamDesigner
                 Target = proc;
             }
         }
-    }
-    public class NewUndoRedoEventArgs : EventArgs
-    {
-        public string NewRedo { get; set; }
-        public string NewUndo { get; set; }
-    }
-
-    public class CioClickedEventArgs : EventArgs
-    {
-        public JitProcess TargetProcess { get; set; }
-        public CioBase Cio { get; set; }
     }
 }

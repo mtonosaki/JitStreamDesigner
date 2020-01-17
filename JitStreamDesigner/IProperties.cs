@@ -19,6 +19,12 @@ namespace JitStreamDesigner
     {
         event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
     }
+
+    public interface IUpdateCassette
+    {
+        void UpdateCassette();
+    }
+
     public interface IPropertyInstanceName : IJitObjectID
     {
         string InstanceName { get; set; }
