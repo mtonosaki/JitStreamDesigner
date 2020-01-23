@@ -9,9 +9,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyCoSpan : UserControl, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
+    public sealed partial class PropertyCoSpan : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
     {
         public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private bool IsFireEvents = true;
 
         public PropertyCoSpan()
@@ -83,6 +85,7 @@ namespace JitStreamDesigner
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Span"));
                 }
             }
         }
@@ -105,6 +108,7 @@ namespace JitStreamDesigner
                             NewUndo = $"",
                         });
                     }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PorlingSpan"));
                 }
             }
         }

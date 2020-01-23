@@ -307,6 +307,7 @@ namespace JitStreamDesigner
                 Token.AddNew(new EventTokenCassetteValueChangedTrigger
                 {
                     TokenID = TOKEN.CassetteValueChanged,
+                    Cio = cio,
                     CassetteID = cio.ID,
                     Sender = this,
                     Remarks = "Jac:Gui:Cassette Value Changed",

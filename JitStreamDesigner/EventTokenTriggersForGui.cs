@@ -50,6 +50,7 @@ namespace JitStreamDesigner
 
     public class EventTokenCassetteValueChangedTrigger : EventTokenTrigger
     {
+        public CioBase Cio { get; set; }
         public string CassetteID { get; set; }
     }
 }

@@ -144,6 +144,12 @@ namespace JitStreamDesigner
             var cassetteType = GetType().Assembly.GetTypes().Where(a => a.Name == $"Property{e.Cio.GetType().Name}").FirstOrDefault();
             var cioCassette = Activator.CreateInstance(cassetteType) as UIElement;
             //if (cioCassette is INotifyPropertyChanged npc) npc.PropertyChanged += OnPropertyChanged; // Ci/Co Cassette : NOT SUPPORT PropertyChange. Need to use OnNewUndoRedo
+
+            if (cioCassette is FrameworkElement fe)
+            {
+                fe.Name = e.Cio.ID;
+            }
+
             if (cioCassette is IEventPropertySpecificUndoRedo sur)
             {
                 sur.NewUndoRedo += OnNewUndoRedo;
@@ -298,10 +304,13 @@ namespace JitStreamDesigner
             pp.UpdateCioButton(token.Action, token.FromCioID);  // Add/Remove Ci/Co button in Process Cassette
         }
 
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CassetteValueChanged)]
         public void CassetteValueChanged(EventTokenCassetteValueChangedTrigger token)
         {
-            var cassette = FindCassette(token.CassetteID);
-
+            if (FindCassette(token.CassetteID).Cassette is ISetPropertyTarget uc)
+            {
+                uc.SetPropertyTarget(token.Cio);
+            }
         }
 
 
