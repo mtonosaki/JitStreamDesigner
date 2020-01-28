@@ -251,4 +251,10 @@
   <data name="InstanceTimeDelayError.Text" xml:space="preserve">
     <value>TimeSpan format : 45.6 + Unit(H/M/S/MS/D/W)</value>
   </data>
+  <data name="InstanceCostValueError.Text" xml:space="preserve">
+    <value>Input Cost Value here. (integer / number only)</value>
+  </data>
+  <data name="InstanceVarNameError.Text" xml:space="preserve">
+    <value>Set a variable name here. Starts with A-Z.</value>
+  </data>
 </root>

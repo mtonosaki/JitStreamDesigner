@@ -286,6 +286,7 @@ namespace JitStreamDesigner
             {
                 Width = 18,
                 Height = 18,
+                Margin = new Thickness(0, 0, 2, 0),
                 Source = new BitmapImage(new Uri($"ms-appx:///Assets/{cio.GetType().Name}.png")),
             });
             var shortCaption = GetCiMajorValue(cio.ID);
