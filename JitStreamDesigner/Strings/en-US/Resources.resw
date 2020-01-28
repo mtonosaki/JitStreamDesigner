@@ -248,4 +248,7 @@
   <data name="CoAddButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Add an Out-Constraint</value>
   </data>
+  <data name="InstanceTimeDelayError.Text" xml:space="preserve">
+    <value>TimeSpan format : 45.6 + Unit(H/M/S/MS/D/W)</value>
+  </data>
 </root>

@@ -304,7 +304,7 @@ namespace JitStreamDesigner
         {
             if (value is CioBase cio)
             {
-                Token.AddNew(new EventTokenCassetteValueChangedTrigger
+                Token.AddNew(new EventTokenCioCassetteValueChangedTrigger
                 {
                     TokenID = TOKEN.CassetteValueChanged,
                     Cio = cio,

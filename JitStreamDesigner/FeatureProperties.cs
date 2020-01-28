@@ -58,7 +58,7 @@ namespace JitStreamDesigner
             return cassettes.FirstOrDefault();
         }
 
-        private StackPanel SetLevel(int level)
+        private void RemoveLane(int level)
         {
             // delete level lane
             var dels =
@@ -74,6 +74,11 @@ namespace JitStreamDesigner
                 Screen.Children.Remove(lane);
             }
             Screen.Width = 300 * level;
+        }
+
+        private StackPanel SetLevel(int level)
+        {
+            RemoveLane(level);
 
             StackPanel tarlane;
             Screen.Children.Add(tarlane = new StackPanel
@@ -103,10 +108,7 @@ namespace JitStreamDesigner
             var btn = sender as Button;
             var toLevel = (int)btn.Tag;
 
-            // auto scroll to show back cassette
-            ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
-            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            ScrollView.ChangeView(alane.Width * (toLevel - 1), null, null, false);
+            FocusLane(toLevel);
         }
 
         private (StackPanel Parent, UIElement Cassette) AddCassette(Func<UIElement> instanciator)
@@ -160,13 +162,7 @@ namespace JitStreamDesigner
             {
                 sp.SetPropertyTarget(e.Cio);
             }
-            DelayUtil.Start(TimeSpan.FromMilliseconds(20), () =>
-            {
-                // auto scroll to show new cassette
-                ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
-                ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                ScrollView.ChangeView(lane.Width * level, null, null, false);
-            });
+            FocusLane(level + 1);
         }
 
         private void RemoveCassette(string xname)
@@ -175,7 +171,23 @@ namespace JitStreamDesigner
             if (res != default)
             {
                 res.Parent.Children.Remove(res.Cassette);
+                if( res.Parent.Children.Count < 1)
+                {
+                    Screen.Children.Remove(res.Parent);
+                }
             }
+        }
+
+        private void FocusLane(int level)
+        {
+            DelayUtil.Start(TimeSpan.FromMilliseconds(20), () =>
+            {
+                // auto scroll to show new cassette
+                var alane = Screen.Children.Where(a => ((FrameworkElement)a).Name.StartsWith("Level_")).FirstOrDefault() as FrameworkElement;
+                ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
+                ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                ScrollView.ChangeView(alane.Width * (level - 1), null, null, false);
+            });
         }
 
         private UIElement AddOrFocus(string xname, Func<UIElement> instanciator)
@@ -183,8 +195,12 @@ namespace JitStreamDesigner
             var pp = FindCassette(xname);
             if (pp != default)
             {
-                // TODO: 先頭に持ってくる
-                // TODO: 次レベルのカセットが xnameでなければ、それらを消す
+                // 既に表示しているCi/CoカセットをUNDO時に消す（そうしないと、Processなど親が消えても、Ci/Co編集ができてしまう）
+                int lv = int.Parse(StrUtil.MidSkip(pp.Parent.Name, "Level_"));
+                RemoveLane(lv + 1);
+                FocusLane(lv);
+
+                // TODO: Processカセットを先頭に
             }
             else
             {
@@ -305,11 +321,18 @@ namespace JitStreamDesigner
         }
 
         [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CassetteValueChanged)]
-        public void CassetteValueChanged(EventTokenCassetteValueChangedTrigger token)
+        public void CioCassetteValueChanged(EventTokenCioCassetteValueChangedTrigger token)
         {
             if (FindCassette(token.CassetteID).Cassette is ISetPropertyTarget uc)
             {
                 uc.SetPropertyTarget(token.Cio);
+            }
+            if( token.Cio != null)
+            {
+                if (FindCassette(token.Cio.ParentProcess.ID).Cassette is PropertyProcess pp)
+                {
+                    pp.UpdateAllCioButtonsCaption();
+                }
             }
         }
 

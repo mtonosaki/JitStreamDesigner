@@ -48,7 +48,7 @@ namespace JitStreamDesigner
         public string FromCioID { get; set; }
     }
 
-    public class EventTokenCassetteValueChangedTrigger : EventTokenTrigger
+    public class EventTokenCioCassetteValueChangedTrigger : EventTokenTrigger
     {
         public CioBase Cio { get; set; }
         public string CassetteID { get; set; }

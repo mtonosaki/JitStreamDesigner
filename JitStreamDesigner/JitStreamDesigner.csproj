@@ -138,6 +138,9 @@
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PropertyCiDelay.xaml.cs">
+      <DependentUpon>PropertyCiDelay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyCoSpan.xaml.cs">
       <DependentUpon>PropertyCoSpan.xaml</DependentUpon>
     </Compile>
@@ -264,6 +267,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PropertiesCase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCiDelay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

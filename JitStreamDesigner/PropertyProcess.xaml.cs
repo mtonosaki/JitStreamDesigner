@@ -299,11 +299,35 @@ namespace JitStreamDesigner
                     FontSize = 10,
                 });
                 btnCaption.Text = $" {shortCaption}";
+                btnCaption.Tag = "ShortCaption";
             }
 
             ToolTipService.SetToolTip(btn, $"{cio.GetType().Name} {cio.MakeShortValue()}");
             btn.Click += CioButton_Click;
             btn.Tag = cio;
+        }
+
+        public void UpdateAllCioButtonsCaption()
+        {
+            foreach (var lane in new[] { CiLane, CoLane })
+            {
+                foreach (var btn in lane.Children.Select(a => a as Button).Where( a => a.Tag is CioBase))
+                {
+                    var cio = btn.Tag as CioBase;
+                    var shortCaption = GetCiMajorValue(cio.ID);
+                    if( shortCaption != null)
+                    {
+                        if (btn.Content is StackPanel sp)
+                        {
+                            var captbox = sp.Children.Select(a => a as FrameworkElement).Where(a => a?.Tag is string).Where(a => a.Tag?.ToString() == "ShortCaption").FirstOrDefault();
+                            if (captbox is TextBlock tb)
+                            {
+                                tb.Text = shortCaption;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void CioButton_Click(object sender, RoutedEventArgs e)
