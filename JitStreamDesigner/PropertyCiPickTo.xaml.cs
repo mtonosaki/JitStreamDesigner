@@ -4,21 +4,32 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Tono.Jit;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyCiKanbanReturn : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
+    public sealed partial class PropertyCiPickTo : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
     {
         public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool IsFireEvents = true;
 
-        public PropertyCiKanbanReturn()
+        public PropertyCiPickTo()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -27,7 +38,7 @@ namespace JitStreamDesigner
         /// <param name="target"></param>
         public void SetPropertyTarget(object target)
         {
-            if (target is CiKanbanReturn co)
+            if (target is CiPickTo co)
             {
                 Target = co;
             }
@@ -36,16 +47,17 @@ namespace JitStreamDesigner
         public void UpdateCassette()
         {
             IsFireEvents = false;
-            TargetKanbanClass = target.TargetKanbanClass;
+            TargetWorkClass = target.TargetWorkClass;
             Delay = JacInterpreter.MakeTimeSpanString(target.Delay);
+            Destination = target.Destination?.Invoke().Name ?? "";
             IsFireEvents = true;
         }
 
-        private CiKanbanReturn target;
+        private CiPickTo target;
         /// <summary>
         /// Target Jit Object
         /// </summary>
-        public CiKanbanReturn Target
+        public CiPickTo Target
         {
             get => target;
             set
@@ -63,32 +75,33 @@ namespace JitStreamDesigner
 
         public Dictionary<string, object> PreviousValue { get; } = new Dictionary<string, object>();
 
-        private string targetKanbanClass = "_NONAME_";
-        public string TargetKanbanClass
+        private string targetWorkClass = "_NONAME_";
+        public string TargetWorkClass
         {
-            get => targetKanbanClass;
+            get => targetWorkClass;
             set
             {
-                if (value != targetKanbanClass)
+                if (value != targetWorkClass)
                 {
-                    PreviousValue["TargetKanbanClass"] = targetKanbanClass;
-                    targetKanbanClass = value;
+                    PreviousValue["TargetWorkClass"] = targetWorkClass;
+                    targetWorkClass = value;
                     if (IsFireEvents)
                     {
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    TargetKanbanClass = {targetKanbanClass}\r\n" +
+                                      $"    TargetWorkClass = {targetWorkClass}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    TargetKanbanClass = {PreviousValue["TargetKanbanClass"]}\r\n" +
+                                      $"    TargetWorkClass = {PreviousValue["TargetWorkClass"]}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TargetKanbanClass"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TargetWorkClass"));
                 }
             }
         }
+
         private string delay = "987.65498D";
         public string Delay
         {
@@ -112,6 +125,33 @@ namespace JitStreamDesigner
                         });
                     }
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Delay"));
+                }
+            }
+        }
+
+        private string destination = "_NONAME_";
+        public string Destination
+        {
+            get => destination;
+            set
+            {
+                if (value != destination)
+                {
+                    PreviousValue["Destination"] = destination;
+                    destination = value;
+                    if (IsFireEvents)
+                    {
+                        NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
+                        {
+                            NewRedo = $"{Target.ID}\r\n" +
+                                      $"    Destination = {destination}\r\n" +
+                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
+                            NewUndo = $"{Target.ID}\r\n" +
+                                      $"    Destination = {PreviousValue["Destination"]}\r\n" +
+                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
+                        });
+                    }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Destination"));
                 }
             }
         }

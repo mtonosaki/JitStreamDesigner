@@ -144,6 +144,9 @@
     <Compile Include="PropertyCiKanbanReturn.xaml.cs">
       <DependentUpon>PropertyCiKanbanReturn.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PropertyCiPickTo.xaml.cs">
+      <DependentUpon>PropertyCiPickTo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyCoMaxCost.xaml.cs">
       <DependentUpon>PropertyCoMaxCost.xaml</DependentUpon>
     </Compile>
@@ -281,6 +284,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PropertyCiKanbanReturn.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCiPickTo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
