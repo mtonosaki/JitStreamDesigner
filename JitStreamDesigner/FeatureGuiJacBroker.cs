@@ -1,4 +1,4 @@
-﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
 using System;
@@ -25,7 +25,8 @@ namespace JitStreamDesigner
             public const string NameChanged = "FeatureGuiJacBrokerNameChanged";
             public const string SizeChanged = "FeatureGuiJacBrokerSizeChanged";
             public const string LocationChanged = "FeatureGuiJacBrokerLocationChanged";
-            public const string CioChanged = "FeatureGuiJacBrokerCioChanged";
+            public const string CioNewRemoveChanged = "FeatureGuiJacBrokerCioNewRemoveChanged";
+            public const string CassetteValueChanged = "FeatureGuiJacBrokerCassetteValueChanged";
         }
         private LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
@@ -285,16 +286,35 @@ namespace JitStreamDesigner
 
             Token.AddNew(new EventTokenJitCioTrigger
             {
-                TokenID = TOKEN.CioChanged,
+                TokenID = TOKEN.CioNewRemoveChanged,
                 Action = co[0],
                 TargetProcessID = co[1],
                 FromCioID = co[2],
                 Sender = this,
-                Remarks = "Jac:Gui:Cio Changed",
+                Remarks = "Jac:Gui:Cio Add/Remove",
             });
             WaitNext();
         }
 
+        /// <summary>
+        /// Common Cassette Special Value Changed
+        /// </summary>
+        /// <param name="value"></param>
+        public void UpdateCassetteValue(object value)
+        {
+            if (value is CioBase cio)
+            {
+                Token.AddNew(new EventTokenCioCassetteValueChangedTrigger
+                {
+                    TokenID = TOKEN.CassetteValueChanged,
+                    Cio = cio,
+                    CassetteID = cio.ID,
+                    Sender = this,
+                    Remarks = "Jac:Gui:Cassette Value Changed",
+                });
+            }
+            WaitNext();
+        }
 
         /// <summary>
         /// Gui.ClearAllSelection = dummy
@@ -320,37 +340,5 @@ namespace JitStreamDesigner
             }
             WaitNext();
         }
-    }
-
-    /// <summary>
-    /// Variable message
-    /// </summary>
-    public class EventTokenJitVariableTrigger : EventTokenTrigger
-    {
-        /// <summary>
-        /// Value changed target
-        /// </summary>
-        public IJitObjectID From { get; set; }
-    }
-
-    /// <summary>
-    /// Cio message
-    /// </summary>
-    public class EventTokenJitCioTrigger : EventTokenTrigger
-    {
-        /// <summary>
-        /// add / remove / update
-        /// </summary>
-        public string Action { get; set; }
-
-        /// <summary>
-        /// The process that have Cio
-        /// </summary>
-        public string TargetProcessID { get; set; }
-
-        /// <summary>
-        /// Value changed target
-        /// </summary>
-        public string FromCioID { get; set; }
     }
 }

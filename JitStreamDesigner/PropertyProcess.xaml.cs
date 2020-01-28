@@ -1,4 +1,4 @@
-﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
 using System;
@@ -260,6 +260,7 @@ namespace JitStreamDesigner
                 return; // Already added button
             }
 
+            // XAML SAMPLE
             //< Button x: Name = "CB_Dummy1" Background = "Transparent" Margin = "0,-6" >
             //  < Button.Content >
             //      < StackPanel Orientation = "Horizontal" >
@@ -285,6 +286,7 @@ namespace JitStreamDesigner
             {
                 Width = 18,
                 Height = 18,
+                Margin = new Thickness(0, 0, 2, 0),
                 Source = new BitmapImage(new Uri($"ms-appx:///Assets/{cio.GetType().Name}.png")),
             });
             var shortCaption = GetCiMajorValue(cio.ID);
@@ -298,11 +300,35 @@ namespace JitStreamDesigner
                     FontSize = 10,
                 });
                 btnCaption.Text = $" {shortCaption}";
+                btnCaption.Tag = "ShortCaption";
             }
 
             ToolTipService.SetToolTip(btn, $"{cio.GetType().Name} {cio.MakeShortValue()}");
             btn.Click += CioButton_Click;
             btn.Tag = cio;
+        }
+
+        public void UpdateAllCioButtonsCaption()
+        {
+            foreach (var lane in new[] { CiLane, CoLane })
+            {
+                foreach (var btn in lane.Children.Select(a => a as Button).Where( a => a.Tag is CioBase))
+                {
+                    var cio = btn.Tag as CioBase;
+                    var shortCaption = GetCiMajorValue(cio.ID);
+                    if( shortCaption != null)
+                    {
+                        if (btn.Content is StackPanel sp)
+                        {
+                            var captbox = sp.Children.Select(a => a as FrameworkElement).Where(a => a?.Tag is string).Where(a => a.Tag?.ToString() == "ShortCaption").FirstOrDefault();
+                            if (captbox is TextBlock tb)
+                            {
+                                tb.Text = shortCaption;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void CioButton_Click(object sender, RoutedEventArgs e)
@@ -323,16 +349,5 @@ namespace JitStreamDesigner
                 Target = proc;
             }
         }
-    }
-    public class NewUndoRedoEventArgs : EventArgs
-    {
-        public string NewRedo { get; set; }
-        public string NewUndo { get; set; }
-    }
-
-    public class CioClickedEventArgs : EventArgs
-    {
-        public JitProcess TargetProcess { get; set; }
-        public CioBase Cio { get; set; }
     }
 }

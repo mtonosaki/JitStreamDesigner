@@ -1,0 +1,46 @@
+﻿<UserControl
+    x:Class="JitStreamDesigner.PropertyCiDelay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JitStreamDesigner"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:tg="using:Tono.Gui.Uwp"
+    d:DesignHeight="400"
+    d:DesignWidth="300">
+
+    <StackPanel
+        BorderBrush="Black" BorderThickness="2"
+        Background="#22ff0000" Margin="2,2,4,4">
+        <Grid HorizontalAlignment="Stretch" Background="#ff550000" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Width="22" Height="22" Margin="2,0,0,0" Source="./Assets/CiDelay.png" />
+            <TextBlock Grid.Column="1" Margin="2,0,0,0">
+                <Run FontWeight="Bold" Foreground="White">Delay</Run>
+                <Span Foreground="White" FontSize="10">- In Command</Span>
+            </TextBlock>
+        </Grid>
+        <Grid HorizontalAlignment="Stretch" Margin="4,0,4,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Delay</TextBlock>
+            <tg:TTextValidate Grid.Row="0"  Grid.Column="1" Text="{x:Bind Delay,Mode=TwoWay}"  ErrorMessageText="{x:Bind DelayError}" Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="DelayError" x:Uid="InstanceTimeDelayError" Foreground="Red"  Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>
+        </Grid>
+        <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>
+    </StackPanel>
+</UserControl>

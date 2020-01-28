@@ -54,10 +54,17 @@
                 <tg:TMenuFlyoutItem Name="OpenLogText" x:Uid="OpenLogText" Text="Open Log" />
             </MenuFlyout>
         </tg:TGuiView.ContextFlyout>
+        <TextBox
+            x:Name="PropertyFinder"
+            PlaceholderText="Object key to find"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Height="32" Width="300" Margin="0,4,48,0"/>
+
         <local:PropertyCase Name="PropertyCase"
             Margin="0,4,48,0"
             Width="300"
-            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.Below="PropertyFinder"
             RelativePanel.Above="LogPanel"
             RelativePanel.AlignRightWithPanel="True">
         </local:PropertyCase>

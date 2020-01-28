@@ -119,21 +119,36 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CioClickedEventArgs.cs" />
     <Compile Include="CiPalette.xaml.cs">
       <DependentUpon>CiPalette.xaml</DependentUpon>
     </Compile>
     <Compile Include="CoPalette.xaml.cs">
       <DependentUpon>CoPalette.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EventTokenTriggersForGui.cs" />
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
     <Compile Include="FeatureProperties.cs" />
     <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
     <Compile Include="IProperties.cs" />
+    <Compile Include="NewUndoRedoEventArgs.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyCiDelay.xaml.cs">
+      <DependentUpon>PropertyCiDelay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyCiKanbanReturn.xaml.cs">
+      <DependentUpon>PropertyCiKanbanReturn.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyCiPickTo.xaml.cs">
+      <DependentUpon>PropertyCiPickTo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyCoMaxCost.xaml.cs">
+      <DependentUpon>PropertyCoMaxCost.xaml</DependentUpon>
     </Compile>
     <Compile Include="PropertyCoSpan.xaml.cs">
       <DependentUpon>PropertyCoSpan.xaml</DependentUpon>
@@ -261,6 +276,22 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PropertiesCase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCiDelay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCiKanbanReturn.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCiPickTo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCoMaxCost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

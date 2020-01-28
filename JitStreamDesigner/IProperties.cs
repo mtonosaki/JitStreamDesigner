@@ -1,4 +1,4 @@
-﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
 using System;
@@ -19,6 +19,12 @@ namespace JitStreamDesigner
     {
         event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
     }
+
+    public interface IUpdateCassette
+    {
+        void UpdateCassette();
+    }
+
     public interface IPropertyInstanceName : IJitObjectID
     {
         string InstanceName { get; set; }

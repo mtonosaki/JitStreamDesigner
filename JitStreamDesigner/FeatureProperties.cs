@@ -1,4 +1,4 @@
-﻿// Copyright(c) Manabu Tonosaki All rights reserved.
+﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
 using System;
@@ -58,7 +58,7 @@ namespace JitStreamDesigner
             return cassettes.FirstOrDefault();
         }
 
-        private StackPanel SetLevel(int level)
+        private void RemoveLane(int level)
         {
             // delete level lane
             var dels =
@@ -74,6 +74,11 @@ namespace JitStreamDesigner
                 Screen.Children.Remove(lane);
             }
             Screen.Width = 300 * level;
+        }
+
+        private StackPanel SetLevel(int level)
+        {
+            RemoveLane(level);
 
             StackPanel tarlane;
             Screen.Children.Add(tarlane = new StackPanel
@@ -103,10 +108,7 @@ namespace JitStreamDesigner
             var btn = sender as Button;
             var toLevel = (int)btn.Tag;
 
-            // auto scroll to show back cassette
-            ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
-            ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            ScrollView.ChangeView(alane.Width * (toLevel - 1), null, null, false);
+            FocusLane(toLevel);
         }
 
         private (StackPanel Parent, UIElement Cassette) AddCassette(Func<UIElement> instanciator)
@@ -122,7 +124,7 @@ namespace JitStreamDesigner
             }
             if (npc is IEventPropertyCioOpen pco)
             {
-                pco.CioClicked += OnCioClicked;
+                pco.CioClicked += OnCioButtonInProcessClicked;
             }
 
             var lane = SetLevel(1); // remove the all lanes and add a first lane
@@ -136,25 +138,31 @@ namespace JitStreamDesigner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnCioClicked(object sender, CioClickedEventArgs e)
+        private void OnCioButtonInProcessClicked(object sender, CioClickedEventArgs e)
         {
             var res = FindCassette(e.TargetProcess.ID);
             var level = int.Parse(StrUtil.MidSkip(res.Parent.Name, "Level_"));
             var lane = SetLevel(level + 1);
             var cassetteType = GetType().Assembly.GetTypes().Where(a => a.Name == $"Property{e.Cio.GetType().Name}").FirstOrDefault();
             var cioCassette = Activator.CreateInstance(cassetteType) as UIElement;
+            //if (cioCassette is INotifyPropertyChanged npc) npc.PropertyChanged += OnPropertyChanged; // Ci/Co Cassette : NOT SUPPORT PropertyChange. Need to use OnNewUndoRedo
+
+            if (cioCassette is FrameworkElement fe)
+            {
+                fe.Name = e.Cio.ID;
+            }
+
+            if (cioCassette is IEventPropertySpecificUndoRedo sur)
+            {
+                sur.NewUndoRedo += OnNewUndoRedo;
+            }
+
             lane.Children.Add(cioCassette);
             if (cioCassette is ISetPropertyTarget sp)
             {
                 sp.SetPropertyTarget(e.Cio);
             }
-            DelayUtil.Start(TimeSpan.FromMilliseconds(20), () =>
-            {
-                // auto scroll to show new cassette
-                ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
-                ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                ScrollView.ChangeView(lane.Width * level, null, null, false);
-            });
+            FocusLane(level + 1);
         }
 
         private void RemoveCassette(string xname)
@@ -163,7 +171,23 @@ namespace JitStreamDesigner
             if (res != default)
             {
                 res.Parent.Children.Remove(res.Cassette);
+                if( res.Parent.Children.Count < 1)
+                {
+                    Screen.Children.Remove(res.Parent);
+                }
             }
+        }
+
+        private void FocusLane(int level)
+        {
+            DelayUtil.Start(TimeSpan.FromMilliseconds(20), () =>
+            {
+                // auto scroll to show new cassette
+                var alane = Screen.Children.Where(a => ((FrameworkElement)a).Name.StartsWith("Level_")).FirstOrDefault() as FrameworkElement;
+                ScrollView.HorizontalScrollMode = ScrollMode.Enabled;
+                ScrollView.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                ScrollView.ChangeView(alane.Width * (level - 1), null, null, false);
+            });
         }
 
         private UIElement AddOrFocus(string xname, Func<UIElement> instanciator)
@@ -171,8 +195,12 @@ namespace JitStreamDesigner
             var pp = FindCassette(xname);
             if (pp != default)
             {
-                // TODO: 先頭に持ってくる
-                // TODO: 次レベルのカセットが xnameでなければ、それらを消す
+                // 既に表示しているCi/CoカセットをUNDO時に消す（そうしないと、Processなど親が消えても、Ci/Co編集ができてしまう）
+                int lv = int.Parse(StrUtil.MidSkip(pp.Parent.Name, "Level_"));
+                RemoveLane(lv + 1);
+                FocusLane(lv);
+
+                // TODO: Processカセットを先頭に
             }
             else
             {
@@ -281,15 +309,33 @@ namespace JitStreamDesigner
             redosaver.Start();
         }
 
-        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CioChanged)]
-        public void CioChanged(EventTokenJitCioTrigger token)
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CioNewRemoveChanged)]
+        public void CioNewRemoveChanged(EventTokenJitCioTrigger token)
         {
             var pp = AddOrFocus(token.TargetProcessID, () => new PropertyProcess
             {
                 Target = Hot.ActiveTemplate.Jac.GetProcess(token.TargetProcessID),
-            });
-            ((PropertyProcess)pp).UpdateCioButton(token.Action, token.FromCioID);
+            }) as PropertyProcess;
+
+            pp.UpdateCioButton(token.Action, token.FromCioID);  // Add/Remove Ci/Co button in Process Cassette
         }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CassetteValueChanged)]
+        public void CioCassetteValueChanged(EventTokenCioCassetteValueChangedTrigger token)
+        {
+            if (FindCassette(token.CassetteID).Cassette is ISetPropertyTarget uc)
+            {
+                uc.SetPropertyTarget(token.Cio);
+            }
+            if( token.Cio != null)
+            {
+                if (FindCassette(token.Cio.ParentProcess.ID).Cassette is PropertyProcess pp)
+                {
+                    pp.UpdateAllCioButtonsCaption();
+                }
+            }
+        }
+
 
         private void UpdateCassette<TCassette>(EventTokenJitVariableTrigger token, Action<TCassette, JitVariable> updateAction)
         {
@@ -338,14 +384,5 @@ namespace JitStreamDesigner
         {
             RemoveCassette(token.Process.ID);
         }
-    }
-
-    /// <summary>
-    /// Creating Jit-instance
-    /// </summary>
-    public class EventTokenTriggerPropertyOpen : EventTokenTrigger
-    {
-        public override string TokenID { get => FeatureProperties.TOKEN.PROPERTYOPEN; set => throw new NotSupportedException(); }
-        public object Target { get; set; }
     }
 }

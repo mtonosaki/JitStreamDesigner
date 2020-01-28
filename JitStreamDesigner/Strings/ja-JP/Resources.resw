@@ -247,4 +247,16 @@
   <data name="CoAddButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Out-Constraint 追加</value>
   </data>
+  <data name="InstanceTimeDelayError.Text" xml:space="preserve">
+    <value>時間形式 : 2.34 + 単位(H/M/S/MS/D/W)</value>
+  </data>
+  <data name="InstanceCostValueError.Text" xml:space="preserve">
+    <value>コストの数字を入力してください</value>
+  </data>
+  <data name="InstanceVarNameError.Text" xml:space="preserve">
+    <value>コスト変数名を入力してください A-Z始まり</value>
+  </data>
+  <data name="InstanceClassNameError.Name" xml:space="preserve">
+    <value>クラス名は次の形式です。 :Aaa:Bbb:Ccc</value>
+  </data>
 </root>

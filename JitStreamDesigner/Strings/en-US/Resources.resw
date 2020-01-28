@@ -248,4 +248,16 @@
   <data name="CoAddButton.ToolTipService.ToolTip" xml:space="preserve">
     <value>Add an Out-Constraint</value>
   </data>
+  <data name="InstanceTimeDelayError.Text" xml:space="preserve">
+    <value>TimeSpan format : 45.6 + Unit(H/M/S/MS/D/W)</value>
+  </data>
+  <data name="InstanceCostValueError.Text" xml:space="preserve">
+    <value>Input Cost Value here. (integer / number only)</value>
+  </data>
+  <data name="InstanceVarNameError.Text" xml:space="preserve">
+    <value>Set a variable name here. Starts with A-Z.</value>
+  </data>
+  <data name="InstanceClassNameError.Name" xml:space="preserve">
+    <value>Class name is like :Aaa:Bbb:Ccc style.</value>
+  </data>
 </root>

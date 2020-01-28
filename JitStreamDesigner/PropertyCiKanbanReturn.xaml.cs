@@ -9,16 +9,16 @@ using Windows.UI.Xaml.Controls;
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyCoSpan : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
+    public sealed partial class PropertyCiKanbanReturn : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
     {
         public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool IsFireEvents = true;
 
-        public PropertyCoSpan()
+        public PropertyCiKanbanReturn()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace JitStreamDesigner
         /// <param name="target"></param>
         public void SetPropertyTarget(object target)
         {
-            if (target is CoSpan co)
+            if (target is CiKanbanReturn co)
             {
                 Target = co;
             }
@@ -36,16 +36,16 @@ namespace JitStreamDesigner
         public void UpdateCassette()
         {
             IsFireEvents = false;
-            Span = JacInterpreter.MakeTimeSpanString(target.Span);
-            PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
+            TargetKanbanClass = target.TargetKanbanClass;
+            Delay = JacInterpreter.MakeTimeSpanString(target.Delay);
             IsFireEvents = true;
         }
 
-        private CoSpan target;
+        private CiKanbanReturn target;
         /// <summary>
         /// Target Jit Object
         /// </summary>
-        public CoSpan Target
+        public CiKanbanReturn Target
         {
             get => target;
             set
@@ -63,56 +63,55 @@ namespace JitStreamDesigner
 
         public Dictionary<string, object> PreviousValue { get; } = new Dictionary<string, object>();
 
-        private string span = "0S";
-        public string Span
+        private string targetKanbanClass = "_NONAME_";
+        public string TargetKanbanClass
         {
-            get => span;
+            get => targetKanbanClass;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(span))
+                if (value != targetKanbanClass)
                 {
-                    PreviousValue["Span"] = span;
-                    span = value;
+                    PreviousValue["TargetKanbanClass"] = targetKanbanClass;
+                    targetKanbanClass = value;
                     if (IsFireEvents)
                     {
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    Span = {span}\r\n" +
+                                      $"    TargetKanbanClass = {targetKanbanClass}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    Span = {PreviousValue["Span"]}\r\n" +
+                                      $"    TargetKanbanClass = {PreviousValue["TargetKanbanClass"]}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Span"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TargetKanbanClass"));
                 }
             }
         }
-
-        private string porlingspan = "0S";
-        public string PorlingSpan
+        private string delay = "987.65498D";
+        public string Delay
         {
-            get => porlingspan;
+            get => delay;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(porlingspan))
+                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(delay))
                 {
-                    PreviousValue["PorlingSpan"] = span;
-                    porlingspan = value;
+                    PreviousValue["Delay"] = delay;
+                    delay = value;
                     if (IsFireEvents)
                     {
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    PorlingSpan = {porlingspan}\r\n" +
+                                      $"    Delay = {delay}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    PorlingSpan = {PreviousValue["PorlingSpan"]}\r\n" +
+                                      $"    Delay = {PreviousValue["Delay"]}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PorlingSpan"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Delay"));
                 }
             }
         }

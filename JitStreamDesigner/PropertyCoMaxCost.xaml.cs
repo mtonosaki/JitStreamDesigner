@@ -4,19 +4,32 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Tono.Jit;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
+
+// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace JitStreamDesigner
 {
-    public sealed partial class PropertyCoSpan : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
+    public sealed partial class PropertyCoMaxCost : UserControl, INotifyPropertyChanged, ISetPropertyTarget, IEventPropertySpecificUndoRedo, IUpdateCassette
     {
         public event EventHandler<NewUndoRedoEventArgs> NewUndoRedo;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool IsFireEvents = true;
 
-        public PropertyCoSpan()
+        public PropertyCoMaxCost()
         {
             this.InitializeComponent();
         }
@@ -27,7 +40,7 @@ namespace JitStreamDesigner
         /// <param name="target"></param>
         public void SetPropertyTarget(object target)
         {
-            if (target is CoSpan co)
+            if (target is CoMaxCost co)
             {
                 Target = co;
             }
@@ -36,16 +49,16 @@ namespace JitStreamDesigner
         public void UpdateCassette()
         {
             IsFireEvents = false;
-            Span = JacInterpreter.MakeTimeSpanString(target.Span);
-            PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
+            ReferenceVarName = target.ReferenceVarName.Value?.ToString() ?? "";
+            Value = target.Value.ToString();
             IsFireEvents = true;
         }
 
-        private CoSpan target;
+        private CoMaxCost target;
         /// <summary>
         /// Target Jit Object
         /// </summary>
-        public CoSpan Target
+        public CoMaxCost Target
         {
             get => target;
             set
@@ -63,56 +76,56 @@ namespace JitStreamDesigner
 
         public Dictionary<string, object> PreviousValue { get; } = new Dictionary<string, object>();
 
-        private string span = "0S";
-        public string Span
+        private string referenceVarName = "_NONAME_";
+        public string ReferenceVarName
         {
-            get => span;
+            get => referenceVarName;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(span))
+                if (value != referenceVarName)
                 {
-                    PreviousValue["Span"] = span;
-                    span = value;
+                    PreviousValue["ReferenceVarName"] = referenceVarName;
+                    referenceVarName = value;
                     if (IsFireEvents)
                     {
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    Span = {span}\r\n" +
+                                      $"    ReferenceVarName = {referenceVarName}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    Span = {PreviousValue["Span"]}\r\n" +
+                                      $"    ReferenceVarName = {PreviousValue["ReferenceVarName"]}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Span"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ReferenceVarName"));
                 }
             }
         }
 
-        private string porlingspan = "0S";
-        public string PorlingSpan
+        private string _value = "0";
+        public string Value
         {
-            get => porlingspan;
+            get => _value;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(porlingspan))
+                if (double.Parse(value) != double.Parse(_value))
                 {
-                    PreviousValue["PorlingSpan"] = span;
-                    porlingspan = value;
+                    PreviousValue["Value"] = _value;
+                    _value = value;
                     if (IsFireEvents)
                     {
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    PorlingSpan = {porlingspan}\r\n" +
+                                      $"    Value = {_value}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    PorlingSpan = {PreviousValue["PorlingSpan"]}\r\n" +
+                                      $"    Value = {PreviousValue["Value"]}\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PorlingSpan"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
                 }
             }
         }
