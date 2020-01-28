@@ -257,4 +257,7 @@
   <data name="InstanceVarNameError.Text" xml:space="preserve">
     <value>Set a variable name here. Starts with A-Z.</value>
   </data>
+  <data name="InstanceClassNameError.Name" xml:space="preserve">
+    <value>Class name is like :Aaa:Bbb:Ccc style.</value>
+  </data>
 </root>

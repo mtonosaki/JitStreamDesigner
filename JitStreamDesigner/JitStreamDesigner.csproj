@@ -141,6 +141,9 @@
     <Compile Include="PropertyCiDelay.xaml.cs">
       <DependentUpon>PropertyCiDelay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PropertyCiKanbanReturn.xaml.cs">
+      <DependentUpon>PropertyCiKanbanReturn.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyCoMaxCost.xaml.cs">
       <DependentUpon>PropertyCoMaxCost.xaml</DependentUpon>
     </Compile>
@@ -274,6 +277,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PropertyCiDelay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCiKanbanReturn.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

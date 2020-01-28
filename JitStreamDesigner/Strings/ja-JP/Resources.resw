@@ -256,4 +256,7 @@
   <data name="InstanceVarNameError.Text" xml:space="preserve">
     <value>コスト変数名を入力してください A-Z始まり</value>
   </data>
+  <data name="InstanceClassNameError.Name" xml:space="preserve">
+    <value>クラス名は次の形式です。 :Aaa:Bbb:Ccc</value>
+  </data>
 </root>
