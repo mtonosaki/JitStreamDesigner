@@ -41,7 +41,7 @@ namespace JitStreamDesigner
         /// </summary>
         public PropertyProcess()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             CleanDesignDummy();
         }
 
@@ -50,13 +50,7 @@ namespace JitStreamDesigner
             ClearCioButtons();
         }
 
-        public Visibility HideWhenRun
-        {
-            get
-            {
-                return DesignMode.DesignModeEnabled ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+        public Visibility HideWhenRun => DesignMode.DesignModeEnabled ? Visibility.Visible : Visibility.Collapsed;
 
         private void ClearCioButtons()
         {
@@ -312,11 +306,11 @@ namespace JitStreamDesigner
         {
             foreach (var lane in new[] { CiLane, CoLane })
             {
-                foreach (var btn in lane.Children.Select(a => a as Button).Where( a => a.Tag is CioBase))
+                foreach (var btn in lane.Children.Select(a => a as Button).Where(a => a.Tag is CioBase))
                 {
                     var cio = btn.Tag as CioBase;
                     var shortCaption = GetCiMajorValue(cio.ID);
-                    if( shortCaption != null)
+                    if (shortCaption != null)
                     {
                         if (btn.Content is StackPanel sp)
                         {

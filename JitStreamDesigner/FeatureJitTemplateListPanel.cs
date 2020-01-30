@@ -107,7 +107,10 @@ namespace JitStreamDesigner
         [EventCatch(TokenID = TOKEN.TemplateSelectionChanged)]
         public void TemplateSelectionChanged(EventTokenTemplateChangedTrigger token)
         {
-            if (ReferenceEquals(Hot.ActiveTemplate, token.TargetTemplate)) return;
+            if (ReferenceEquals(Hot.ActiveTemplate, token.TargetTemplate))
+            {
+                return;
+            }
 
             // Prepare template parts desig
             Hot.ActiveTemplate = token.TargetTemplate;

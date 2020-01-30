@@ -18,7 +18,7 @@ namespace JitStreamDesigner
 
         public PropertyCoSpan()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>

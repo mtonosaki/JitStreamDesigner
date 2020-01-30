@@ -1,12 +1,10 @@
 ﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using Tono;
 using Tono.Gui.Uwp;
 using Tono.Jit;
 using Windows.UI;
@@ -29,7 +27,7 @@ namespace JitStreamDesigner
         }
 
         [DataMember]
-        public string Name 
+        public string Name
         {
             get => Template?.Name ?? "(no template)" ?? "(no name)";
             set => Template.Name = value;

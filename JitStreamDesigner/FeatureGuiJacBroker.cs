@@ -5,10 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
@@ -28,18 +24,22 @@ namespace JitStreamDesigner
             public const string CioNewRemoveChanged = "FeatureGuiJacBrokerCioNewRemoveChanged";
             public const string CassetteValueChanged = "FeatureGuiJacBrokerCassetteValueChanged";
         }
-        private LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
+        private readonly LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
         public override void OnInitialInstance()
         {
             Hot.TheBroker = this;
             WaitNext(true);
         }
-        bool IsOptimized = false;
+
+        private bool IsOptimized = false;
 
         private void Optimize()
         {
-            if (IsOptimized) return;
+            if (IsOptimized)
+            {
+                return;
+            }
 
             bool isClearAll = false;
             var updatedIds = new Dictionary<string/*Parts.ID*/, bool>();

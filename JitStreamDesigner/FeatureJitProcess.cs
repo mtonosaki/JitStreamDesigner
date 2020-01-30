@@ -1,14 +1,12 @@
 ﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
-using System;
 using System.Linq;
 using System.Text;
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Tono.Jit;
-using Windows.UI.Xaml.Controls;
 
 namespace JitStreamDesigner
 {
