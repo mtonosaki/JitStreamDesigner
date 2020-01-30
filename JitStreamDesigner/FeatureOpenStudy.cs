@@ -4,15 +4,12 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 
 namespace JitStreamDesigner
 {
@@ -52,7 +49,7 @@ namespace JitStreamDesigner
             alltxt = alltxt.Replace("\r", "");
             alltxt = alltxt.Replace("\n", "");
             var txts = alltxt.Split(SEPARATOR);
-            for (var i = 1; i < txts.Length; i++) 
+            for (var i = 1; i < txts.Length; i++)
             {
                 var json = txts[i].Trim();
                 if (templateNo >= 1 && templateNo <= templateNoMax)

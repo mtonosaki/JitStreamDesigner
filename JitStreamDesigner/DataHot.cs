@@ -35,7 +35,7 @@ namespace JitStreamDesigner
         /// <summary>
         /// JitStreamDesigner template list
         /// </summary>
-        public TemplateTipCollection TemplateList { get => PersistTarget.TemplateList; }
+        public TemplateTipCollection TemplateList => PersistTarget.TemplateList;
 
         /// <summary>
         /// Calclate Simulation time

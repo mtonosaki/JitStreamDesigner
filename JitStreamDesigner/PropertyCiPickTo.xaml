@@ -48,7 +48,7 @@
             <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="DelayError" x:Uid="InstanceTimeDelayError" Foreground="Red"  Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 56.7 + Unit(H/M/S/MS/D/W)"/>
 
             <TextBlock Grid.Row="4" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Process Name</TextBlock>
-            <tg:TTextValidate Grid.Row="4"  Grid.Column="1" Text="{x:Bind Destination,Mode=TwoWay}"  ErrorMessageText="{x:Bind DestinationError}" Pattern="^[a-zA-Z]+[a-zA-Z0-9]*$|^::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::$" />
+            <tg:TTextValidate Grid.Row="4"  Grid.Column="1" Text="{x:Bind DestProcessKey,Mode=TwoWay}"  ErrorMessageText="{x:Bind DestinationError}" Pattern="^[a-zA-Z]+[a-zA-Z0-9]*$|^::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::$" />
             <TextBlock Grid.Row="5" Grid.ColumnSpan="2" x:Name="DestinationError" x:Uid="InstanceClassNameError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Input Process name that is a push destination here"/>
         </Grid>
         <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>

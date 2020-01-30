@@ -1,9 +1,6 @@
 ﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Tono;
 using Tono.Gui.Uwp;
 using Tono.Jit;

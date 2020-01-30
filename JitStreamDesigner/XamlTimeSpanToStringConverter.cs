@@ -2,10 +2,6 @@
 // Licensed under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
 namespace JitStreamDesigner
@@ -30,7 +26,7 @@ namespace JitStreamDesigner
                     var sttar = ts.TotalMinutes % 1;
                     foreach (var st in sts)
                     {
-                        if( IsDoubleEqual(sttar, st))
+                        if (IsDoubleEqual(sttar, st))
                         {
                             return $"{ts.TotalMinutes}M";
                         }

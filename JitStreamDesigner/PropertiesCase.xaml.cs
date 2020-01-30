@@ -9,7 +9,7 @@ namespace JitStreamDesigner
     {
         public PropertyCase()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             CleanDesignDummy();
         }
 

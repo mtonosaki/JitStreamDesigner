@@ -1,11 +1,8 @@
 ﻿// (c) 2020 Manabu Tonosaki
 // Licensed under the MIT license.
 
-using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using Tono.Gui.Uwp;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace JitStreamDesigner

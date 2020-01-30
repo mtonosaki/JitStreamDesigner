@@ -57,7 +57,7 @@ namespace JitStreamDesigner
         /// <param name="te"></param>
         protected void ResetJac(TemplateTipModel te)
         {
-            if(te.Jac == null)
+            if (te.Jac == null)
             {
                 te.Jac = new JacInterpreter();
             }
@@ -77,7 +77,7 @@ namespace JitStreamDesigner
         /// <summary>
         /// Pane for Jit Model Parts
         /// </summary>
-        public IDrawArea PaneJitParts { get => View; }
+        public IDrawArea PaneJitParts => View;
 
 
         public LayoutX DistancePositionerX(CodeX<Distance> x, CodeY<Distance> y)

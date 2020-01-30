@@ -4,19 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Tono.Jit;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace JitStreamDesigner
 {
@@ -29,7 +18,7 @@ namespace JitStreamDesigner
 
         public PropertyCiPickTo()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>
@@ -49,7 +38,7 @@ namespace JitStreamDesigner
             IsFireEvents = false;
             TargetWorkClass = target.TargetWorkClass;
             Delay = JacInterpreter.MakeTimeSpanString(target.Delay);
-            Destination = target.Destination?.Invoke().Name ?? "";
+            DestProcessKey = target.DestProcessKey;
             IsFireEvents = true;
         }
 
@@ -129,29 +118,29 @@ namespace JitStreamDesigner
             }
         }
 
-        private string destination = "_NONAME_";
-        public string Destination
+        private string destProcessKey = "_NONAME_";
+        public string DestProcessKey
         {
-            get => destination;
+            get => destProcessKey;
             set
             {
-                if (value != destination)
+                if (value != destProcessKey)
                 {
-                    PreviousValue["Destination"] = destination;
-                    destination = value;
+                    PreviousValue["DestProcessKey"] = destProcessKey;
+                    destProcessKey = value;
                     if (IsFireEvents)
                     {
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    Destination = {destination}\r\n" +
+                                      $"    DestProcessKey = '{destProcessKey}'\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    Destination = {PreviousValue["Destination"]}\r\n" +
+                                      $"    DestProcessKey = '{PreviousValue["DestProcessKey"]}'\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Destination"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DestProcessKey"));
                 }
             }
         }

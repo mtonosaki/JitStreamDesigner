@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -171,7 +170,7 @@ namespace JitStreamDesigner
             if (res != default)
             {
                 res.Parent.Children.Remove(res.Cassette);
-                if( res.Parent.Children.Count < 1)
+                if (res.Parent.Children.Count < 1)
                 {
                     Screen.Children.Remove(res.Parent);
                 }
@@ -221,10 +220,9 @@ namespace JitStreamDesigner
             }
         }
 
-        StringBuilder jacUndo = new StringBuilder();
-        StringBuilder jacRedo = new StringBuilder();
-
-        DispatcherTimer redosaver = new DispatcherTimer();
+        private readonly StringBuilder jacUndo = new StringBuilder();
+        private readonly StringBuilder jacRedo = new StringBuilder();
+        private DispatcherTimer redosaver = new DispatcherTimer();
 
         /// <summary>
         /// Make chunk of REDO/UNDO (for Round function that change two properties W and H)
@@ -327,7 +325,7 @@ namespace JitStreamDesigner
             {
                 uc.SetPropertyTarget(token.Cio);
             }
-            if( token.Cio != null)
+            if (token.Cio != null)
             {
                 if (FindCassette(token.Cio.ParentProcess.ID).Cassette is PropertyProcess pp)
                 {
