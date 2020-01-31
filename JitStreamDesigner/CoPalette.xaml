@@ -9,7 +9,7 @@
     xmlns:jit="using:Tono.Jit"
     RequestedTheme="Dark"
     CloseButtonText="Cancel"
-    Title="Out-Constraint (Co)">
+    Title="Out-Constraints (Co)">
 
     <Grid>
         <Grid.ColumnDefinitions>

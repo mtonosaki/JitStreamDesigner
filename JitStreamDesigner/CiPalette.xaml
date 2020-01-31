@@ -9,7 +9,7 @@
     xmlns:jit="using:Tono.Jit"
     RequestedTheme="Dark"
     CloseButtonText="Cancel"
-    Title="In-Command (Ci)">
+    Title="In-Commands (Ci)">
 
     <Grid>
         <Grid.ColumnDefinitions>

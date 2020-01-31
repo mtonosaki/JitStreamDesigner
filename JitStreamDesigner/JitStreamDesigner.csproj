@@ -147,6 +147,9 @@
     <Compile Include="PropertyCiPickTo.xaml.cs">
       <DependentUpon>PropertyCiPickTo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PropertyCoJoinFrom.xaml.cs">
+      <DependentUpon>PropertyCoJoinFrom.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyCoMaxCost.xaml.cs">
       <DependentUpon>PropertyCoMaxCost.xaml</DependentUpon>
     </Compile>
@@ -288,6 +291,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PropertyCiPickTo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyCoJoinFrom.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

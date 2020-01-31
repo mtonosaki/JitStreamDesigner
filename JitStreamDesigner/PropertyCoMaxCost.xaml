@@ -38,11 +38,19 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Variable name</TextBlock>
-            <tg:TTextValidate Grid.Row="0"  Grid.Column="1" Text="{x:Bind ReferenceVarName,Mode=TwoWay}"  ErrorMessageText="{x:Bind ReferenceVarNameError}" Pattern="^[a-zA-Z].*$" />
+            <tg:TTextValidate Grid.Row="0"  Grid.Column="1" 
+                              Text="{x:Bind ReferenceVarName,Mode=TwoWay}" 
+                              PlaceholderText="ReferenceVarName"
+                              ErrorMessageText="{x:Bind ReferenceVarNameError}" 
+                              Pattern="^[a-zA-Z].*$" />
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="ReferenceVarNameError" x:Uid="InstanceVarNameError" Foreground="Red"  Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Set a variable name here."/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Cost value</TextBlock>
-            <tg:TTextValidate Grid.Row="2"  Grid.Column="1" Text="{x:Bind Value,Mode=TwoWay}"  ErrorMessageText="{x:Bind ValueError}" Pattern="^[1-9][0-9]*(\.[0-9]+)?$" />
+            <tg:TTextValidate Grid.Row="2"  Grid.Column="1" 
+                              Text="{x:Bind Value,Mode=TwoWay}" 
+                              PlaceholderText="Value"
+                              ErrorMessageText="{x:Bind ValueError}" 
+                              Pattern="^[1-9][0-9]*(\.[0-9]+)?$" />
             <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="ValueError" x:Uid="InstanceCostValueError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Max cost value here.(integer or number)"/>
         </Grid>
         <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>
