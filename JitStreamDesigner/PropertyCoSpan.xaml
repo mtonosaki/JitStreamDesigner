@@ -38,11 +38,19 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Span</TextBlock>
-            <tg:TTextValidate Grid.Row="0"  Grid.Column="1" Text="{x:Bind Span,Mode=TwoWay}"  ErrorMessageText="{x:Bind SpanError}" Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
+            <tg:TTextValidate Grid.Row="0"  Grid.Column="1" 
+                              Text="{x:Bind Span,Mode=TwoWay}"
+                              PlaceholderText="Span"
+                              ErrorMessageText="{x:Bind SpanError}" 
+                              Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="SpanError" x:Uid="InstanceTimeSpanError" Foreground="Red"  Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Porling Span</TextBlock>
-            <tg:TTextValidate Grid.Row="2"  Grid.Column="1" Text="{x:Bind PorlingSpan,Mode=TwoWay}"  ErrorMessageText="{x:Bind PorlingError}" Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
+            <tg:TTextValidate Grid.Row="2"  Grid.Column="1" 
+                              Text="{x:Bind PorlingSpan,Mode=TwoWay}"
+                              PlaceholderText="PorlingSpan"
+                              ErrorMessageText="{x:Bind PorlingError}" 
+                              Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
             <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="PorlingError" x:Uid="InstanceTimeSpanError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>
         </Grid>
         <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>

@@ -38,7 +38,11 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Delay</TextBlock>
-            <tg:TTextValidate Grid.Row="0"  Grid.Column="1" Text="{x:Bind Delay,Mode=TwoWay}"  ErrorMessageText="{x:Bind DelayError}" Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
+            <tg:TTextValidate Grid.Row="0"  Grid.Column="1"
+                              Text="{x:Bind Delay,Mode=TwoWay}"
+                              PlaceholderText="Delay"
+                              ErrorMessageText="{x:Bind DelayError}"
+                              Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="DelayError" x:Uid="InstanceTimeDelayError" Foreground="Red"  Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>
         </Grid>
         <TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>
