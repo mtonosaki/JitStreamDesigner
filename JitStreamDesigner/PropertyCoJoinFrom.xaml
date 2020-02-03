@@ -5,7 +5,10 @@
     xmlns:local="using:JitStreamDesigner"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tg="using:Tono.Gui.Uwp">
+    mc:Ignorable="d"
+    xmlns:tg="using:Tono.Gui.Uwp"
+    d:DesignHeight="400"
+    d:DesignWidth="300">
 
     <StackPanel
         BorderBrush="Black" BorderThickness="2"
@@ -36,24 +39,28 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <!--<StackPanel Grid.Row="0" Grid.Column="0" >
+            <StackPanel Grid.Row="0" Grid.Column="0" >
                 <TextBlock>Pull From</TextBlock>
                 <TextBlock FontSize="10">Process Name</TextBlock>
             </StackPanel>
             <tg:TTextValidate Grid.Row="0"  Grid.Column="1"
-                              Text="{x:Bind DestProcessKey,Mode=TwoWay}" 
-                              PlaceholderText="DestProcessKey"
-                              ErrorMessageText="{x:Bind DestinationError}"
+                              Text="{x:Bind PullFromProcessKey,Mode=TwoWay}" 
+                              PlaceholderText="PullFromProcessKey"
+                              ErrorMessageText="{x:Bind PullFromProcessKeyError}"
                               Pattern="^[a-zA-Z]+[a-zA-Z0-9]*$|^::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::$" />
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="DestinationError" x:Uid="InstanceClassNameError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Input Process name that is a push destination here"/>
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" x:Name="PullFromProcessKeyError" x:Uid="InstanceNameError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Input Process name that is a push destination here"/>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Delay</TextBlock>
-            <tg:TTextValidate Grid.Row="2"  Grid.Column="1" 
-                              Text="{x:Bind Delay,Mode=TwoWay}" 
-                              PlaceholderText="Delay"
-                              ErrorMessageText="{x:Bind DelayError}" 
-                              Pattern="(^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$)|(^0([WDHMS]|MS)$)|(^0.0+([WDHMS]|MS)$)" />
-            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="DelayError" x:Uid="InstanceTimeDelayError" Foreground="Red"  Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 56.7 + Unit(H/M/S/MS/D/W)"/>
+            <StackPanel Grid.Row="2" Grid.Column="0" >
+                <TextBlock>Child Work Key</TextBlock>
+                <TextBlock FontSize="10" Margin="0,0,4,0">Work Specification Key</TextBlock>
+            </StackPanel>
+            <tg:TTextValidate Grid.Row="2"  Grid.Column="1"
+                              Text="{x:Bind ChildWorkKey,Mode=TwoWay}" 
+                              PlaceholderText="ChildWorkKey"
+                              ErrorMessageText="{x:Bind ChildWorkNameError}"
+                              Pattern="^[a-zA-Z]+[a-zA-Z0-9]*$|^::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::$" />
+            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="ChildWorkNameError" x:Uid="InstanceNameError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Input Process name that is a push destination here"/>
+
 
             <TextBlock Grid.Row="4" Grid.Column="0" Margin="2,-8,8,0" VerticalAlignment="Center">Porling Span</TextBlock>
             <tg:TTextValidate Grid.Row="4"  Grid.Column="1" 
@@ -61,7 +68,7 @@
                               PlaceholderText="PorlingSpan"
                               ErrorMessageText="{x:Bind PorlingError}" 
                               Pattern="^((((0)|([1-9][0-9]*))\.[0-9]+)|([1-9][0-9]*))([WDHMS]|MS)$" />
-            <TextBlock Grid.Row="5" Grid.ColumnSpan="2" x:Name="PorlingError" x:Uid="InstanceTimeSpanError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>-->
+            <TextBlock Grid.Row="5" Grid.ColumnSpan="2" x:Name="PorlingError" x:Uid="InstanceTimeSpanError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Time format : 34.5 + Unit(H/M/S/MS/D/W)"/>
         </Grid>
         <!--<TextBlock Margin="4,8,4,8" FontSize="9" Foreground="#88888888" HorizontalAlignment="Right"><Span>ID=</Span><Run Text="{x:Bind ID,Mode=OneTime}" /></TextBlock>-->
     </StackPanel>

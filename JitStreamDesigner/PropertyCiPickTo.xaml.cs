@@ -79,10 +79,10 @@ namespace JitStreamDesigner
                         NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
                         {
                             NewRedo = $"{Target.ID}\r\n" +
-                                      $"    TargetWorkClass = {targetWorkClass}\r\n" +
+                                      $"    TargetWorkClass = '{targetWorkClass}'\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                             NewUndo = $"{Target.ID}\r\n" +
-                                      $"    TargetWorkClass = {PreviousValue["TargetWorkClass"]}\r\n" +
+                                      $"    TargetWorkClass = '{PreviousValue["TargetWorkClass"]}'\r\n" +
                                       $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
                         });
                     }

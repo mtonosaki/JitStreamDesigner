@@ -98,7 +98,7 @@ namespace JitStreamDesigner
             {
                 if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(porlingspan))
                 {
-                    PreviousValue["PorlingSpan"] = span;
+                    PreviousValue["PorlingSpan"] = porlingspan;
                     porlingspan = value;
                     if (IsFireEvents)
                     {
