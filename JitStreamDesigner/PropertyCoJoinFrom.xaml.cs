@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static Tono.Jit.Utils;
 
 namespace JitStreamDesigner
 {
@@ -46,7 +47,7 @@ namespace JitStreamDesigner
             IsFireEvents = false;
             PullFromProcessKey = target.PullFromProcessKey;
             ChildWorkKey = target.ChildWorkKey;
-            PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
+            PorlingSpan = MakeTimeSpanString(target.PorlingSpan);
             IsFireEvents = true;
         }
 
@@ -132,7 +133,7 @@ namespace JitStreamDesigner
             get => porlingspan;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(porlingspan))
+                if (ParseTimeSpan(value) != ParseTimeSpan(porlingspan))
                 {
                     PreviousValue["PorlingSpan"] = porlingspan;
                     porlingspan = value;
