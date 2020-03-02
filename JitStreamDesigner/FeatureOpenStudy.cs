@@ -93,12 +93,14 @@ namespace JitStreamDesigner
             Hot.ActiveTemplate = null;
 
             // Rebuild Gui Parts
-            foreach (var tarlayer in LAYER.JitObjects)
+            var pts =
+                from Layer in LAYER.JitObjects
+                from Parts in Parts.GetParts(Layer)
+                select (Layer, Parts);
+
+            foreach (var lp in pts)
             {
-                foreach (var pt in Parts.GetParts(tarlayer))
-                {
-                    Parts.Remove(PaneJitParts, pt, tarlayer);
-                }
+                Parts.Remove(PaneJitParts, lp.Parts, lp.Layer);
             }
         }
 

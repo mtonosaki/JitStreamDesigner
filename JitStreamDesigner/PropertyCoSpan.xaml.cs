@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Tono.Jit;
 using Windows.UI.Xaml.Controls;
+using static Tono.Jit.Utils;
+
 
 namespace JitStreamDesigner
 {
@@ -36,8 +38,8 @@ namespace JitStreamDesigner
         public void UpdateCassette()
         {
             IsFireEvents = false;
-            Span = JacInterpreter.MakeTimeSpanString(target.Span);
-            PorlingSpan = JacInterpreter.MakeTimeSpanString(target.PorlingSpan);
+            Span = MakeTimeSpanString(target.Span);
+            PorlingSpan = MakeTimeSpanString(target.PorlingSpan);
             IsFireEvents = true;
         }
 
@@ -69,7 +71,7 @@ namespace JitStreamDesigner
             get => span;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(span))
+                if (ParseTimeSpan(value) != ParseTimeSpan(span))
                 {
                     PreviousValue["Span"] = span;
                     span = value;
@@ -96,7 +98,7 @@ namespace JitStreamDesigner
             get => porlingspan;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(porlingspan))
+                if (ParseTimeSpan(value) != ParseTimeSpan(porlingspan))
                 {
                     PreviousValue["PorlingSpan"] = porlingspan;
                     porlingspan = value;

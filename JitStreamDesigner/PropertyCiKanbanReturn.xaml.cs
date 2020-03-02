@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Tono.Jit;
 using Windows.UI.Xaml.Controls;
+using static Tono.Jit.Utils;
 
 namespace JitStreamDesigner
 {
@@ -37,7 +38,7 @@ namespace JitStreamDesigner
         {
             IsFireEvents = false;
             TargetKanbanClass = target.TargetKanbanClass;
-            Delay = JacInterpreter.MakeTimeSpanString(target.Delay);
+            Delay = MakeTimeSpanString(target.Delay);
             IsFireEvents = true;
         }
 
@@ -95,7 +96,7 @@ namespace JitStreamDesigner
             get => delay;
             set
             {
-                if (JacInterpreter.ParseTimeSpan(value) != JacInterpreter.ParseTimeSpan(delay))
+                if (ParseTimeSpan(value) != ParseTimeSpan(delay))
                 {
                     PreviousValue["Delay"] = delay;
                     delay = value;

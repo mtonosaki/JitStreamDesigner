@@ -129,11 +129,13 @@
     <Compile Include="EventTokenTriggersForGui.cs" />
     <Compile Include="FeatureGuiJacBroker.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
+    <Compile Include="FeatureProcessLinkConnection.cs" />
     <Compile Include="FeatureProperties.cs" />
     <Compile Include="FeatureSaveStudy.cs" />
     <Compile Include="FeatureUndoRedo.cs" />
     <Compile Include="IProperties.cs" />
     <Compile Include="NewUndoRedoEventArgs.cs" />
+    <Compile Include="OneTime.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>
