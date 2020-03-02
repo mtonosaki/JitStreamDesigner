@@ -15,6 +15,8 @@ namespace JitStreamDesigner
         public static readonly NamedId SelectionMask = NamedId.From("SelectionMask", 900);
         public static readonly NamedId EventQueue = NamedId.From("EventQueue", 400);
 
+        public static readonly NamedId JitProcessConnectorFrom = NamedId.From("JitProcessConnectorFrom", 301);
+        public static readonly NamedId JitProcessConnectorTo = NamedId.From("JitProcessConnectorTo", 302);
         public static readonly NamedId JitProcess = NamedId.From("JitProcess", 300);
         public static readonly NamedId[] JitObjects = new[] { JitProcess };
     }

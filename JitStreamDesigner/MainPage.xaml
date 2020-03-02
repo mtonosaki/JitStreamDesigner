@@ -39,10 +39,13 @@
             <local:FeatureGuiJacBroker />
             <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
             <local:FeatureProperties />
+            <local:FeatureProcessLinkConnection />
             <tg:FeatureScrollDrag />
             <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
             <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcessConnectorFrom}" />
             <tg:FeatureMoveSelectedParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeatureMoveSelectedParts TargetLayer="{x:Bind local:LAYER.JitProcessConnectorFrom}" />
             <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <local:FeatureSaveStudy ListeningButtonNames="SaveStudyButton" />

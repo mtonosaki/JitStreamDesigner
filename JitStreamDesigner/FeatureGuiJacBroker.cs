@@ -322,19 +322,21 @@ namespace JitStreamDesigner
         /// <param name="value">dummy</param>
         public void ClearAllSelection(object value)
         {
-            var n = 0;
-            foreach (var layer in LAYER.JitObjects)
+            var pts =
+                from layer in LAYER.JitObjects
+                from pt in Parts.GetParts<ISelectableParts>(layer)
+                select pt;
+
+            var nChanged = 0;
+            foreach (var pt in pts)
             {
-                foreach (var pt in Parts.GetParts<ISelectableParts>(layer))
+                if (pt.IsSelected)
                 {
-                    if (pt.IsSelected)
-                    {
-                        pt.IsSelected = false;
-                        n++;
-                    }
+                    pt.IsSelected = false;
+                    nChanged++;
                 }
             }
-            if (n > 0)
+            if (nChanged > 0)
             {
                 Redraw();
             }
