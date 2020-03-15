@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JitStreamDesigner"
+    xmlns:tono="using:Tono"
     xmlns:tg="using:Tono.Gui.Uwp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -42,11 +43,11 @@
             <local:FeatureProcessLinkConnection />
             <tg:FeatureScrollDrag />
             <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
-            <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
-            <tg:FeatureSelectParts TargetLayer="{x:Bind local:LAYER.JitProcessConnectorFrom}" />
-            <tg:FeatureMoveSelectedParts TargetLayer="{x:Bind local:LAYER.JitProcess}" />
-            <tg:FeatureMoveSelectedParts TargetLayer="{x:Bind local:LAYER.JitProcessConnectorFrom}" />
-            <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
+            <tg:FeatureSelectParts Name="Select_JitProcess" TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeatureSelectParts Name="Select_JitProcessConnector" TargetLayer="{x:Bind local:LAYER.JitProcessConnector}" />
+            <tg:FeatureMoveSelectedParts Name="Move_JitProcess" TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeatureMoveSelectedParts Name="Move_JitProcessConnector" TargetLayer="{x:Bind local:LAYER.JitProcessConnector}" />
+            <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" IgnoreLayers="{x:Bind local:LAYER.MaskIgnoreLayers}"  MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <local:FeatureSaveStudy ListeningButtonNames="SaveStudyButton" />
             <local:FeatureOpenStudy ListeningButtonNames="OpenStudyButton" />
