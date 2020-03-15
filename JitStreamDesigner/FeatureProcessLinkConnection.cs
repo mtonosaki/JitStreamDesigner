@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,22 +37,19 @@ namespace JitStreamDesigner
                 {
                     Parts.RemoveLayereParts(Pane.Target, LAYER.JitProcessConnectorFrom, LAYER.JitProcessConnectorTo);    // Delete the all connector Parts
                 });
-                for (var A = Angle.Zero; A.Deg < 360; A = A + Angle.FromDeg(45))
+                var cf = new PartsConnectorFrom
                 {
-                    var cf = new PartsConnectorFrom
-                    {
-                        PositionerX = ConnectorPositionerX,
-                        PositionerY = ConnectorPositionerY,
-                    };
-                    cf.CoderX = cf.ConnectorCoderX;
-                    cf.CoderY = cf.ConnectorCoderY;
-                    cf.Location = CodePos<PartsJitProcess, Angle>.From(tarProcParts, A);
-                    Parts.Add(Pane.Target, cf, LAYER.JitProcessConnectorFrom);
-                }
+                    PositionerX = ConnectorPositionerX,
+                    PositionerY = ConnectorPositionerY,
+                };
+                cf.CoderX = cf.ConnectorCoderX;
+                cf.CoderY = cf.ConnectorCoderY;
+                cf.Location = CodePos<PartsJitProcess, Angle>.From(tarProcParts, Angle.Zero);
+                Parts.Add(Pane.Target, cf, LAYER.JitProcessConnectorFrom);
             }
         }
 
-        const double SQ2 = 1.4142135623731;
+        const double Root2 = 1.414213562373095048801688724209;
 
         public LayoutX ConnectorPositionerX(CodeX<PartsJitProcess> x, CodeY<Angle> y)
         {
@@ -63,7 +61,7 @@ namespace JitStreamDesigner
 
             return
                 lpos.X          // Parts Location
-                + lw * SQ2      // R (Circle of the four vertices）
+                + lw * Root2    // R (Circle of the four vertices）
                 * lois.X;       // Location of inscribed square in circle
         }
 
@@ -77,7 +75,7 @@ namespace JitStreamDesigner
 
             return
                 lpos.Y          // Parts Location
-                + lh * SQ2      // R (Circle of the four vertices）
+                + lh * Root2      // R (Circle of the four vertices）
                 * lois.Y;       // Location of inscribed square in circle
         }
     }
@@ -90,12 +88,12 @@ namespace JitStreamDesigner
         /// <summary>
         /// Parts Size (Horizontal)
         /// </summary>
-        public static Distance Width { get; set; } = Distance.FromMeter(0.2);
+        public static Distance Width { get; set; } = Distance.FromMeter(0.5);
 
         /// <summary>
         /// Parts Size (Vertical)
         /// </summary>
-        public static Distance Height { get; set; } = Distance.FromMeter(0.2);
+        public static Distance Height { get; set; } = Distance.FromMeter(0.5);
 
         /// <summary>
         /// Parts Select State
@@ -134,6 +132,7 @@ namespace JitStreamDesigner
 
         public void Move(IDrawArea pane, ScreenSize offset)
         {
+            Debug.WriteLine(offset);
             var spos0 = GetScreenPos(pane, OriginalPosition);
             var spos1 = spos0 + offset;
             var lpos = LayoutPos.From(pane, spos1);
