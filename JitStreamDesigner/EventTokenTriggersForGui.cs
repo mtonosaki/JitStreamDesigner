@@ -53,4 +53,10 @@ namespace JitStreamDesigner
         public CioBase Cio { get; set; }
         public string CassetteID { get; set; }
     }
+
+    public class EventTokenProcessLinkTrigger : EventTokenTrigger
+    {
+        public string ProcessIDFrom { get; set; }
+        public string ProcessIDTo { get; set; }
+    }
 }

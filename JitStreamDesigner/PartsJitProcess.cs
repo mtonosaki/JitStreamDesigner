@@ -17,6 +17,8 @@ namespace JitStreamDesigner
     /// </remarks>
     public class PartsJitProcess : PartsJitBase
     {
+        public bool IsConnecting { get; set; }
+
         /// <summary>
         /// Change Base Color
         /// </summary>
@@ -32,15 +34,21 @@ namespace JitStreamDesigner
             var lsiz = LayoutSize.From(PositionerX(CodeX<Distance>.From(Width), null), PositionerY(null, CodeY<Distance>.From(Height)));
             var ssiz = ScreenSize.From(dp.Pane, lsiz);
             var sr = ScreenRect.FromCWH(sc, ssiz.Width, ssiz.Height);
+            SelectableSize = sr.ToSize();
 
+            if (IsConnecting)
+            {
+                dp.Graphics.DrawRectangle(_(sr), ConnectingColor, 4f);
+                dp.Graphics.FillRectangle(_(sr), ConnectingColor);
+                return;
+            }
             if (IsSelected)
             {
                 dp.Graphics.DrawRectangle(_(sr), SelectingColor, 4f);
                 dp.Graphics.FillRectangle(_(sr), SelectingColor);
+                return;
             }
             dp.Graphics.DrawRectangle(_(sr), GetColor(dp));
-
-            SelectableSize = sr.ToSize();
         }
     }
 }

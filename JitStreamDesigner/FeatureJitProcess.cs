@@ -180,8 +180,10 @@ namespace JitStreamDesigner
             var jacRedo = new StringBuilder();
             jacUndo.AppendLine("Gui.ClearAllSelection = true");
             jacRedo.AppendLine("Gui.ClearAllSelection = true");
-            foreach (PartsJitProcess pt in token.Parts.Where(a => a is PartsJitProcess))
+            var n = 0;
+            foreach (PartsJitProcess pt in token.PartsSet.Where(a => a is PartsJitProcess))
             {
+                n++;
                 jacRedo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
                 jacRedo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
                 jacRedo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
@@ -190,7 +192,10 @@ namespace JitStreamDesigner
                 jacUndo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
                 jacUndo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
             }
-            SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
+            if( n > 0)
+            {
+                SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
+            }
         }
 
         [EventCatch(TokenID = TokensGeneral.PartsSelectChanged)]

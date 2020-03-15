@@ -6,12 +6,27 @@ using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
-    /// <summary>
-    /// Process Link Connector
-    /// </summary>
-    public class PartsJitProcessConnector : PartsJitBase
+    public class PartsJitProcessLink : PartsJitBase
     {
-        public enum Kinds
+        public PartsJitProcess ProcessFrom { get; set; }
+
+        public PartsJitProcess ProcessTo { get; set; }
+
+        /// <summary>
+        /// Visualize
+        /// </summary>
+        /// <param name="dp"></param>
+        public override void Draw(DrawProperty dp)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Process Link Connect Grip parts that is for GUI edit only
+    /// </summary>
+    public class PartsConnectGrip : PartsJitBase
+    {
+        public enum Designs
         {
             OUT, IN,
         }
@@ -19,7 +34,7 @@ namespace JitStreamDesigner
         /// <summary>
         /// Linkage kind IN/OUT
         /// </summary>
-        public Kinds Kind { get; set; }
+        public Designs Design { get; set; }
 
         public Angle Angle { get; set; }
 
@@ -27,11 +42,6 @@ namespace JitStreamDesigner
         /// Target Process Parts
         /// </summary>
         public PartsJitProcess TargetProcess { get; set; }
-
-        /// <summary>
-        /// Change Base Color
-        /// </summary>
-        public override Color BaseColor => base.BaseColor;
 
         /// <summary>
         /// Drawing main
@@ -52,8 +62,8 @@ namespace JitStreamDesigner
                 var lposIn = GetLayoutPos(A);
                 var scIn = ScreenPos.From(dp.Pane, lposIn);
                 var srIn = ScreenRect.FromCWH(scIn, ssiz.Width, ssiz.Height);
-                dp.Graphics.DrawLine(_(scIn), _(sc), Color.FromArgb(128, 128, 0, 0));
-                if( Kind == Kinds.IN)
+                dp.Graphics.DrawLine(_(scIn), _(sc), ConnectingColor);
+                if( Design == Designs.IN)
                 {
                     dp.Graphics.FillRectangle(_(srIn), Colors.DarkGray);
                 } else
@@ -65,7 +75,7 @@ namespace JitStreamDesigner
                 dp.Graphics.DrawRectangle(_(sr), SelectingColor, 4f);
                 dp.Graphics.FillRectangle(_(sr), SelectingColor);
             }
-            if (Kind == Kinds.IN)
+            if (Design == Designs.IN)
             {
                 dp.Graphics.FillRectangle(_(sr), GetColor(dp));
             }

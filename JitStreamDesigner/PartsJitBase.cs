@@ -28,6 +28,12 @@ namespace JitStreamDesigner
         /// </summary>
         protected Color SelectingColor { get; } = Color.FromArgb(160, 255, 0, 0);
 
+        /// <summary>
+        /// Connecting Background Color
+        /// </summary>
+        protected Color ConnectingColor { get; } = Color.FromArgb(160, 0, 255, 255);
+
+
         public enum DesignStates
         {
             Positioning,

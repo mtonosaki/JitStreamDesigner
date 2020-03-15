@@ -23,6 +23,8 @@ namespace JitStreamDesigner
             public const string LocationChanged = "FeatureGuiJacBrokerLocationChanged";
             public const string CioNewRemoveChanged = "FeatureGuiJacBrokerCioNewRemoveChanged";
             public const string CassetteValueChanged = "FeatureGuiJacBrokerCassetteValueChanged";
+            public const string AddProcessLink = "FeatureGuiJacBrokerAddProcessLink";
+            public const string RemoveProcessLink = "FeatureGuiJacBrokerRemoveProcessLink";
         }
         private readonly LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
@@ -339,6 +341,51 @@ namespace JitStreamDesigner
             if (nChanged > 0)
             {
                 Redraw();
+            }
+            WaitNext();
+        }
+
+        /// <summary>
+        /// ProcessLink
+        /// </summary>
+        /// <param name="value"></param>
+        public void AddProcLink(object value)
+        {
+            if (value is string link)
+            {
+                var vals = link.Split(',');
+                if( vals.Length == 2)
+                {
+                    Token.AddNew(new EventTokenProcessLinkTrigger
+                    {
+                        TokenID = TOKEN.AddProcessLink,
+                        Sender = this,
+                        Remarks = "Jac:Gui:ProcLink Add",
+                    });
+                }
+            }
+            WaitNext();
+        }
+        /// <summary>
+        /// ProcessLink
+        /// </summary>
+        /// <param name="value"></param>
+        public void RemoveProcLink(object value)
+        {
+            if (value is string link)
+            {
+                var vals = link.Split(',');
+                if (vals.Length == 2)
+                {
+                    Token.AddNew(new EventTokenProcessLinkTrigger
+                    {
+                        ProcessIDFrom = vals[0].Trim(),
+                        ProcessIDTo = vals[1].Trim(),
+                        TokenID = TOKEN.RemoveProcessLink,
+                        Sender = this,
+                        Remarks = "Jac:Gui:ProcLink Remove",
+                    });
+                }
             }
             WaitNext();
         }
