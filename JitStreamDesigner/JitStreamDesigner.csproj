@@ -137,6 +137,7 @@
     <Compile Include="NewUndoRedoEventArgs.cs" />
     <Compile Include="OneTime.cs" />
     <Compile Include="PartsConnectGrip.cs" />
+    <Compile Include="PartsJitProcessLink.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>

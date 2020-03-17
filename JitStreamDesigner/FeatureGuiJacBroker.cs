@@ -359,6 +359,8 @@ namespace JitStreamDesigner
                     Token.AddNew(new EventTokenProcessLinkTrigger
                     {
                         TokenID = TOKEN.AddProcessLink,
+                        ProcessIDFrom = vals[0].Trim(),
+                        ProcessIDTo = vals[1].Trim(),
                         Sender = this,
                         Remarks = "Jac:Gui:ProcLink Add",
                     });

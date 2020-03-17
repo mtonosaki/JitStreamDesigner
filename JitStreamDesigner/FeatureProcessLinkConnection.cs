@@ -26,18 +26,18 @@ namespace JitStreamDesigner
         [EventCatch(TokenID = TokensGeneral.PartsSelectChanged)]
         public void PartsSelected(EventTokenPartsSelectChangedTrigger token)
         {
+            ResetConnectorGripParts(); // Delete the all connector Parts
+
             // Make connector parts with process click
+            var froms = Parts.GetParts<PartsJitProcessLink>(LAYER.JitProcessConnector).ToDictionary(a => a.ProcessFrom.ID);
             var tars = token.PartStates
                 .Where(a => a.sw)
                 .Where(a => a.parts is PartsJitProcess)
-                .Select(a => (PartsJitProcess)a.parts);
+                .Select(a => (PartsJitProcess)a.parts)
+                .Where(a => froms.ContainsKey(a.ID) == false);
 
-            foreach (var tarProcParts in LoopUtil<PartsJitProcess>.From(tars, out var lc))
+            foreach (var tarProcParts in tars)
             {
-                lc.DoFirstTime(() =>
-                {
-                    ResetConnectParts(); // Delete the all connector Parts
-                });
                 var cf = new PartsConnectGrip
                 {
                     Design = PartsConnectGrip.Designs.OUT,
@@ -81,12 +81,12 @@ namespace JitStreamDesigner
                     let score = p.SelectingScore(Pane.Target, spos)
                     orderby score ascending
                     select (p, score);
-                foreach (var ps in LoopUtil<(PartsJitProcess Process, float Score)>.From(prs, out var lu))
+                foreach (var ps in LoopUtil<(PartsJitProcess Process, float Score)>.From(prs, out var loop))
                 {
                     ps.Process.IsConnecting = false;
                     isDrawRequested = true;
 
-                    lu.DoFirstTime(() =>
+                    loop.DoFirstTime(() =>
                     {
                         if (ps.Score <= 1.0f)
                         {
@@ -110,10 +110,10 @@ namespace JitStreamDesigner
             foreach (var pcon in LoopUtil<PartsConnectGrip>.From(
                 token.PartsSet
                 .Where(a => a is PartsConnectGrip)
-                .Select(a => (PartsConnectGrip)a), out var lu))
+                .Select(a => (PartsConnectGrip)a), out var loop))
             {
-                pcon.SetLocation(pcon.Angle = pcon.GetAngle());
-                lu.DoFirstTime(() =>
+                pcon.SetLocation(pcon.Angle = pcon.GetAngle()); // Update Angle and Location
+                loop.DoFirstTime(() =>
                 {
                     confrom = pcon.TargetProcess;
                 });
@@ -133,18 +133,26 @@ namespace JitStreamDesigner
                 Connect(token, confrom, conto);
             }
         }
-        private void ResetConnectParts()
+        private void ResetConnectorGripParts()
         {
-            Parts.RemoveLayereParts(Pane.Target, LAYER.JitProcessConnectorGrip);
-            foreach (var pt in Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.IsConnecting))
+            Parts.RemoveLayereParts(Pane.Target, LAYER.JitProcessConnectorGrip);    // delete the all connector grip parts
+
+            foreach (var pt in Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.IsConnecting))  // reset PartsJitProcess property
             {
                 pt.IsConnecting = false;
             }
             Redraw();
         }
+
+        /// <summary>
+        /// Connect
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
         private void Connect(EventTokenTrigger token, PartsJitProcess from, PartsJitProcess to)
         {
-            ResetConnectParts();
+            ResetConnectorGripParts();
             var jacredo =
             $@"
                 TheStage
@@ -176,13 +184,20 @@ namespace JitStreamDesigner
                 CoderX = DistanceCoderX,
                 CoderY = DistanceCoderY,
             };
-//            Parts.Add(Pane.Target, link, LAYER.JitProcessConnector)
+            Parts.Add(Pane.Target, link, LAYER.JitProcessConnector);
         }
 
         [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.RemoveProcessLink)]
         public void RemoveProcessLink(EventTokenProcessLinkTrigger token)
         {
-            int a = 1;
+            var links = Parts.GetParts<PartsJitProcessLink>(LAYER.JitProcessConnector, a =>
+            {
+                return a.ProcessFrom.ID == token.ProcessIDFrom && a.ProcessTo.ID == token.ProcessIDTo;
+            });
+            foreach (var link in links)
+            {
+                Parts.Remove(Pane.Target, link, LAYER.JitProcessConnector);
+            }
         }
     }
 }

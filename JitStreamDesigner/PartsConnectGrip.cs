@@ -6,23 +6,9 @@ using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
-    public class PartsJitProcessLink : PartsJitBase
-    {
-        public PartsJitProcess ProcessFrom { get; set; }
-
-        public PartsJitProcess ProcessTo { get; set; }
-
-        /// <summary>
-        /// Visualize
-        /// </summary>
-        /// <param name="dp"></param>
-        public override void Draw(DrawProperty dp)
-        {
-        }
-    }
 
     /// <summary>
-    /// Process Link Connect Grip parts that is for GUI edit only
+    /// A temporary GUI parts of Process Link Connector Grip
     /// </summary>
     public class PartsConnectGrip : PartsJitBase
     {
@@ -87,8 +73,6 @@ namespace JitStreamDesigner
             SelectableSize = sr.ToSize();
         }
 
-        const double Root2 = 1.414213562373095048801688724209;
-
         public LayoutPos GetLayoutPos(Angle A)
         {
             var lw = TargetProcess.PositionerX(CodeX<Distance>.From(TargetProcess.Width / 2 + Width / 2), CodeY<Distance>.From(TargetProcess.Height / 2 + Height / 2));
@@ -96,12 +80,12 @@ namespace JitStreamDesigner
             var lpos = TargetProcess.GetLayoutPos();    // Parts Location
             var lois = GeoEu.GetLocationOfInscribedSquareInCircle(A); // Connector Location Unit (0.7 times)
             return LayoutPos.From(
-                lpos.X              // Parts Location
-                    + lw * Root2    // R (Circle of the four vertices）
-                    * lois.X,       // Location of inscribed square in circle
-                lpos.Y              // Parts Location
-                    + lh * Root2    // R (Circle of the four vertices）
-                    * lois.Y        // Location of inscribed square in circle
+                lpos.X                      // Parts Location
+                    + lw * MathUtil.Root2   // R (Circle of the four vertices）
+                    * lois.X,               // Location of inscribed square in circle
+                lpos.Y                      // Parts Location
+                    + lh * MathUtil.Root2   // R (Circle of the four vertices）
+                    * lois.Y                // Location of inscribed square in circle
             );
         }
 
