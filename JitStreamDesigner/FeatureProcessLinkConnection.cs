@@ -44,6 +44,7 @@ namespace JitStreamDesigner
                 .Where(a => a.sw)
                 .Where(a => a.parts is PartsJitProcess)
                 .Select(a => (PartsJitProcess)a.parts)
+                .Where( a=> a.ID != null)
                 .Where(a => froms.ContainsKey(a.ID) == false);
 
             foreach (var tarProcParts in tars)
