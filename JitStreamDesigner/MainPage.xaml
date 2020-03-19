@@ -40,7 +40,7 @@
             <local:FeatureGuiJacBroker />
             <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />
             <local:FeatureProperties />
-            <local:FeatureProcessLinkConnection />
+            <local:FeatureProcessLinkConnection CommandDeleteProcessLink="{x:Bind DeleteProcessLink}" ContextMenu="{x:Bind ContextMenu}" />
             <tg:FeatureScrollDrag />
             <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
             <tg:FeatureSelectParts Name="Select_JitProcess" TargetLayer="{x:Bind local:LAYER.JitProcess}" />
@@ -53,7 +53,8 @@
             <local:FeatureOpenStudy ListeningButtonNames="OpenStudyButton" />
         </tg:TGuiView.Features>
         <tg:TGuiView.ContextFlyout>
-            <MenuFlyout>
+            <MenuFlyout x:Name="ContextMenu">
+                <tg:TMenuFlyoutItem x:Name="DeleteProcessLink" x:Uid="DeleteProcessLink" Text="Delete Link" />
                 <tg:TMenuFlyoutItem Name="OpenStudy" x:Uid="OpenStudy" />
                 <tg:TMenuFlyoutItem Name="OpenLogText" x:Uid="OpenLogText" Text="Open Log" />
             </MenuFlyout>

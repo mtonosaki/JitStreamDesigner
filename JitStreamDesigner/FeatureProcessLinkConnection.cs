@@ -8,12 +8,17 @@ using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
-    public class FeatureProcessLinkConnection : FeatureSimulatorBase
+    public class FeatureProcessLinkConnection : FeatureSimulatorBase, IPointerListener
     {
+        public TMenuFlyoutItem CommandDeleteProcessLink { get; set; }
+        public MenuFlyout ContextMenu { get; set; }
+
         /// <summary>
         /// Initialize this feature
         /// </summary>
@@ -21,6 +26,11 @@ namespace JitStreamDesigner
         {
             base.OnInitialInstance();
             Pane.Target = PaneJitParts;
+
+            CommandDeleteProcessLink.Visibility = Visibility.Collapsed;
+            CommandDeleteProcessLink.Click += CommandDeleteProcessLink_Click;
+            ContextMenu.Opening += Menu_Opening;
+            ContextMenu.Closed += Menu_Closed;
         }
 
         [EventCatch(TokenID = TokensGeneral.PartsSelectChanged)]
@@ -54,7 +64,7 @@ namespace JitStreamDesigner
             }
         }
 
-        [EventCatch(TokenID =TokensGeneral.PartsMoving)]
+        [EventCatch(TokenID = TokensGeneral.PartsMoving)]
         public void PartsMoving(EventTokenPartsMovingTrigger token)
         {
             bool isDrawRequested = false;
@@ -72,7 +82,7 @@ namespace JitStreamDesigner
             }
 
             // Change IsConnecting
-            foreach(var pcon in token.PartsSet.Where(a => a is PartsConnectGrip).Select(a => (PartsConnectGrip)a))
+            foreach (var pcon in token.PartsSet.Where(a => a is PartsConnectGrip).Select(a => (PartsConnectGrip)a))
             {
                 var spos = pcon.GetScreenPos(Pane.Target);
                 var prs =
@@ -128,7 +138,7 @@ namespace JitStreamDesigner
                 }
             }
             var conto = Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.IsConnecting).FirstOrDefault();
-            if( confrom != null && conto != null)
+            if (confrom != null && conto != null)
             {
                 Connect(token, confrom, conto);
             }
@@ -176,7 +186,7 @@ namespace JitStreamDesigner
             var link = new PartsJitProcessLink
             {
                 ProcessFrom = Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.ID == token.ProcessIDFrom).FirstOrDefault(),
-                ProcessTo   = Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.ID == token.ProcessIDTo).FirstOrDefault(),
+                ProcessTo = Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.ID == token.ProcessIDTo).FirstOrDefault(),
                 Width = Distance.FromMeter(0.5),
                 Height = Distance.FromMeter(0.5),
                 PositionerX = DistancePositionerX,
@@ -198,6 +208,107 @@ namespace JitStreamDesigner
             {
                 Parts.Remove(Pane.Target, link, LAYER.JitProcessConnector);
             }
+        }
+
+        public void OnPointerPressed(PointerState po)
+        {
+            _pobak = po.Clone();
+        }
+
+        public void OnPointerHold(PointerState po)
+        {
+        }
+
+        public void OnPointerMoved(PointerState po)
+        {
+            _pobak = po.Clone();
+            if (isMenu) return;
+
+            foreach (var link in LoopUtil<PartsJitProcessLink>
+                .From(
+                    Parts.GetParts<PartsJitProcessLink>(LAYER.JitProcessConnector)
+                    .OrderBy(a => (int)(a.SelectingScore(Pane.Target, po.Position) * 1000))
+                , out var loop))
+            {
+                loop.DoFirstTime(() =>
+                {
+                    if (link.SelectingScore(Pane.Target, po.Position) <= 1.0f)
+                    {
+                        link.State = PartsJitProcessLink.States.HOVER;
+                    }
+                    else
+                    {
+                        link.State = PartsJitProcessLink.States.LINE;
+                    }
+                });
+                loop.DoSecondTimesAndSubsequent(() =>
+                {
+                    link.State = PartsJitProcessLink.States.LINE;
+                });
+            }
+        }
+
+        public void OnPointerReleased(PointerState po)
+        {
+        }
+
+        private bool isMenu = false;
+        private PointerState _pobak;
+
+        private void Menu_Opening(object sender, object e)
+        {
+            Menu_Closed(null, e);
+            isMenu = true;
+            CommandDeleteProcessLink.Visibility = Visibility.Collapsed;
+
+            var link = Parts.GetParts<PartsJitProcessLink>(LAYER.JitProcessConnector).OrderBy(a => (int)(a.SelectingScore(Pane.Target, _pobak.Position) * 1000)).FirstOrDefault();
+            if (link == default) return;
+            if (link.SelectingScore(Pane.Target, _pobak.Position) > 1.0f) return;
+
+            CommandDeleteProcessLink.Visibility = Visibility.Visible;
+            link.State = PartsJitProcessLink.States.SELECTING;
+            CommandDeleteProcessLink.Tag = link;
+            Redraw();
+        }
+
+        private void Menu_Closed(object sender, object e)
+        {
+            foreach (var link in LoopUtil<PartsJitProcessLink>.From(Parts.GetParts<PartsJitProcessLink>(LAYER.JitProcessConnector), out var loop))
+            {
+                link.State = PartsJitProcessLink.States.LINE;
+                loop.DoLastOneTime(() =>
+                {
+                    Redraw();
+                });
+            }
+            isMenu = false;
+        }
+
+        /// <summary>
+        /// Link Delete Command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommandDeleteProcessLink_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var link = ((FrameworkElement)sender).Tag as PartsJitProcessLink;
+            if (link == null) return;
+
+            var jacredo =
+            $@"
+                TheStage
+                    ProcLinks
+                        remove '{link.ProcessFrom.ID}' -> '{link.ProcessTo.ID}'
+                Gui.RemoveProcLink = '{link.ProcessFrom.ID},{link.ProcessTo.ID}'
+            ";
+            var jacundo =
+            $@"
+                TheStage
+                    ProcLinks
+                        add '{link.ProcessFrom.ID}' -> '{link.ProcessTo.ID}'
+                Gui.AddProcLink = '{link.ProcessFrom.ID},{link.ProcessTo.ID}'
+            ";
+            SetNewAction(null, jacredo, jacundo);
         }
     }
 }
