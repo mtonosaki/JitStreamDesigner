@@ -12,9 +12,10 @@ namespace JitStreamDesigner
         public static readonly string DoubleBufferMap = "DoubleBufferMap";
         public static readonly NamedId ToolButtons = NamedId.From("ToolButtons", 5001);
         public static readonly NamedId ToolButtonBox = NamedId.From("ToolButtonBox", 5000);
-        public static readonly NamedId SelectionMask = NamedId.From("SelectionMask", 900);
-        public static readonly NamedId EventQueue = NamedId.From("EventQueue", 400);
+        public static readonly NamedId SelectionMask = NamedId.From("SelectionMask", 990);
+        public static readonly NamedId EventQueue = NamedId.From("EventQueue", 900);
 
+        public static readonly NamedId JitWork = NamedId.From("JitWork", 400);
         public static readonly NamedId JitProcessConnectorGrip = NamedId.From("JitProcessConnectorGrip", 304);
         public static readonly NamedId JitProcessConnector = NamedId.From("JitProcessConnector", 301);
         public static readonly NamedId JitProcess = NamedId.From("JitProcess", 300);

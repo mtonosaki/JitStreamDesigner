@@ -35,6 +35,7 @@
             </tg:FeatureToolTip>
             <tg:FeatureLogPanel Name="MainLogPanel" TargetPane="LogPanel" BackgroundColor1="#CC202B3E" BackgroundColor2="#CC202B3E" />
             <local:FeatureJitTemplateListPanel ListeningButtonNames="ButtonAddTemplate" TargetListView="{x:Bind TemplateList}"/>
+            <local:FeatureGuiCommon />
             <local:FeatureJitProcess />
             <local:FeatureUndoRedo ListeningButtonNames="UndoButton,RedoButton" />
             <local:FeatureGuiJacBroker />

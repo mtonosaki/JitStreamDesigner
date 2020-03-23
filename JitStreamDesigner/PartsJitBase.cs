@@ -11,7 +11,7 @@ namespace JitStreamDesigner
     /// <summary>
     /// JIT Parts Base class
     /// </summary>
-    public abstract class PartsJitBase : PartsBase<Distance, Distance>, ISelectableParts, IMovableParts
+    public abstract class PartsJitBase : PartsBase<Distance, Distance>, ISelectableParts, IMovableParts, IGuiPartsControlCommon
     {
         /// <summary>
         /// Process ID same with Jac

@@ -14,23 +14,23 @@ namespace JitStreamDesigner
     /// Feature : GUI Process
     /// </summary>
     /// <remarks>
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCreating,    Name = "Process")] EventTokenTriggerToolDragging
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Process")] EventTokenTriggerToolDragging
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdFinished,    Name = "Process")] EventTokenTriggerToolDragging 
-    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling,  Name = "Process")] EventTokenTriggerToolDragging 
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCreating,    Name = "Work")] EventTokenTriggerToolDragging
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Work")] EventTokenTriggerToolDragging
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdFinished,    Name = "Work")] EventTokenTriggerToolDragging 
+    /// [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling,  Name = "Work")] EventTokenTriggerToolDragging 
     ///
-    /// [EventCatch(TokenID = TOKEN.CREATE)] EventTokenCreateProcessPartsTrigger
-    /// [EventCatch(TokenID = TOKEN.REMOVE)] EventTokenCreateProcessPartsTrigger
+    /// [EventCatch(TokenID = TOKEN.CREATE)] EventTokenCreateWorkPartsTrigger
+    /// [EventCatch(TokenID = TOKEN.REMOVE)] EventTokenCreateWorkPartsTrigger
     /// </remarks>
-    [FeatureDescription(En = "Put JitProcess", Jp = "JitProcess GUI編集")]
-    public class FeatureJitProcess : FeatureSimulatorBase
+    [FeatureDescription(En = "Put JitWork", Jp = "JitWork GUI編集")]
+    public class FeatureJitWork : FeatureSimulatorBase
     {
         public static class TOKEN
         {
-            public const string CREATE = "FeatureJitProcessCreate";
-            public const string REMOVE = "FeatureJitProcessRemove";
+            public const string CREATE = "FeatureJitWorkCreate";
+            public const string REMOVE = "FeatureJitWorkRemove";
         };
-        private PartsJitProcess CurrentParts = null;
+        private PartsJitWork CurrentParts = null;
 
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace JitStreamDesigner
         /// Creating new instance
         /// </summary>
         /// <param name="token"></param>
-        [EventCatch(TokenID = FeatureToolbox.TokenIdCreating, Name = "Process")]
+        [EventCatch(TokenID = FeatureToolbox.TokenIdCreating, Name = "Work")]
         public void Creating(EventTokenTriggerToolDragging token)
         {
             if (CurrentParts != null)
@@ -54,7 +54,7 @@ namespace JitStreamDesigner
                 return;
             }
 
-            CurrentParts = new PartsJitProcess
+            CurrentParts = new PartsJitWork
             {
                 Location = GetCoderPos(PaneJitParts, token.Pointer),
                 Width = Distance.FromMeter(2.0),
@@ -64,14 +64,14 @@ namespace JitStreamDesigner
                 CoderX = DistanceCoderX,
                 CoderY = DistanceCoderY,
             };
-            Parts.Add(PaneJitParts, CurrentParts, LAYER.JitProcess);
+            Parts.Add(PaneJitParts, CurrentParts, LAYER.JitWork);
         }
 
         /// <summary>
         /// Moving new instance
         /// </summary>
         /// <param name="token"></param>
-        [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Process")]
+        [EventCatch(TokenID = FeatureToolbox.TokenIdPositioning, Name = "Work")]
         public void Positioning(EventTokenTriggerToolDragging token)
         {
             if (CurrentParts == null)
@@ -88,7 +88,7 @@ namespace JitStreamDesigner
         /// Cancel the instance position
         /// </summary>
         /// <param name="token"></param>
-        [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Process")]
+        [EventCatch(TokenID = FeatureToolbox.TokenIdCancelling, Name = "Work")]
         public void Cancelling(EventTokenTriggerToolDragging token)
         {
             if (CurrentParts == null)
@@ -96,7 +96,7 @@ namespace JitStreamDesigner
                 return;
             }
 
-            Parts.Remove(PaneJitParts, CurrentParts, LAYER.JitProcess);  // delete temporary parts
+            Parts.Remove(PaneJitParts, CurrentParts, LAYER.JitWork);  // delete temporary parts
             CurrentParts = null;
             Redraw();
         }
@@ -105,7 +105,7 @@ namespace JitStreamDesigner
         /// Decide the instance position
         /// </summary>
         /// <param name="token"></param>
-        [EventCatch(TokenID = FeatureToolbox.TokenIdFinished, Name = "Process")]
+        [EventCatch(TokenID = FeatureToolbox.TokenIdFinished, Name = "Work")]
         public void Finished(EventTokenTriggerToolDragging token)
         {
             if (CurrentParts == null)
@@ -115,28 +115,28 @@ namespace JitStreamDesigner
 
             CurrentParts.DesignState = PartsJitBase.DesignStates.Normal;
             CurrentParts.Location = GetCoderPos(PaneJitParts, token.Pointer);
-            var processID = JacInterpreter.MakeID("Process");
-            CurrentParts.ID = processID;
+            var workID = JacInterpreter.MakeID("Work");
+            CurrentParts.ID = workID;
 
             var jacredo =
             $@"
                 TheStage
-                    Procs
-                        add new Process
-                            ID = '{processID}'
+                    Works
+                        add datetime('{Now.ToString(TimeUtil.FormatYMDHMSms)}'):new Work
+                            ID = '{workID}'
                             LocationX = {CurrentParts.Location.X.Cx.m}m
                             LocationY = {CurrentParts.Location.Y.Cy.m}m
                             Width = {CurrentParts.Width.m}m
                             Height = {CurrentParts.Height.m}m
                 Gui.ClearAllSelection = true
-                Gui.CreateProcess = {processID}
+                Gui.CreateWork = {workID}
             ";
             var jacundo =
             $@"
-                Gui.RemoveProcess = {processID}
+                Gui.RemoveWork = {workID}
                 TheStage
-                    Procs
-                        remove {processID}
+                    Works
+                        remove {workID}
             ";
             SetNewAction(token, jacredo, jacundo);
 
@@ -146,29 +146,29 @@ namespace JitStreamDesigner
         }
 
         [EventCatch(TokenID = TOKEN.CREATE)]
-        public void CreateProcess(EventTokenProcessPartsTrigger token)
+        public void CreateWork(EventTokenWorkPartsTrigger token)
         {
-            var pt = new PartsJitProcess
+            var pt = new PartsJitWork
             {
-                ID = token.Process.ID,
-                Location = CodePos<Distance, Distance>.From((Distance)token.Process.ChildVriables["LocationX"].Value, (Distance)token.Process.ChildVriables["LocationY"].Value),
-                Width = (Distance)token.Process.ChildVriables["Width"].Value,
-                Height = (Distance)token.Process.ChildVriables["Height"].Value,
+                ID = token.Work.ID,
+                Location = CodePos<Distance, Distance>.From((Distance)token.Work.ChildVriables["LocationX"].Value, (Distance)token.Work.ChildVriables["LocationY"].Value),
+                Width = (Distance)token.Work.ChildVriables["Width"].Value,
+                Height = (Distance)token.Work.ChildVriables["Height"].Value,
                 PositionerX = DistancePositionerX,
                 PositionerY = DistancePositionerY,
                 CoderX = DistanceCoderX,
                 CoderY = DistanceCoderY,
             };
-            Parts.Add(PaneJitParts, pt, LAYER.JitProcess);
+            Parts.Add(PaneJitParts, pt, LAYER.JitWork);
             Redraw();
         }
 
         [EventCatch(TokenID = TOKEN.REMOVE)]
-        public void RemoveProcess(EventTokenProcessPartsTrigger token)
+        public void RemoveWork(EventTokenWorkPartsTrigger token)
         {
-            foreach (var pt in Parts.GetParts<PartsJitProcess>(LAYER.JitProcess, a => a.ID == token.Process.ID))
+            foreach (var pt in Parts.GetParts<PartsJitWork>(LAYER.JitWork, a => a.ID == token.Work.ID))
             {
-                Parts.Remove(PaneJitParts, pt, LAYER.JitProcess);
+                Parts.Remove(PaneJitParts, pt, LAYER.JitWork);
             }
             Redraw();
         }
@@ -177,8 +177,8 @@ namespace JitStreamDesigner
     /// <summary>
     /// Process parts control order message
     /// </summary>
-    public class EventTokenProcessPartsTrigger : EventTokenTrigger
+    public class EventTokenWorkPartsTrigger : EventTokenTrigger
     {
-        public JitProcess Process { get; set; }
+        public JitWork Work { get; set; }
     }
 }

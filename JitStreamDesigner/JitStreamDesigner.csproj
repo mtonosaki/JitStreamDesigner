@@ -128,6 +128,8 @@
     </Compile>
     <Compile Include="EventTokenTriggersForGui.cs" />
     <Compile Include="FeatureGuiJacBroker.cs" />
+    <Compile Include="FeatureGuiCommon.cs" />
+    <Compile Include="FeatureJitWork.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
     <Compile Include="FeatureProcessLinkConnection.cs" />
     <Compile Include="FeatureProperties.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="NewUndoRedoEventArgs.cs" />
     <Compile Include="OneTime.cs" />
     <Compile Include="PartsConnectGrip.cs" />
+    <Compile Include="PartsJitWork.cs" />
     <Compile Include="PartsJitProcessLink.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
