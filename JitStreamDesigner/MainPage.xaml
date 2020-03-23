@@ -37,6 +37,7 @@
             <local:FeatureJitTemplateListPanel ListeningButtonNames="ButtonAddTemplate" TargetListView="{x:Bind TemplateList}"/>
             <local:FeatureGuiCommon />
             <local:FeatureJitProcess />
+            <local:FeatureJitWork />
             <local:FeatureUndoRedo ListeningButtonNames="UndoButton,RedoButton" />
             <local:FeatureGuiJacBroker />
             <local:FeatureClock ListeningButtonNames="ClockStart,ClockStop" />

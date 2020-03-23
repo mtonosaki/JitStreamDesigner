@@ -391,5 +391,33 @@ namespace JitStreamDesigner
             }
             WaitNext();
         }
+
+        public void CreateWork(object value)
+        {
+            if (value is JitWork work)
+            {
+                Token.AddNew(new EventTokenWorkPartsTrigger
+                {
+                    TokenID = FeatureJitWork.TOKEN.CREATE,
+                    Work = work,
+                    Sender = this,
+                });
+            }
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
+        }
+
+        public void RemoveWork(object value)
+        {
+            if (value is JitWork work)
+            {
+                Token.AddNew(new EventTokenWorkPartsTrigger
+                {
+                    TokenID = FeatureJitWork.TOKEN.REMOVE,
+                    Work = work,
+                    Sender = this,
+                });
+            }
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
+        }
     }
 }

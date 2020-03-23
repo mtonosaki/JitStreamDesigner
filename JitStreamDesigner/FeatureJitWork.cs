@@ -11,7 +11,7 @@ using Tono.Jit;
 namespace JitStreamDesigner
 {
     /// <summary>
-    /// Feature : GUI Process
+    /// Feature : GUI Work
     /// </summary>
     /// <remarks>
     /// [EventCatch(TokenID = FeatureToolbox.TokenIdCreating,    Name = "Work")] EventTokenTriggerToolDragging
@@ -141,7 +141,7 @@ namespace JitStreamDesigner
             SetNewAction(token, jacredo, jacundo);
 
             // remove toolbox parts. (Expecting to be created by REDO processor)
-            Parts.Remove(PaneJitParts, CurrentParts, LAYER.JitProcess);
+            Parts.Remove(PaneJitParts, CurrentParts, LAYER.JitWork);
             CurrentParts = null;
         }
 
@@ -175,7 +175,7 @@ namespace JitStreamDesigner
     }
 
     /// <summary>
-    /// Process parts control order message
+    /// Work parts control order message
     /// </summary>
     public class EventTokenWorkPartsTrigger : EventTokenTrigger
     {

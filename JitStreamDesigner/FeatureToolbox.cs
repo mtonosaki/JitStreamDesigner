@@ -142,7 +142,7 @@ namespace JitStreamDesigner
     /// <summary>
     /// Creating Jit-instance
     /// </summary>
-    public class EventTokenTriggerToolDragging : EventTokenTrigger
+    public class EventTokenTriggerToolDragging : EventTokenTrigger, ITokenNameKey
     {
         public string Name { get; set; }
         public Type ToolButtonType { get; set; }
