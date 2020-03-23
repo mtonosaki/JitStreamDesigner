@@ -7,17 +7,19 @@ using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
 using Tono.Jit;
+using static Tono.Jit.JitVariable;
 
 namespace JitStreamDesigner
 {
     /// <summary>
     /// Gui Common Interface : implement to a PartsJit*****
     /// </summary>
-    public interface IGuiPartsControlCommon
+    public interface IGuiPartsControlCommon : IJitObjectID
     {
-        string ID { get; }
         CodePos<Distance, Distance> Location { get; }
         CodePos<Distance, Distance> OriginalPosition { get; }
+        ChildValueDic ChildVriables { get; }
+
     }
 
     /// <summary>

@@ -4,6 +4,7 @@
 using Tono;
 using Tono.Gui;
 using Tono.Gui.Uwp;
+using Tono.Jit;
 using Windows.UI;
 using static Tono.Gui.Uwp.CastUtil;
 
@@ -15,7 +16,7 @@ namespace JitStreamDesigner
     /// <remarks>
     /// Location = Center
     /// </remarks>
-    public class PartsJitProcess : PartsJitBase
+    public class PartsJitProcess : PartsJitBase, IGuiPartsControlCommon
     {
         public bool IsConnecting { get; set; }
 
@@ -23,6 +24,8 @@ namespace JitStreamDesigner
         /// Change Base Color
         /// </summary>
         public override Color BaseColor => base.BaseColor;
+
+        public JitVariable.ChildValueDic ChildVriables => throw new System.NotImplementedException();
 
         /// <summary>
         /// Drawing main
@@ -36,19 +39,18 @@ namespace JitStreamDesigner
             var sr = ScreenRect.FromCWH(sc, ssiz.Width, ssiz.Height);
             SelectableSize = sr.ToSize();
 
+            dp.Graphics.DrawRectangle(_(sr), GetColor(dp));
+
             if (IsConnecting)
             {
                 dp.Graphics.DrawRectangle(_(sr), ConnectingColor, 4f);
-                dp.Graphics.FillRectangle(_(sr), ConnectingColor);
                 return;
             }
             if (IsSelected)
             {
                 dp.Graphics.DrawRectangle(_(sr), SelectingColor, 4f);
-                dp.Graphics.FillRectangle(_(sr), SelectingColor);
                 return;
             }
-            dp.Graphics.DrawRectangle(_(sr), GetColor(dp));
         }
     }
 }

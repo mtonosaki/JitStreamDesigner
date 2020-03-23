@@ -207,23 +207,59 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
+        /// Gui.CreateWork JAC interface
+        /// </summary>
+        /// <param name="value">JitWork instance</param>
+        public void CreateWork(object value)
+        {
+            if (value is JitWork work)
+            {
+                Token.AddNew(new EventTokenWorkPartsTrigger
+                {
+                    TokenID = FeatureJitWork.TOKEN.CREATE,
+                    Work = work,
+                    Sender = this,
+                });
+            }
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
+        }
+
+        /// <summary>
+        /// Gui.RemoveWork JAC interface
+        /// </summary>
+        /// <param name="value">JitWork instance</param>
+        public void RemoveWork(object value)
+        {
+            if (value is JitWork work)
+            {
+                Token.AddNew(new EventTokenWorkPartsTrigger
+                {
+                    TokenID = FeatureJitWork.TOKEN.REMOVE,
+                    Work = work,
+                    Sender = this,
+                });
+            }
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
+        }
+
+        /// <summary>
         /// Gui.UpdateLocation = Process.ID
         /// </summary>
         /// <param name="value">JitProcess</param>
         public void UpdateLocation(object value)
         {
-            if (value is JitProcess process)
+            if (value is IJitObjectID jitobj && value is JitVariable jitval)
             {
-                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault() is PartsJitBase pt)
+                if (Parts.GetParts<PartsJitBase>(LAYER.JitPartsLayers, a => a.ID == jitobj.ID).FirstOrDefault() is PartsJitBase pt)
                 {
-                    pt.Location = CodePos<Distance, Distance>.From((Distance)process.ChildVriables["LocationX"].Value, (Distance)process.ChildVriables["LocationY"].Value);
+                    pt.Location = CodePos<Distance, Distance>.From((Distance)jitval.ChildVriables["LocationX"].Value, (Distance)jitval.ChildVriables["LocationY"].Value);
                     pt.IsSelected = true;
                     Redraw();
 
                     Token.AddNew(new EventTokenJitVariableTrigger
                     {
                         TokenID = TOKEN.LocationChanged,
-                        From = process,
+                        From = jitobj,
                         Sender = this,
                     });
                 }
@@ -236,19 +272,19 @@ namespace JitStreamDesigner
         /// <param name="value">JitProcess</param>
         public void UpdateSize(object value)
         {
-            if (value is JitProcess process)
+            if (value is IJitObjectID jitobj && value is JitVariable jitval)
             {
-                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault() is PartsJitBase pt)
+                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == jitobj.ID).FirstOrDefault() is PartsJitBase pt)
                 {
-                    pt.Width = (Distance)process.ChildVriables["Width"].Value;
-                    pt.Height = (Distance)process.ChildVriables["Height"].Value;
+                    pt.Width = (Distance)jitval.ChildVriables["Width"].Value;
+                    pt.Height = (Distance)jitval.ChildVriables["Height"].Value;
                     pt.IsSelected = true;
                     Redraw();
 
                     Token.AddNew(new EventTokenJitVariableTrigger
                     {
                         TokenID = TOKEN.SizeChanged,
-                        From = process,
+                        From = jitobj,
                         Sender = this,
                     });
                 }
@@ -390,34 +426,6 @@ namespace JitStreamDesigner
                 }
             }
             WaitNext();
-        }
-
-        public void CreateWork(object value)
-        {
-            if (value is JitWork work)
-            {
-                Token.AddNew(new EventTokenWorkPartsTrigger
-                {
-                    TokenID = FeatureJitWork.TOKEN.CREATE,
-                    Work = work,
-                    Sender = this,
-                });
-            }
-            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
-        }
-
-        public void RemoveWork(object value)
-        {
-            if (value is JitWork work)
-            {
-                Token.AddNew(new EventTokenWorkPartsTrigger
-                {
-                    TokenID = FeatureJitWork.TOKEN.REMOVE,
-                    Work = work,
-                    Sender = this,
-                });
-            }
-            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
         }
     }
 }

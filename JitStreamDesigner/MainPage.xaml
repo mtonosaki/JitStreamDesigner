@@ -45,11 +45,11 @@
             <local:FeatureProcessLinkConnection CommandDeleteProcessLink="{x:Bind DeleteProcessLink}" ContextMenu="{x:Bind ContextMenu}" />
             <tg:FeatureScrollDrag />
             <tg:FeatureZoomDrag SpeedX="20.0" SpeedY="20.0" />
-            <tg:FeatureSelectParts Name="Select_JitProcess" TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeatureSelectParts Name="Select_JitParts" TargetLayers="{x:Bind local:LAYER.JitPartsLayers}" />
             <tg:FeatureSelectHoverParts Name="Select_JitProcessConnector" TargetLayer="{x:Bind local:LAYER.JitProcessConnectorGrip}" />
-            <tg:FeatureMoveSelectedParts Name="Move_JitProcess" TargetLayer="{x:Bind local:LAYER.JitProcess}" />
+            <tg:FeatureMoveSelectedParts Name="Move_JitParts" TargetLayers="{x:Bind local:LAYER.JitPartsLayers}" />
             <tg:FeatureMoveSelectedParts Name="Move_JitProcessConnector" TargetLayer="{x:Bind local:LAYER.JitProcessConnectorGrip}" />
-            <tg:FeaturePartsSelectOnRect TargetLayer="{x:Bind local:LAYER.JitProcess}" IgnoreLayers="{x:Bind local:LAYER.MaskIgnoreLayers}"  MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
+            <tg:FeaturePartsSelectOnRect TargetLayers="{x:Bind local:LAYER.JitPartsLayers}" IgnoreLayers="{x:Bind local:LAYER.MaskIgnoreLayers}"  MaskLayer="{x:Bind local:LAYER.SelectionMask}" />
             <tg:FeatureLogOpenAsText ListeningButtonNames="OpenLogText" />
             <local:FeatureSaveStudy ListeningButtonNames="SaveStudyButton" />
             <local:FeatureOpenStudy ListeningButtonNames="OpenStudyButton" />

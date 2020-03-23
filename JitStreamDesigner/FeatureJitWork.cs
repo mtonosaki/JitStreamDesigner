@@ -57,8 +57,8 @@ namespace JitStreamDesigner
             CurrentParts = new PartsJitWork
             {
                 Location = GetCoderPos(PaneJitParts, token.Pointer),
-                Width = Distance.FromMeter(2.0),
-                Height = Distance.FromMeter(2.0),
+                Width = Distance.FromMeter(0.3),
+                Height = Distance.FromMeter(0.3),
                 PositionerX = DistancePositionerX,
                 PositionerY = DistancePositionerY,
                 CoderX = DistanceCoderX,

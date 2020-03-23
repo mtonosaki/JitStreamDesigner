@@ -11,7 +11,7 @@ namespace JitStreamDesigner
     /// <summary>
     /// JIT Parts Base class
     /// </summary>
-    public abstract class PartsJitBase : PartsBase<Distance, Distance>, ISelectableParts, IMovableParts, IGuiPartsControlCommon
+    public abstract class PartsJitBase : PartsBase<Distance, Distance>, ISelectableParts, IMovableParts
     {
         /// <summary>
         /// Process ID same with Jac
@@ -26,12 +26,12 @@ namespace JitStreamDesigner
         /// <summary>
         /// Selecting Background Color
         /// </summary>
-        protected Color SelectingColor { get; } = Color.FromArgb(160, 255, 0, 0);
+        protected Color SelectingColor { get; } = Color.FromArgb(96, 255, 0, 0);
 
         /// <summary>
         /// Connecting Background Color
         /// </summary>
-        protected Color ConnectingColor { get; } = Color.FromArgb(160, 0, 255, 255);
+        protected Color ConnectingColor { get; } = Color.FromArgb(96, 0, 255, 255);
 
 
         public enum DesignStates
