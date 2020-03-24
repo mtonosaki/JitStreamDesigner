@@ -218,6 +218,13 @@ namespace JitStreamDesigner
                     Target = proc,
                 });
             }
+            if (token.Target is JitWork work)
+            {
+                AddOrFocus(work.ID, () => new PropertyWork
+                {
+                    Target = work,
+                });
+            }
         }
 
         private readonly StringBuilder jacUndo = new StringBuilder();
@@ -319,7 +326,7 @@ namespace JitStreamDesigner
         }
 
         [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CassetteValueChanged)]
-        public void CioCassetteValueChanged(EventTokenCioCassetteValueChangedTrigger token)
+        public void CioCassetteValueChanged(EventTokenCioBasedCassetteValueChangedTrigger token)
         {
             if (FindCassette(token.CassetteID).Cassette is ISetPropertyTarget uc)
             {
@@ -331,6 +338,15 @@ namespace JitStreamDesigner
                 {
                     pp.UpdateAllCioButtonsCaption();
                 }
+            }
+        }
+
+        [EventCatch(TokenID = FeatureGuiJacBroker.TOKEN.CassetteValueChanged, Name = "Work")]
+        public void WorkCassetteValueChanged(EventTokenVariableBasedCassetteValueChangedTrigger token)
+        {
+            if (FindCassette(token.CassetteID).Cassette is ISetPropertyTarget uc)
+            {
+                uc.SetPropertyTarget(token.Variable);
             }
         }
 
@@ -381,6 +397,12 @@ namespace JitStreamDesigner
         public void ProcessRemoved(EventTokenProcessPartsTrigger token)
         {
             RemoveCassette(token.Process.ID);
+        }
+
+        [EventCatch(TokenID = FeatureJitWork.TOKEN.REMOVE)]
+        public void WorkRemoved(EventTokenWorkPartsTrigger token)
+        {
+            RemoveCassette(token.Work.ID);
         }
     }
 }

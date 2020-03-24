@@ -342,11 +342,22 @@ namespace JitStreamDesigner
         {
             if (value is CioBase cio)
             {
-                Token.AddNew(new EventTokenCioCassetteValueChangedTrigger
+                Token.AddNew(new EventTokenCioBasedCassetteValueChangedTrigger
                 {
                     TokenID = TOKEN.CassetteValueChanged,
                     Cio = cio,
                     CassetteID = cio.ID,
+                    Sender = this,
+                    Remarks = "Jac:Gui:Cassette Value Changed",
+                });
+            }
+            else if( value is JitVariable variable && value is IJitObjectID obj)
+            {
+                Token.AddNew(new EventTokenVariableBasedCassetteValueChangedTrigger
+                {
+                    TokenID = TOKEN.CassetteValueChanged,
+                    Variable = variable,
+                    CassetteID = obj.ID,
                     Sender = this,
                     Remarks = "Jac:Gui:Cassette Value Changed",
                 });
