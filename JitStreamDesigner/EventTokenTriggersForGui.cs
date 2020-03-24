@@ -48,9 +48,21 @@ namespace JitStreamDesigner
         public string FromCioID { get; set; }
     }
 
-    public class EventTokenCioCassetteValueChangedTrigger : EventTokenTrigger
+    public class EventTokenCioBasedCassetteValueChangedTrigger : EventTokenTrigger
     {
         public CioBase Cio { get; set; }
         public string CassetteID { get; set; }
+    }
+
+    public class EventTokenVariableBasedCassetteValueChangedTrigger : EventTokenTrigger
+    {
+        public JitVariable Variable { get; set; }   // JitProcess / JitWork
+        public string CassetteID { get; set; }
+    }
+
+    public class EventTokenProcessLinkTrigger : EventTokenTrigger
+    {
+        public string ProcessIDFrom { get; set; }
+        public string ProcessIDTo { get; set; }
     }
 }

@@ -128,6 +128,8 @@
     </Compile>
     <Compile Include="EventTokenTriggersForGui.cs" />
     <Compile Include="FeatureGuiJacBroker.cs" />
+    <Compile Include="FeatureGuiCommon.cs" />
+    <Compile Include="FeatureJitWork.cs" />
     <Compile Include="FeatureOpenStudy.cs" />
     <Compile Include="FeatureProcessLinkConnection.cs" />
     <Compile Include="FeatureProperties.cs" />
@@ -136,7 +138,9 @@
     <Compile Include="IProperties.cs" />
     <Compile Include="NewUndoRedoEventArgs.cs" />
     <Compile Include="OneTime.cs" />
-    <Compile Include="PartsJitProcessConnector.cs" />
+    <Compile Include="PartsConnectGrip.cs" />
+    <Compile Include="PartsJitWork.cs" />
+    <Compile Include="PartsJitProcessLink.cs" />
     <Compile Include="PersistModel.cs" />
     <Compile Include="PropertiesCase.xaml.cs">
       <DependentUpon>PropertiesCase.xaml</DependentUpon>
@@ -161,6 +165,9 @@
     </Compile>
     <Compile Include="PropertyProcess.xaml.cs">
       <DependentUpon>PropertyProcess.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyWork.xaml.cs">
+      <DependentUpon>PropertyWork.xaml</DependentUpon>
     </Compile>
     <Compile Include="TemplateDialog.xaml.cs">
       <DependentUpon>TemplateDialog.xaml</DependentUpon>
@@ -254,6 +261,7 @@
     <Content Include="Assets\tbProcess.png" />
     <Content Include="Assets\tbWork.png" />
     <Content Include="Assets\Wide310x150Logo.png" />
+    <Content Include="Assets\Work.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -310,6 +318,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PropertyProcess.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertyWork.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

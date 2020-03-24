@@ -23,6 +23,8 @@ namespace JitStreamDesigner
             public const string LocationChanged = "FeatureGuiJacBrokerLocationChanged";
             public const string CioNewRemoveChanged = "FeatureGuiJacBrokerCioNewRemoveChanged";
             public const string CassetteValueChanged = "FeatureGuiJacBrokerCassetteValueChanged";
+            public const string AddProcessLink = "FeatureGuiJacBrokerAddProcessLink";
+            public const string RemoveProcessLink = "FeatureGuiJacBrokerRemoveProcessLink";
         }
         private readonly LinkedList<(string Remarks, Action Act)> Actions = new LinkedList<(string Remarks, Action Act)>();
 
@@ -205,23 +207,59 @@ namespace JitStreamDesigner
         }
 
         /// <summary>
+        /// Gui.CreateWork JAC interface
+        /// </summary>
+        /// <param name="value">JitWork instance</param>
+        public void CreateWork(object value)
+        {
+            if (value is JitWork work)
+            {
+                Token.AddNew(new EventTokenWorkPartsTrigger
+                {
+                    TokenID = FeatureJitWork.TOKEN.CREATE,
+                    Work = work,
+                    Sender = this,
+                });
+            }
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
+        }
+
+        /// <summary>
+        /// Gui.RemoveWork JAC interface
+        /// </summary>
+        /// <param name="value">JitWork instance</param>
+        public void RemoveWork(object value)
+        {
+            if (value is JitWork work)
+            {
+                Token.AddNew(new EventTokenWorkPartsTrigger
+                {
+                    TokenID = FeatureJitWork.TOKEN.REMOVE,
+                    Work = work,
+                    Sender = this,
+                });
+            }
+            Token.Finalize(() => WaitNext());   // Wait all tokens in queue finished for TOKEN.TemplateSelectionChanged
+        }
+
+        /// <summary>
         /// Gui.UpdateLocation = Process.ID
         /// </summary>
         /// <param name="value">JitProcess</param>
         public void UpdateLocation(object value)
         {
-            if (value is JitProcess process)
+            if (value is IJitObjectID jitobj && value is JitVariable jitval)
             {
-                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault() is PartsJitBase pt)
+                if (Parts.GetParts<PartsJitBase>(LAYER.JitPartsLayers, a => a.ID == jitobj.ID).FirstOrDefault() is PartsJitBase pt)
                 {
-                    pt.Location = CodePos<Distance, Distance>.From((Distance)process.ChildVriables["LocationX"].Value, (Distance)process.ChildVriables["LocationY"].Value);
+                    pt.Location = CodePos<Distance, Distance>.From((Distance)jitval.ChildVriables["LocationX"].Value, (Distance)jitval.ChildVriables["LocationY"].Value);
                     pt.IsSelected = true;
                     Redraw();
 
                     Token.AddNew(new EventTokenJitVariableTrigger
                     {
                         TokenID = TOKEN.LocationChanged,
-                        From = process,
+                        From = jitobj,
                         Sender = this,
                     });
                 }
@@ -234,19 +272,19 @@ namespace JitStreamDesigner
         /// <param name="value">JitProcess</param>
         public void UpdateSize(object value)
         {
-            if (value is JitProcess process)
+            if (value is IJitObjectID jitobj && value is JitVariable jitval)
             {
-                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == process.ID).FirstOrDefault() is PartsJitBase pt)
+                if (Parts.GetParts<PartsJitBase>(LAYER.JitProcess, a => a.ID == jitobj.ID).FirstOrDefault() is PartsJitBase pt)
                 {
-                    pt.Width = (Distance)process.ChildVriables["Width"].Value;
-                    pt.Height = (Distance)process.ChildVriables["Height"].Value;
+                    pt.Width = (Distance)jitval.ChildVriables["Width"].Value;
+                    pt.Height = (Distance)jitval.ChildVriables["Height"].Value;
                     pt.IsSelected = true;
                     Redraw();
 
                     Token.AddNew(new EventTokenJitVariableTrigger
                     {
                         TokenID = TOKEN.SizeChanged,
-                        From = process,
+                        From = jitobj,
                         Sender = this,
                     });
                 }
@@ -304,11 +342,22 @@ namespace JitStreamDesigner
         {
             if (value is CioBase cio)
             {
-                Token.AddNew(new EventTokenCioCassetteValueChangedTrigger
+                Token.AddNew(new EventTokenCioBasedCassetteValueChangedTrigger
                 {
                     TokenID = TOKEN.CassetteValueChanged,
                     Cio = cio,
                     CassetteID = cio.ID,
+                    Sender = this,
+                    Remarks = "Jac:Gui:Cassette Value Changed",
+                });
+            }
+            else if( value is JitVariable variable && value is IJitObjectID obj)
+            {
+                Token.AddNew(new EventTokenVariableBasedCassetteValueChangedTrigger
+                {
+                    TokenID = TOKEN.CassetteValueChanged,
+                    Variable = variable,
+                    CassetteID = obj.ID,
                     Sender = this,
                     Remarks = "Jac:Gui:Cassette Value Changed",
                 });
@@ -339,6 +388,53 @@ namespace JitStreamDesigner
             if (nChanged > 0)
             {
                 Redraw();
+            }
+            WaitNext();
+        }
+
+        /// <summary>
+        /// ProcessLink
+        /// </summary>
+        /// <param name="value"></param>
+        public void AddProcLink(object value)
+        {
+            if (value is string link)
+            {
+                var vals = link.Split(',');
+                if( vals.Length == 2)
+                {
+                    Token.AddNew(new EventTokenProcessLinkTrigger
+                    {
+                        TokenID = TOKEN.AddProcessLink,
+                        ProcessIDFrom = vals[0].Trim(),
+                        ProcessIDTo = vals[1].Trim(),
+                        Sender = this,
+                        Remarks = "Jac:Gui:ProcLink Add",
+                    });
+                }
+            }
+            WaitNext();
+        }
+        /// <summary>
+        /// ProcessLink
+        /// </summary>
+        /// <param name="value"></param>
+        public void RemoveProcLink(object value)
+        {
+            if (value is string link)
+            {
+                var vals = link.Split(',');
+                if (vals.Length == 2)
+                {
+                    Token.AddNew(new EventTokenProcessLinkTrigger
+                    {
+                        ProcessIDFrom = vals[0].Trim(),
+                        ProcessIDTo = vals[1].Trim(),
+                        TokenID = TOKEN.RemoveProcessLink,
+                        Sender = this,
+                        Remarks = "Jac:Gui:ProcLink Remove",
+                    });
+                }
             }
             WaitNext();
         }

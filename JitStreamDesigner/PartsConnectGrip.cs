@@ -6,12 +6,13 @@ using static Tono.Gui.Uwp.CastUtil;
 
 namespace JitStreamDesigner
 {
+
     /// <summary>
-    /// Process Link Connector
+    /// A temporary GUI parts of Process Link Connector Grip
     /// </summary>
-    public class PartsJitProcessConnector : PartsJitBase
+    public class PartsConnectGrip : PartsJitBase
     {
-        public enum Kinds
+        public enum Designs
         {
             OUT, IN,
         }
@@ -19,7 +20,7 @@ namespace JitStreamDesigner
         /// <summary>
         /// Linkage kind IN/OUT
         /// </summary>
-        public Kinds Kind { get; set; }
+        public Designs Design { get; set; }
 
         public Angle Angle { get; set; }
 
@@ -27,11 +28,6 @@ namespace JitStreamDesigner
         /// Target Process Parts
         /// </summary>
         public PartsJitProcess TargetProcess { get; set; }
-
-        /// <summary>
-        /// Change Base Color
-        /// </summary>
-        public override Color BaseColor => base.BaseColor;
 
         /// <summary>
         /// Drawing main
@@ -52,8 +48,8 @@ namespace JitStreamDesigner
                 var lposIn = GetLayoutPos(A);
                 var scIn = ScreenPos.From(dp.Pane, lposIn);
                 var srIn = ScreenRect.FromCWH(scIn, ssiz.Width, ssiz.Height);
-                dp.Graphics.DrawLine(_(scIn), _(sc), Color.FromArgb(128, 128, 0, 0));
-                if( Kind == Kinds.IN)
+                dp.Graphics.DrawLine(_(scIn), _(sc), ConnectingColor);
+                if( Design == Designs.IN)
                 {
                     dp.Graphics.FillRectangle(_(srIn), Colors.DarkGray);
                 } else
@@ -65,7 +61,7 @@ namespace JitStreamDesigner
                 dp.Graphics.DrawRectangle(_(sr), SelectingColor, 4f);
                 dp.Graphics.FillRectangle(_(sr), SelectingColor);
             }
-            if (Kind == Kinds.IN)
+            if (Design == Designs.IN)
             {
                 dp.Graphics.FillRectangle(_(sr), GetColor(dp));
             }
@@ -77,8 +73,6 @@ namespace JitStreamDesigner
             SelectableSize = sr.ToSize();
         }
 
-        const double Root2 = 1.414213562373095048801688724209;
-
         public LayoutPos GetLayoutPos(Angle A)
         {
             var lw = TargetProcess.PositionerX(CodeX<Distance>.From(TargetProcess.Width / 2 + Width / 2), CodeY<Distance>.From(TargetProcess.Height / 2 + Height / 2));
@@ -86,12 +80,12 @@ namespace JitStreamDesigner
             var lpos = TargetProcess.GetLayoutPos();    // Parts Location
             var lois = GeoEu.GetLocationOfInscribedSquareInCircle(A); // Connector Location Unit (0.7 times)
             return LayoutPos.From(
-                lpos.X              // Parts Location
-                    + lw * Root2    // R (Circle of the four vertices）
-                    * lois.X,       // Location of inscribed square in circle
-                lpos.Y              // Parts Location
-                    + lh * Root2    // R (Circle of the four vertices）
-                    * lois.Y        // Location of inscribed square in circle
+                lpos.X                      // Parts Location
+                    + lw * MathUtil.Root2   // R (Circle of the four vertices）
+                    * lois.X,               // Location of inscribed square in circle
+                lpos.Y                      // Parts Location
+                    + lh * MathUtil.Root2   // R (Circle of the four vertices）
+                    * lois.Y                // Location of inscribed square in circle
             );
         }
 

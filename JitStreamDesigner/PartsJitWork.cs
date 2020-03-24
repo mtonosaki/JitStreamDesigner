@@ -16,16 +16,16 @@ namespace JitStreamDesigner
     /// <remarks>
     /// Location = Center
     /// </remarks>
-    public class PartsJitProcess : PartsJitBase, IGuiPartsControlCommon
+    public class PartsJitWork : PartsJitBase, IGuiPartsControlCommon
     {
-        public bool IsConnecting { get; set; }
-
         /// <summary>
         /// Change Base Color
         /// </summary>
-        public override Color BaseColor => base.BaseColor;
+        public override Color BaseColor => Colors.Cyan;
 
         public JitVariable.ChildValueDic ChildVriables => throw new System.NotImplementedException();
+
+        private float SelectR = 0;
 
         /// <summary>
         /// Drawing main
@@ -36,21 +36,18 @@ namespace JitStreamDesigner
             var sc = GetScreenPos(dp.Pane);
             var lsiz = LayoutSize.From(PositionerX(CodeX<Distance>.From(Width), null), PositionerY(null, CodeY<Distance>.From(Height)));
             var ssiz = ScreenSize.From(dp.Pane, lsiz);
-            var sr = ScreenRect.FromCWH(sc, ssiz.Width, ssiz.Height);
-            SelectableSize = sr.ToSize();
+            SelectR = ssiz.Width + 4;
 
-            dp.Graphics.DrawRectangle(_(sr), GetColor(dp));
-
-            if (IsConnecting)
-            {
-                dp.Graphics.DrawRectangle(_(sr), ConnectingColor, 4f);
-                return;
-            }
             if (IsSelected)
             {
-                dp.Graphics.DrawRectangle(_(sr), SelectingColor, 4f);
-                return;
+                dp.Graphics.FillCircle(_(sc), SelectR, SelectingColor);
             }
+            dp.Graphics.DrawCircle(_(sc), ssiz.Width, BaseColor, 1.0f);
+        }
+
+        public override float SelectingScore(IDrawArea pane, ScreenPos pos)
+        {
+            return (float)GetScreenPos(pane).LengthTo(pos) / SelectR;
         }
     }
 }
