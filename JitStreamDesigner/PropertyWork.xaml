@@ -37,16 +37,10 @@
             <TextBlock Margin="2,0,8,0" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Name</TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1"
                        Text="{x:Bind InstanceName,Mode=OneWay}" />
-            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,12,8,0">
-                <TextBlock>Push Work To</TextBlock>
-                <TextBlock FontSize="10">Location Path</TextBlock>
-            </StackPanel>
-            <tg:TTextValidate Grid.Row="2"  Grid.Column="1" Margin="0,12,8,0"
-                              Text="{x:Bind DestProcessKey,Mode=TwoWay}" 
-                              PlaceholderText="LocationPath"
-                              ErrorMessageText="{x:Bind DestinationError}" 
-                              Pattern="^/?([a-zA-Z]+[a-zA-Z0-9]*$|::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::)(/([a-zA-Z]+[a-zA-Z0-9]*|::Jac:Instance:[A-Z][A-Za-z0-9]+:[0-9]+::))*$" />
-            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="DestinationError" x:Uid="InstanceClassNameError" Foreground="Red" Margin="0,0,0,8" FontSize="12" HorizontalAlignment="Right" Text="Location path; Proc or Subset names separated by /"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,12,8,0">Next Process</TextBlock>
+            <TextBlock Grid.Row="2"  Grid.Column="1" Margin="0,12,8,0"
+                       VerticalAlignment="Top"
+                       Text="{x:Bind NextLocation,Mode=OneWay}" />
         </Grid>
         <Rectangle Fill="SteelBlue" Height="1" Margin="8,8,8,8"/>
         <TextBlock Margin="4">Location/Size</TextBlock>

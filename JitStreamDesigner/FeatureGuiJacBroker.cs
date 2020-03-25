@@ -111,11 +111,21 @@ namespace JitStreamDesigner
             throw new JacException(JacException.Codes.SyntaxError, $"Cannot get a GuiBroker's property");
         }
 
+        /// <summary>
+        /// Remarks string is for Optimize
+        /// </summary>
+        /// <param name="varname"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private string MakeRemarks(string varname, object value)
         {
             if (value is JitProcess process)
             {
                 return $"{varname} {process.ID} // Process";
+            }
+            if (value is JitWork work)
+            {
+                return $"{varname} {work.ID} // Work";
             }
             return $"{varname} = {value} // not a Jit Object";
         }
@@ -253,7 +263,6 @@ namespace JitStreamDesigner
                 if (Parts.GetParts<PartsJitBase>(LAYER.JitPartsLayers, a => a.ID == jitobj.ID).FirstOrDefault() is PartsJitBase pt)
                 {
                     pt.Location = CodePos<Distance, Distance>.From((Distance)jitval.ChildVriables["LocationX"].Value, (Distance)jitval.ChildVriables["LocationY"].Value);
-                    pt.IsSelected = true;
                     Redraw();
 
                     Token.AddNew(new EventTokenJitVariableTrigger
@@ -278,7 +287,6 @@ namespace JitStreamDesigner
                 {
                     pt.Width = (Distance)jitval.ChildVriables["Width"].Value;
                     pt.Height = (Distance)jitval.ChildVriables["Height"].Value;
-                    pt.IsSelected = true;
                     Redraw();
 
                     Token.AddNew(new EventTokenJitVariableTrigger
@@ -372,7 +380,7 @@ namespace JitStreamDesigner
         public void ClearAllSelection(object value)
         {
             var pts =
-                from layer in LAYER.JitObjects
+                from layer in LAYER.JitPartsLayers
                 from pt in Parts.GetParts<ISelectableParts>(layer)
                 select pt;
 
@@ -387,6 +395,21 @@ namespace JitStreamDesigner
             }
             if (nChanged > 0)
             {
+                Redraw();
+            }
+            WaitNext();
+        }
+
+        public void SelectParts(object value)
+        {
+            if (value is IJitObjectID jid)
+            {
+                foreach (ISelectableParts pt in Parts
+                    .GetParts<IGuiPartsControlCommon>(LAYER.JitPartsLayers, a => a.ID == jid.ID)
+                    .Where(a => a is ISelectableParts)
+                ){
+                    pt.IsSelected = true;
+                }
                 Redraw();
             }
             WaitNext();

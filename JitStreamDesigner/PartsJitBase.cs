@@ -13,15 +13,29 @@ namespace JitStreamDesigner
     /// </summary>
     public abstract class PartsJitBase : PartsBase<Distance, Distance>, ISelectableParts, IMovableParts
     {
+        private bool isSelected = false;
+
         /// <summary>
-        /// Process ID same with Jac
+        /// Process/Work ID same with Jac
         /// </summary>
         public string ID { get; set; }
 
         /// <summary>
         /// Parts Select State
         /// </summary>
-        public bool IsSelected { get; set; }
+        public virtual bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                isSelected = value;
+            }
+        }
+
+        /// <summary>
+        /// to set as ignore move with Redo/Undo mechanism
+        /// </summary>
+        public bool IsCancellingMove { get; set; }
 
         /// <summary>
         /// Selecting Background Color
@@ -87,13 +101,21 @@ namespace JitStreamDesigner
             OriginalPosition = Location;
         }
 
+        public void ClearOriginalPosition()
+        {
+            OriginalPosition = null;
+        }
+
         public bool IsMoved()
         {
+            if (OriginalPosition == null) return false;
+
             return !OriginalPosition.Equals(Location);
         }
 
         public void Move(IDrawArea pane, ScreenSize offset)
         {
+            if (OriginalPosition == null) return;
             var spos0 = GetScreenPos(pane, OriginalPosition);
             var spos1 = spos0 + offset;
             var lpos = LayoutPos.From(pane, spos1);

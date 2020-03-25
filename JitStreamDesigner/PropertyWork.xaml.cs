@@ -44,17 +44,17 @@ namespace JitStreamDesigner
 
         public Visibility HideWhenRun => DesignMode.DesignModeEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-        private JitWork target;
+        private JitWork _target;
 
         /// <summary>
         /// Target Jit Object
         /// </summary>
         public JitWork Target
         {
-            get => target;
+            get => _target;
             set
             {
-                target = value;
+                _target = value;
                 UpdateCassette();
             }
         }
@@ -62,11 +62,11 @@ namespace JitStreamDesigner
         public void UpdateCassette()
         {
             IsFireEvents = false;
-            Name = target.ID;           // Control.Name to find chip
-            DestProcessKey = target.Next?.Path ?? "" ?? "";
-            X = $"{((Distance)target.ChildVriables["LocationX"].Value).m}m";
-            Y = $"{((Distance)target.ChildVriables["LocationY"].Value).m}m";
+            Name = Target.ID;           // Control.Name to find chip
+            X = $"{((Distance)Target.ChildVriables["LocationX"].Value).m}m";
+            Y = $"{((Distance)Target.ChildVriables["LocationY"].Value).m}m";
             IsFireEvents = true;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("NextLocation"));
         }
 
         public string ID
@@ -80,37 +80,11 @@ namespace JitStreamDesigner
         /// <summary>
         /// ViewModel : Instance Name
         /// </summary>
-        public string InstanceName { get => target?.Name ?? "(n/a)";  }    // Not Editable
+        public string InstanceName { get => Target?.Name ?? "(n/a)";  }    // Not Editable
 
-        private string destProcessKey;
-        public string DestProcessKey
+        public string NextLocation
         {
-            get => destProcessKey;
-            set
-            {
-                if (destProcessKey != value)
-                {
-                    PreviousValue["DestProcessKey"] = destProcessKey;
-                    destProcessKey = value;
-                    if (IsFireEvents)
-                    {
-                        NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
-                        {
-                            NewRedo = $"{Target.ID}\r\n" +
-                                      $"    Next = new Location\r\n" +
-                                      $"        Stage = TheStage\r\n" +
-                                      $"        Path = '{destProcessKey}'\r\n" +
-                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
-                            NewUndo = $"{Target.ID}\r\n" +
-                                      $"    Next = new Location\r\n" +
-                                      $"        Stage = TheStage\r\n" +
-                                      $"        Path = '{PreviousValue["DestProcessKey"]}'\r\n" +
-                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
-                        });
-                    }
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DestProcessKey"));
-                }
-            }
+            get => Target?.Next?.FullPath;
         }
 
         private string x = "0m";

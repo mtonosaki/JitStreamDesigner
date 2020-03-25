@@ -120,7 +120,7 @@ namespace JitStreamDesigner
 
             // Rebuild Gui Parts
             var pts =
-                from Layer in LAYER.JitObjects
+                from Layer in LAYER.JitPartsLayers
                 from Parts in Parts.GetParts(Layer)
                 select (Layer, Parts);
 
