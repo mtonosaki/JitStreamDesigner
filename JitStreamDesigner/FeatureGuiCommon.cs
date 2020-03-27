@@ -19,6 +19,7 @@ namespace JitStreamDesigner
         CodePos<Distance, Distance> Location { get; }
         CodePos<Distance, Distance> OriginalPosition { get; }
         ChildValueDic ChildVriables { get; }
+        bool IsCancellingMove { get; }
 
     }
 
@@ -40,26 +41,39 @@ namespace JitStreamDesigner
         [EventCatch(TokenID = TokensGeneral.PartsMoved)]
         public void PartsMoved(EventTokenPartsMovedTrigger token)
         {
-            var jacUndo = new StringBuilder();
-            var jacRedo = new StringBuilder();
-            jacUndo.AppendLine("Gui.ClearAllSelection = true");
-            jacRedo.AppendLine("Gui.ClearAllSelection = true");
-            var n = 0;
-            foreach (IGuiPartsControlCommon pt in token.PartsSet.Where(a => a is IGuiPartsControlCommon))
+            Token.Finalize(() =>
             {
-                n++;
-                jacRedo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
-                jacRedo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
-                jacRedo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
+                var jacUndo = new StringBuilder();
+                var jacRedo = new StringBuilder();
+                jacUndo.AppendLine("Gui.ClearAllSelection = true");
+                jacRedo.AppendLine("Gui.ClearAllSelection = true");
+                var n = 0;
 
-                jacUndo.AppendLine($@"{pt.ID}.LocationX = {pt.OriginalPosition.X.Cx.m}m");
-                jacUndo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
-                jacUndo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
-            }
-            if( n > 0)
-            {
-                SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
-            }
+                var tars =
+                    from p in token.PartsSet
+                    let cc = p as IGuiPartsControlCommon
+                    where cc != null
+                    where cc.IsCancellingMove == false
+                    select cc;
+
+                foreach (IGuiPartsControlCommon pt in tars)
+                {
+                    n++;
+                    jacRedo.AppendLine($@"{pt.ID}.LocationX = {pt.Location.X.Cx.m}m");
+                    jacRedo.AppendLine($@"{pt.ID}.LocationY = {pt.Location.Y.Cy.m}m");
+                    jacRedo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
+                    jacRedo.AppendLine($@"Gui.SelectParts = {pt.ID}");
+
+                    jacUndo.AppendLine($@"{pt.ID}.LocationX = {pt.OriginalPosition.X.Cx.m}m");
+                    jacUndo.AppendLine($@"{pt.ID}.LocationY = {pt.OriginalPosition.Y.Cy.m}m");
+                    jacUndo.AppendLine($@"Gui.UpdateLocation = {pt.ID}");
+                    jacUndo.AppendLine($@"Gui.SelectParts = {pt.ID}");
+                }
+                if (n > 0)
+                {
+                    SetNewAction(token, jacRedo.ToString(), jacUndo.ToString());
+                }
+            });
         }
 
         [EventCatch(TokenID = TokensGeneral.PartsSelectChanged)]

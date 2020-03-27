@@ -19,8 +19,6 @@ namespace JitStreamDesigner
         public static readonly NamedId JitProcessConnectorGrip = NamedId.From("JitProcessConnectorGrip", 304);
         public static readonly NamedId JitProcessConnector = NamedId.From("JitProcessConnector", 301);
         public static readonly NamedId JitProcess = NamedId.From("JitProcess", 300);
-        public static readonly NamedId[] JitObjects = new[] { JitProcess };
-
 
         public static readonly NamedId[] JitPartsLayers = new[] { JitProcess, JitWork };
         public static readonly NamedId[] MaskIgnoreLayers = new[] { JitProcessConnectorGrip };
