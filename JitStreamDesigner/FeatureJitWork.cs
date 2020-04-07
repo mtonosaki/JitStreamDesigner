@@ -128,6 +128,8 @@ namespace JitStreamDesigner
                             LocationY = {CreatingParts.Location.Y.Cy.m}m
                             Width = {CreatingParts.Width.m}m
                             Height = {CreatingParts.Height.m}m
+                            Current = new Location
+                                Stage = TheStage
                 Gui.ClearAllSelection = true
                 Gui.CreateWork = {workID}
             ";

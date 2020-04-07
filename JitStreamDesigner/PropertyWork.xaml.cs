@@ -65,6 +65,11 @@ namespace JitStreamDesigner
             Name = Target.ID;           // Control.Name to find chip
             X = $"{((Distance)Target.ChildVriables["LocationX"].Value).m}m";
             Y = $"{((Distance)Target.ChildVriables["LocationY"].Value).m}m";
+            if (Target.FindStage() is JitStage st)
+            {
+                var node = st.Events.Find(Target);
+                TimeToPush = node.Value.DT.ToString(TimeUtil.FormatYMDHMSms);
+            }
             IsFireEvents = true;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("NextLocation"));
         }
@@ -85,6 +90,39 @@ namespace JitStreamDesigner
         public string NextLocation
         {
             get => Target?.Next?.FullPath;
+        }
+
+        //TimeToPush
+        private string timeToPush = "--";
+        public string TimeToPush
+        {
+            get => timeToPush;
+            set
+            {
+                var dt = JacInterpreter.ParseDateTime(value, DateTime.MinValue);
+                if ( dt != JacInterpreter.ParseDateTime(timeToPush, DateTime.MinValue))
+                {
+                    PreviousValue["TimeToPush"] = timeToPush;
+                    timeToPush = value;
+                    if (IsFireEvents)
+                    {
+                        NewUndoRedo?.Invoke(this, new NewUndoRedoEventArgs
+                        {
+                            NewRedo = $"TheStage\r\n" +
+                                      $"    Works\r\n" +
+                                      $"        remove {Target.ID}\r\n" +
+                                      $"        add datetime('{dt.ToString(TimeUtil.FormatYMDHMSms)}'):{Target.ID}\r\n" +
+                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
+                            NewUndo = $"TheStage\r\n" +
+                                      $"    Works\r\n" +
+                                      $"        remove {Target.ID}\r\n" +
+                                      $"        add datetime('{PreviousValue["TimeToPush"]}'):{Target.ID}\r\n" +
+                                      $"Gui.UpdateCassetteValue = {Target.ID}\r\n",
+                        });
+                    }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TimeToPush"));
+                }
+            }
         }
 
         private string x = "0m";

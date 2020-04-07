@@ -41,6 +41,15 @@
             <TextBlock Grid.Row="2"  Grid.Column="1" Margin="0,12,8,0"
                        VerticalAlignment="Top"
                        Text="{x:Bind NextLocation,Mode=OneWay}" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,12,8,0">Time to push</TextBlock>
+            <tg:TTextValidate Grid.Row="3"  Grid.Column="1" Margin="0,8,0,0"
+                              Text="{x:Bind TimeToPush,Mode=TwoWay}" 
+                              PlaceholderText="YYYY/MM/DD hh:mm:ss"
+                              ErrorMessageText="{x:Bind DateTimeError}" 
+                              Pattern="^20.*$" />
+            <TextBlock Name="DateTimeError" x:Uid="DateTimeError" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Foreground="Red" Visibility="{x:Bind HideWhenRun, Mode=OneTime}">
+                Date Time format here
+            </TextBlock>
         </Grid>
         <Rectangle Fill="SteelBlue" Height="1" Margin="8,8,8,8"/>
         <TextBlock Margin="4">Location/Size</TextBlock>

@@ -112,7 +112,10 @@ namespace JitStreamDesigner
             while (Hot.ActiveTemplate.UndoRedoCurrenttPointer != Hot.ActiveTemplate.UndoRedoRequestedPointer && dir != 0)
             {
                 var jac = dir > 0 ? Hot.ActiveTemplate.RedoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer] : Hot.ActiveTemplate.UndoStream[Hot.ActiveTemplate.UndoRedoCurrenttPointer];
+
+                //=== INSTANCIATE WITH JAC ===
                 Hot.ActiveTemplate.Jac.Exec(jac);
+
                 Hot.ActiveTemplate.UndoRedoCurrenttPointer += dir;
             }
 
